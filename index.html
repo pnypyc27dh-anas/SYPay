@@ -543,38 +543,40 @@
         }
 
         function openPlansModal(platformName, categoryName) { 
-               document.getElementById('plans-modal-title').innerText = `باقات منصة ${platformName}`; 
+                  document.getElementById('plans-modal-title').innerText = `باقات منصة ${platformName}`; 
     const container = document.getElementById('plans-container'); 
     container.innerHTML = ""; 
     const plans = globalProductsRaw.filter(p => p.category === categoryName && p.platform === platformName); 
 
     plans.forEach(plan => { 
         const card = document.createElement('div'); 
-        // أضفنا تأثيراً حركياً خفيفاً عند المرور فوق البطاقة
-        card.className = "bg-white border p-3 rounded-2xl flex justify-between items-center text-right shadow-sm mb-2 md:mb-0 transition-all hover:border-blue-200 hover:shadow-md"; 
+        // زيادة الحواف الداخلية (p-4 بدلاً من p-3) لتناسب الحجم الجديد
+        card.className = "bg-white border p-4 rounded-2xl flex justify-between items-center text-right shadow-sm mb-3 md:mb-0 transition-all hover:border-blue-200 hover:shadow-md"; 
         
-        // التحقق من وجود الصورة، وإلا استخدام صورة افتراضية تحمل حرفي SY
-        const defaultImage = "https://placehold.co/100x100/f8fafc/005ba3?text=SY&font=Montserrat";
-        const imageUrl = plan.image_url ? plan.image_url : defaultImage;
+        const defaultImage = "https://placehold.co/150x150/f8fafc/005ba3?text=SY&font=Montserrat";
+        const imageUrl = (plan.image_url && plan.image_url.trim() !== "") ? plan.image_url : defaultImage;
 
-        // دمج الصورة مع النص باستخدام Flex
         card.innerHTML = `
-            <div class="flex items-center gap-3">
-                <img src="${imageUrl}" onerror="this.src='${defaultImage}'" class="w-10 h-10 rounded-xl object-cover border border-slate-100 shadow-sm" alt="${plan.package_name}">
-                <div class="flex flex-col">
-                    <span class="text-xs font-bold text-slate-800">${plan.package_name}</span>
-                    <span class="text-[9px] text-slate-400 mt-0.5">تسليم معياري موثق</span>
+            <div class="flex items-center gap-4">
+                <!-- تم تكبير الصورة هنا باستخدام w-16 و h-16 -->
+                <img src="${imageUrl}" onerror="this.src='${defaultImage}'" class="w-16 h-16 rounded-xl object-cover border border-slate-100 shadow-sm" alt="icon">
+                <div class="flex flex-col gap-1">
+                    <!-- تكبير خط اسم الباقة إلى text-sm -->
+                    <span class="text-sm font-bold text-slate-800">${plan.package_name}</span>
+                    <span class="text-[10px] text-slate-400">تسليم معياري موثق</span>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="text-sm font-extrabold text-[#005ba3] font-sans tabular-numeric pr-2">$${plan.price.toFixed(2)}</span>
-                <button onclick="openAccountInputsModal('${plan.id}', '${plan.platform} - ${plan.package_name}', ${plan.price})" class="bg-[#005ba3] text-white text-[11px] font-bold px-3 py-1.5 rounded-lg transition hover:bg-blue-700 interactive-btn">شراء</button>
+            <div class="flex items-center gap-3">
+                <!-- تكبير خط السعر إلى text-base -->
+                <span class="text-base font-extrabold text-[#005ba3] font-sans tabular-numeric pr-1">$${plan.price.toFixed(2)}</span>
+                <!-- تكبير زر الشراء ليتناسب مع التصميم -->
+                <button onclick="openAccountInputsModal('${plan.id}', '${plan.platform} - ${plan.package_name}', ${plan.price})" class="bg-[#005ba3] text-white text-[11px] font-bold px-4 py-2 rounded-xl transition hover:bg-blue-700 interactive-btn">شراء</button>
             </div>
         `; 
         container.appendChild(card); 
     }); 
     toggleView('plans-modal', true); 
-}   
+}
 
         async function fetchStoreProductsDirectly() { 
             try { 

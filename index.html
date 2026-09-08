@@ -457,7 +457,21 @@
 
         let currentUserEmail = "", currentUserToken = "", currentWalletBalance = 0.00, rawCardNumber = "", lastFourDigits = "", isCardVisible = false, isCustomAmountMode = false, selectedProductId = "", selectedItemName = "", selectedItemPrice = 0.00, inputPlayerId = "", inputPlayerIdConfirm = "", tempRegisterData = {}, globalProductsRaw = [], currentFlowType = "register", globalTransactionsRaw = [];      
         
-        function toggleView(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
+        function toggleView(id, show) { 
+    // إظهار أو إخفاء العنصر المطلوب
+    document.getElementById(id).classList.toggle('hidden', !show); 
+    
+    // التحقق مما إذا كان العنصر الذي تم فتحه/إغلاقه هو نافذة منبثقة (يحتوي اسمه على كلمة modal)
+    if (id.includes('modal')) {
+        if (show) {
+            // عند فتح النافذة: تعطيل التمرير والتفاعل في الخلفية
+            document.body.classList.add('overflow-hidden');
+        } else {
+            // عند إغلاق النافذة: إعادة التمرير للعمل بشكل طبيعي
+            document.body.classList.remove('overflow-hidden');
+        }
+    }
+}
         function closeAllModals() { ['register-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'tab-transactions-modal', 'tab-support-modal', 'tab-privacy-modal'].forEach(id => toggleView(id, false)); }
         
         function toggleSideMenu(open) {

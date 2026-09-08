@@ -546,7 +546,6 @@
                   document.getElementById('plans-modal-title').innerText = `باقات منصة ${platformName}`; 
     const container = document.getElementById('plans-container'); 
     
-    // 1. هندسة الحاوية: منع انضغاط العناصر عند كثرتها وإجبارها على احترام الارتفاع الطبيعي
     container.className = "overflow-y-auto flex-grow space-y-3 md:space-y-0 md:grid md:grid-cols-2 md:auto-rows-max md:content-start md:gap-4 text-right pr-1 pb-2";
     container.innerHTML = ""; 
     
@@ -554,27 +553,22 @@
 
     plans.forEach(plan => { 
         const card = document.createElement('div'); 
-        // 2. هندسة البطاقة: استخدام h-fit و shrink-0 لمنع تشوه البطاقة نهائياً
         card.className = "bg-white border p-3 rounded-2xl flex items-center justify-between gap-3 text-right shadow-sm transition-all hover:border-blue-200 hover:shadow-md h-fit shrink-0"; 
         
-        const defaultImage = "https://placehold.co/100x100/f8fafc/005ba3?text=SY&font=Montserrat";
+        const defaultImage = "https://placehold.co/150x150/f8fafc/005ba3?text=SY&font=Montserrat";
         const imageUrl = (plan.image_url && plan.image_url.trim() !== "") ? plan.image_url : defaultImage;
 
         card.innerHTML = `
-            <!-- القسم الأول: الصورة والنصوص -->
-            <div class="flex items-center gap-3 min-w-0 flex-1">
-                <!-- 3. حجم الأيقونة: مقاس متزن (56px) لتكون واضحة دون تدمير الشبكة -->
-                <img src="${imageUrl}" onerror="this.src='${defaultImage}'" class="w-12 h-12 md:w-14 md:h-14 rounded-xl object-cover border border-slate-100 shadow-sm shrink-0" alt="Product Icon">
+            <div class="flex items-center gap-4 min-w-0 flex-1">
+                <!-- تم تكبير الصورة هنا إلى w-16 و h-16 للموبايل، و w-20 و h-20 للكمبيوتر -->
+                <img src="${imageUrl}" onerror="this.src='${defaultImage}'" class="w-16 h-16 md:w-20 md:h-20 rounded-2xl object-cover border border-slate-100 shadow-sm shrink-0" alt="Product Icon">
                 
-                <!-- 4. حماية النصوص: استخدام min-w-0 و truncate لقص النص الطويل جداً -->
                 <div class="flex flex-col min-w-0">
                     <span class="text-xs md:text-sm font-bold text-slate-800 truncate" title="${plan.package_name}">${plan.package_name}</span>
                     <span class="text-[9px] md:text-[10px] text-slate-400 truncate">تسليم معياري</span>
                 </div>
             </div>
             
-            <!-- القسم الثاني: السعر وزر الشراء -->
-            <!-- 5. توفير المساحة: ترتيب السعر والزر عمودياً للحفاظ على مساحة أفقية مريحة لاسم الباقة -->
             <div class="flex flex-col items-end gap-1.5 shrink-0 pl-1 border-r border-slate-50 pr-2 md:pr-3">
                 <span class="text-sm md:text-base font-extrabold text-[#005ba3] font-sans tabular-numeric leading-none">$${plan.price.toFixed(2)}</span>
                 <button onclick="openAccountInputsModal('${plan.id}', '${plan.platform} - ${plan.package_name}', ${plan.price})" class="bg-[#005ba3] text-white text-[10px] md:text-[11px] font-bold px-4 py-1.5 rounded-lg transition hover:bg-blue-700 interactive-btn w-full text-center">شراء</button>

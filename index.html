@@ -268,7 +268,7 @@
     </div>
 
     <!-- نوافذ Modal (توسيع العرض في الكمبيوتر) -->
-    <div id="tab-transactions-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[50]">
+    <div id="tab-transactions-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[70]">
         <div class="bg-white w-full max-w-lg md:max-w-2xl rounded-t-[32px] sm:rounded-[24px] p-6 shadow-2xl h-[80vh] flex flex-col relative text-right" onclick="event.stopPropagation()">
             <div class="flex justify-between border-b pb-3 items-center"><h3 class="font-bold text-slate-800">سجل العمليات المالية</h3><button onclick="toggleView('tab-transactions-modal', false)" class="text-slate-400 font-bold interactive-btn">✕</button></div>
             <div class="py-3 space-y-2 border-b">
@@ -291,7 +291,7 @@
         </div>
     </div>
 
-    <div id="plans-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[50]">      
+    <div id="plans-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[70]">      
         <div class="bg-white border w-full max-w-sm md:max-w-2xl rounded-t-[28px] sm:rounded-[20px] max-h-[65vh] flex flex-col p-5 md:p-6 shadow-2xl relative" onclick="event.stopPropagation()">      
             <div class="flex justify-between items-center border-b pb-3 mb-3"><button onclick="toggleView('plans-modal', false)" class="text-blue-600 text-xs font-bold interactive-btn">رجوع</button><h4 id="plans-modal-title" class="text-sm font-bold text-slate-800 text-center flex-grow">الباقات المتوفرة</h4><button onclick="closeAllModals()" class="text-slate-400 text-xs font-bold interactive-btn">إغلاق</button></div>      
             <!-- يتم إضافة grid هنا في الـ JS لترتيب الباقات بشكل أفضل على الكمبيوتر -->
@@ -299,7 +299,7 @@
         </div>      
     </div>      
       
-    <div id="account-inputs-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[50]">      
+    <div id="account-inputs-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[70]">      
         <div class="bg-white border w-full max-w-sm rounded-t-[28px] sm:rounded-[20px] p-6 space-y-4 shadow-2xl relative text-right" onclick="event.stopPropagation()">      
             <div class="flex justify-between items-center border-b pb-3 mb-3"><button onclick="toggleView('account-inputs-modal', false)" class="text-blue-600 text-xs font-bold interactive-btn">رجوع</button><h3 class="text-sm font-bold text-slate-800 text-center flex-grow">بيانات تعبئة الخدمة</h3><button onclick="closeAllModals()" class="text-slate-400 text-xs font-bold interactive-btn">إغلاق</button></div>      
             <div class="space-y-3">      
@@ -324,7 +324,7 @@
         </div>      
     </div>      
       
-    <div id="purchase-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[50]">      
+    <div id="purchase-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[70]">      
         <div class="bg-white border w-full max-w-sm rounded-t-[32px] sm:rounded-[24px] p-6 shadow-2xl relative text-right space-y-4" onclick="event.stopPropagation()">      
             <div class="flex justify-between items-center border-b pb-3 mb-3"><button onclick="toggleView('purchase-modal', false); toggleView('account-inputs-modal', true)" class="text-blue-600 text-xs font-bold interactive-btn">رجوع</button><h3 class="text-sm font-bold text-slate-800 text-center flex-grow">تأكيد مستند الفاتورة</h3><button onclick="closeAllModals()" class="text-slate-400 text-xs font-bold interactive-btn">إغلاق</button></div>      
             <div class="bg-slate-50 rounded-2xl border p-4 space-y-2 text-xs">      
@@ -341,7 +341,7 @@
     </div>      
 
     <!-- نوافذ الدعم والخصوصية والتسجيل مع تحسينات طفيفة للمقاس -->
-    <div id="tab-support-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[50]">
+    <div id="tab-support-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[70]">
         <div class="bg-white w-full max-w-sm rounded-t-[32px] sm:rounded-[24px] p-6 shadow-2xl relative text-right space-y-4" onclick="event.stopPropagation()">
             <div class="flex justify-between border-b pb-3 items-center"><h3 class="font-bold text-slate-800">الدعم الفني المباشر</h3><button onclick="toggleView('tab-support-modal', false)" class="text-slate-400 font-bold interactive-btn">✕</button></div>
             <p class="text-xs text-slate-500 leading-relaxed">قنوات التواصل الرسمية والمباشرة مع إدارة المنظومة لمعالجة المشاكل التقنية أو الاستفسارات الماليّة:</p>
@@ -352,7 +352,7 @@
         </div>
     </div>
 
-    <div id="tab-privacy-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[50]">
+    <div id="tab-privacy-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[70]">
         <div class="bg-white w-full max-w-sm rounded-t-[32px] sm:rounded-[24px] p-6 shadow-2xl h-[50vh] flex flex-col relative text-right" onclick="event.stopPropagation()">
             <div class="flex justify-between border-b pb-3 items-center"><h3 class="font-bold text-slate-800">سياسة الخصوصية والمعلومات</h3><button onclick="toggleView('tab-privacy-modal', false)" class="text-slate-400 font-bold interactive-btn">✕</button></div>
             <div class="overflow-y-auto text-xs text-slate-600 space-y-3 leading-relaxed py-2">
@@ -364,7 +364,7 @@
         </div>
     </div>
 
-    <div id="register-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[50]">      
+    <div id="register-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[70]">      
         <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[24px] p-6 shadow-2xl relative text-right" onclick="event.stopPropagation()">      
             <div class="flex justify-between pb-3 mb-3 border-b"><h3 id="register-modal-title" class="font-bold text-slate-800">فتح حساب جديد</h3><button onclick="toggleView('register-modal', false)" class="text-slate-400 font-bold interactive-btn">✕</button></div>      
             <div id="register-step-form" class="space-y-4">      

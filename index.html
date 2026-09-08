@@ -563,11 +563,11 @@
                 <!-- تم تكبير الصورة هنا إلى w-16 و h-16 للموبايل، و w-20 و h-20 للكمبيوتر -->
                 <img src="${imageUrl}" onerror="this.src='${defaultImage}'" class="w-16 h-16 md:w-20 md:h-20 rounded-2xl object-cover border border-slate-100 shadow-sm shrink-0" alt="Product Icon">
                 
-                <div class="flex flex-col min-w-0">
-                    <span class="text-xs md:text-sm font-bold text-slate-800 truncate" title="${plan.package_name}">${plan.package_name}</span>
-                    <span class="text-[9px] md:text-[10px] text-slate-400 truncate">تسليم معياري</span>
-                </div>
-            </div>
+                <div class="flex flex-col min-w-0 pt-1">
+    <!-- تمت إزالة truncate وإضافة leading-snug و break-words للسماح بتعدد الأسطر -->
+    <span class="text-xs md:text-sm font-bold text-slate-800 leading-snug break-words">${plan.package_name}</span>
+    <span class="text-[9px] md:text-[10px] text-slate-400 mt-1">تسليم معياري</span>
+</div>
             
             <div class="flex flex-col items-end gap-1.5 shrink-0 pl-1 border-r border-slate-50 pr-2 md:pr-3">
                 <span class="text-sm md:text-base font-extrabold text-[#005ba3] font-sans tabular-numeric leading-none">$${plan.price.toFixed(2)}</span>

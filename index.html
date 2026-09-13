@@ -1,3 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SYPay - المحفظة الرقمية ومتجر الاشتراكات</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Tajawal:wght=400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons (أيقونات عصرية وفخمة) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        :root {
+            --primary: #005ba3;
+            --primary-glow: rgba(0, 91, 163, 0.3);
+            --accent: #7c3aed;
+            --bg-glass: rgba(255, 255, 255, 0.85);
+        }
+        
+        body { 
+            font-family: 'Tajawal', 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f4f7f9; 
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: #0f172a; 
+            overflow-x: hidden; 
+            padding-bottom: 110px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Scrollbar مخصص */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* تأثيرات الزجاج (Glassmorphism) */
+        .glass-panel { 
+            background: var(--bg-glass); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 1); 
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+            border-radius: 28px;
+        }
+
+        /* البطاقة السيبرانية العصرية */
+        .cyber-card {
+            background: linear-gradient(145deg, #0b1120 0%, #151e32 100%);
+            border-radius: 32px;
+            box-shadow: 0 20px 40px -15px var(--primary-glow);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .cyber-card::before {
+            content: "";
+            position: absolute;
+            inset: -50%;
+            background: radial-gradient(circle at 80% 20%, rgba(0, 91, 163, 0.25) 0%, transparent 40%),
+                        radial-gradient(circle at 20% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 40%);
+            pointer-events: none;
+        }
+        
+        /* تأثير تموجات للبطاقة */
+        .abstract-lines {
+            position: absolute; inset: 0; opacity: 0.1;
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, #ffffff 10px, #ffffff 11px);
+            pointer-events: none;
+        }
+
+        /* حقول الإدخال المحسنة */
+        .input-field {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border: 1.5px solid #e2e8f0 !important;
+            border-radius: 16px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .input-field:focus {
+            border-color: var(--primary) !important;
+            background: #ffffff !important;
+            box-shadow: 0 0 0 4px rgba(0, 91, 163, 0.1) !important;
+            outline: none;
+        }
+
+        /* الأزرار الرئيسية */
+        .btn-primary {
+            background: linear-gradient(135deg, #005ba3 0%, #004a85 100%);
+            box-shadow: 0 8px 20px -6px var(--primary-glow);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -8px var(--primary-glow);
+        }
+        .btn-primary:active { transform: scale(0.97); }
+
+        .financial-amount { font-family: 'Plus Jakarta Sans', monospace; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+        .card-number-style { font-family: 'Plus Jakarta Sans', monospace; font-variant-numeric: tabular-nums; letter-spacing: 0.15em; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+
+        /* الأنيميشن */
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        .slide-down { animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideDown { from { opacity: 0; transform: translate(-50%, -20px) scale(0.95); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+
         .slide-up-modal { animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUpModal { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
 

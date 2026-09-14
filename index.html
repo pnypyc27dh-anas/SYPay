@@ -1191,26 +1191,41 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             toggleView('purchase-modal', true); 
         } 
 
-        async function executeSubscriptionPurchase() { 
-            if (currentWalletBalance < selectedItemPrice) return showCustomAlert("خطأ: الرصيد المتوفر في المحفظة غير كافٍ."); 
-            const btn = document.getElementById('confirm-purchase-btn'); 
-            btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري المعالجة...`; 
-            try { 
-                const response = await fetch(webAppUrl, { method: 'POST', body: JSON.stringify({ action: "buy_product", email: currentUserEmail, token: currentUserToken, product_id: selectedProductId, player_id: inputPlayerId, player_id_confirm: inputPlayerIdConfirm }) }); 
-                const r = await response.json(); 
-                if (r.status === "success") { 
-                    currentWalletBalance -= selectedItemPrice; 
-                    document.getElementById('live-balance').innerText = "$" + currentWalletBalance.toFixed(2); 
-                    if (r.mode === "CODE") { 
-                        showCustomAlert(`تمت العملية بنجاح! تم حفظ الكود في سجل العمليات.`, false); 
-                    } else { 
-                        showCustomAlert("تم تسجيل المعاملة بنجاح، الطلب قيد التنفيذ.", false); 
-                    } 
-                    closeAllModals(); silentSyncData(); 
-                } else if (r.status === "expired") { handleLogout(); } 
-                else { showCustomAlert("فشلت المعاملة: " + r.message); btn.disabled = false; btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; } 
-            } catch (err) { showCustomAlert("خطأ اتصال."); btn.disabled = false; btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; } 
+         async function executeSubscriptionPurchase() { 
+    if (currentWalletBalance < selectedItemPrice) return showCustomAlert("خطأ: الرصيد المتوفر في المحفظة غير كافٍ."); 
+    const btn = document.getElementById('confirm-purchase-btn'); 
+    btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري المعالجة...`; 
+    
+    try { 
+        // استدعاء دالة قاعدة البيانات (RPC) مباشرة
+        const { data, error } = await supabase.rpc('execute_purchase', {
+            p_email: currentUserEmail,
+            p_product_id: selectedProductId,
+            p_player_id: inputPlayerId
+        });
+
+        if (error) throw error;
+
+        if (data.status === "success") { 
+            currentWalletBalance -= selectedItemPrice; 
+            document.getElementById('live-balance').innerText = "$" + currentWalletBalance.toFixed(2); 
+            
+            if (data.mode === "CODE") { 
+                showCustomAlert(`تمت العملية بنجاح! الكود الرقمي: ${data.serial_code}`, false); 
+            } else { 
+                showCustomAlert("تم تسجيل المعاملة بنجاح، الطلب قيد التنفيذ.", false); 
+            } 
+            closeAllModals(); 
+            silentSyncData(); // لتحديث سجل المعاملات
+        } else { 
+            showCustomAlert("فشلت المعاملة: " + data.message); 
+            btn.disabled = false; btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; 
         } 
+    } catch (err) { 
+        showCustomAlert("خطأ اتصال بالسيرفر."); 
+        btn.disabled = false; btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; 
+    } 
+}
 
         async function handleUpdateProfileView() { 
             const fName = document.getElementById('prof-first-name').value.trim(); 

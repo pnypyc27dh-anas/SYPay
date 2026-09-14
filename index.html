@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SYPay - المحفظة الرقمية ومتجر الاشتراكات</title>
+    
+    <!-- مكتبة Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -708,13 +710,15 @@
         </div>
     </div>
 
-    <!-- جافاسكربت الأساسية (بدون تعديل جوهري بالمنطق) -->
     <script>
-        // تهيئة الاتصال بقاعدة بيانات Supabase
-const SUPABASE_URL = 'https://wivjfusmdmtjfcefsioc.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpdmpmdXNtZG10amZjZWZzaW9jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzM4MTEsImV4cCI6MjEwNDkwOTgxMX0.3g0wyXro9i92kaNRpX16-SrlX7kNbDa7mF_UwuWHcEk';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // الرابط القديم (تم الاحتفاظ به لأن التسجيل والأمان لا يزالان يعتمدان عليه مؤقتاً)
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbxdld7FEIONXmBxs9F7HXReOg1EVjqvqzLqPf4u4BcGKJx_hhu58M6sZedL33y5LIn3Ow/exec";
         let syncInterval = null;
+
+        // إعداد الاتصال بقاعدة بيانات Supabase المباشرة والسريعة
+        const SUPABASE_URL = 'https://wivjfusmdmtjfcefsioc.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpdmpmdXNtZG10amZjZWZzaW9jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzM4MTEsImV4cCI6MjEwNDkwOTgxMX0.3g0wyXro9i92kaNRpX16-SrlX7kNbDa7mF_UwuWHcEk';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
@@ -805,7 +809,6 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             
             document.querySelectorAll('.data-view').forEach(view => view.classList.add('hidden'));
             
-            // تهيئة جميع أزرار التنقل للحالة غير النشطة
             ['nav-btn-home', 'nav-btn-store', 'nav-btn-deposit', 'nav-btn-profile'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) {
@@ -929,73 +932,30 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             toggleView('plans-modal', true); 
         }
 
-        // 1. الدالة المحدثة لتسجيل الدخول الآمن
-async function handleLogin() { 
-    const email = document.getElementById('login-email').value.trim();
-    const plainPassword = document.getElementById('login-password').value;
-    const btn = document.getElementById('login-btn'); 
-    
-    if (!email || !plainPassword) return showCustomAlert("خطأ: يرجى إدخال البريد الإلكتروني وكلمة المرور."); 
-    btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري التحقق...`; 
-    
-    try { 
-        const hashA = await sha256(plainPassword); 
-        
-        // استدعاء دالة قاعدة البيانات السحابية (RPC)
-        const { data: r, error } = await supabase.rpc('login_user', {
-            p_email: email,
-            p_hash_a: hashA
-        });
-
-        if (error) throw error;
-
-        if (r.status === "success") { 
-            currentUserEmail = email; 
-            currentUserToken = r.token; 
-            try {
-                localStorage.setItem('sypay_email', email);
-                localStorage.setItem('sypay_token', r.token);
-            } catch(e) {}
-            
-            populateDashboard(r); 
-            toggleView('login-screen', false); toggleView('dashboard-screen', true); toggleView('bottom-nav-bar', true);
-            switchTab('home');
-            if(!syncInterval) syncInterval = setInterval(silentSyncData, 30000);
-            fetchStoreProductsDirectly();
-        } else { 
-            showCustomAlert(r.message); 
-            btn.disabled = false; btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`; 
-        } 
-    } catch (err) { 
-        showCustomAlert("خطأ اتصال بالسيرفر."); 
-        btn.disabled = false; btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`; 
-    } 
-} 
-
-// 2. الدالة المحدثة لجلب المنتجات من قواعد البيانات بفضل سياسات (RLS) المفتوحة للقراءة
-async function fetchStoreProductsDirectly() { 
-    try { 
-        const { data: idsData } = await supabase.from('Products_ID').select('*').eq('status', 'نشط');
-        const { data: codesData } = await supabase.from('Products_Code').select('*').eq('status', 'نشط');
-        
-        globalProductsRaw = [];
-        
-        if (idsData) {
-            idsData.forEach(p => globalProductsRaw.push({
-                id: p.product_id, category: p.category, platform: p.platform,
-                package_name: p.package_name, price: parseFloat(p.price), type: "ID", image_url: p.image_url || ""
-            }));
+        // --- التحديث الجديد 1: دالة جلب المنتجات المباشرة من Supabase ---
+        async function fetchStoreProductsDirectly() { 
+            try { 
+                const { data: idsData } = await supabaseClient.from('Products_ID').select('*').eq('status', 'نشط');
+                const { data: codesData } = await supabaseClient.from('Products_Code').select('*').eq('status', 'نشط');
+                
+                globalProductsRaw = [];
+                
+                if (idsData) {
+                    idsData.forEach(p => globalProductsRaw.push({
+                        id: p.product_id, category: p.category, platform: p.platform,
+                        package_name: p.package_name, price: parseFloat(p.price), type: "ID", image_url: p.image_url || ""
+                    }));
+                }
+                if (codesData) {
+                    codesData.forEach(p => globalProductsRaw.push({
+                        id: p.product_id, category: p.category, platform: p.platform,
+                        package_name: p.package_name, price: parseFloat(p.price), type: "CODE", image_url: p.image_url || ""
+                    }));
+                }
+            } catch(e) { 
+                console.error("فشل المزامنة مع متجر المنتجات:", e); 
+            } 
         }
-        if (codesData) {
-            codesData.forEach(p => globalProductsRaw.push({
-                id: p.product_id, category: p.category, platform: p.platform,
-                package_name: p.package_name, price: parseFloat(p.price), type: "CODE", image_url: p.image_url || ""
-            }));
-        }
-    } catch(e) { 
-        console.error("فشل المزامنة مع متجر المنتجات"); 
-    } 
-}
 
         async function syncData() { 
             try { 
@@ -1078,7 +1038,56 @@ async function fetchStoreProductsDirectly() {
             });
         }
 
-         
+        // --- التحديث الجديد 2: دالة تسجيل الدخول المباشرة من Supabase ---
+        async function handleLogin() { 
+            const email = document.getElementById('login-email').value.trim();
+            const plainPassword = document.getElementById('login-password').value;
+            const btn = document.getElementById('login-btn'); 
+            
+            if (!email || !plainPassword) return showCustomAlert("خطأ: يرجى إدخال البريد الإلكتروني وكلمة المرور."); 
+            
+            btn.disabled = true; 
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري التحقق...`; 
+            
+            try { 
+                const hashA = await sha256(plainPassword); 
+                
+                const { data: r, error } = await supabaseClient.rpc('login_user', {
+                    p_email: email,
+                    p_hash_a: hashA
+                });
+
+                if (error) throw error;
+
+                if (r.status === "success") { 
+                    currentUserEmail = email; 
+                    currentUserToken = r.token; 
+                    
+                    try {
+                        localStorage.setItem('sypay_email', email);
+                        localStorage.setItem('sypay_token', r.token);
+                    } catch(e) {}
+                    
+                    populateDashboard(r); 
+                    toggleView('login-screen', false); 
+                    toggleView('dashboard-screen', true); 
+                    toggleView('bottom-nav-bar', true);
+                    switchTab('home');
+                    
+                    if(!syncInterval) syncInterval = setInterval(silentSyncData, 30000);
+                    
+                    fetchStoreProductsDirectly();
+                } else { 
+                    showCustomAlert(r.message); 
+                    btn.disabled = false; 
+                    btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`; 
+                } 
+            } catch (err) { 
+                showCustomAlert("خطأ اتصال بخوادم المصادقة."); 
+                btn.disabled = false; 
+                btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`; 
+            } 
+        } 
 
         function renderTransactionsList(txArray) { 
             const container = document.getElementById('tab-tx-container'); 
@@ -1234,41 +1243,46 @@ async function fetchStoreProductsDirectly() {
             toggleView('purchase-modal', true); 
         } 
 
-         async function executeSubscriptionPurchase() { 
-    if (currentWalletBalance < selectedItemPrice) return showCustomAlert("خطأ: الرصيد المتوفر في المحفظة غير كافٍ."); 
-    const btn = document.getElementById('confirm-purchase-btn'); 
-    btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري المعالجة...`; 
-    
-    try { 
-        // استدعاء دالة قاعدة البيانات (RPC) مباشرة
-        const { data, error } = await supabase.rpc('execute_purchase', {
-            p_email: currentUserEmail,
-            p_product_id: selectedProductId,
-            p_player_id: inputPlayerId
-        });
-
-        if (error) throw error;
-
-        if (data.status === "success") { 
-            currentWalletBalance -= selectedItemPrice; 
-            document.getElementById('live-balance').innerText = "$" + currentWalletBalance.toFixed(2); 
+        // --- التحديث الجديد 3: دالة الشراء والخصم المالي الآمنة ---
+        async function executeSubscriptionPurchase() { 
+            if (currentWalletBalance < selectedItemPrice) return showCustomAlert("خطأ: الرصيد المتوفر في المحفظة غير كافٍ."); 
             
-            if (data.mode === "CODE") { 
-                showCustomAlert(`تمت العملية بنجاح! الكود الرقمي: ${data.serial_code}`, false); 
-            } else { 
-                showCustomAlert("تم تسجيل المعاملة بنجاح، الطلب قيد التنفيذ.", false); 
-            } 
-            closeAllModals(); 
-            silentSyncData(); // لتحديث سجل المعاملات
-        } else { 
-            showCustomAlert("فشلت المعاملة: " + data.message); 
-            btn.disabled = false; btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; 
+            const btn = document.getElementById('confirm-purchase-btn'); 
+            btn.disabled = true; 
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري المعالجة...`; 
+            
+            try { 
+                const { data, error } = await supabaseClient.rpc('execute_purchase', {
+                    p_email: currentUserEmail,
+                    p_product_id: selectedProductId,
+                    p_player_id: inputPlayerId || null
+                });
+
+                if (error) throw error;
+
+                if (data.status === "success") { 
+                    currentWalletBalance -= selectedItemPrice; 
+                    document.getElementById('live-balance').innerText = "$" + currentWalletBalance.toFixed(2); 
+                    
+                    if (data.mode === "CODE") { 
+                        showCustomAlert(`تمت العملية بنجاح! الكود الرقمي: ${data.serial_code}`, false); 
+                    } else { 
+                        showCustomAlert("تم تسجيل المعاملة بنجاح، الطلب قيد التنفيذ.", false); 
+                    } 
+                    
+                    closeAllModals(); 
+                    if (typeof silentSyncData === "function") silentSyncData();
+                    
+                } else { 
+                    showCustomAlert("فشلت المعاملة: " + data.message); 
+                }
+            } catch (err) { 
+                showCustomAlert("خطأ في الاتصال أثناء تنفيذ العملية المالية."); 
+            } finally {
+                btn.disabled = false; 
+                btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; 
+            }
         } 
-    } catch (err) { 
-        showCustomAlert("خطأ اتصال بالسيرفر."); 
-        btn.disabled = false; btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; 
-    } 
-}
 
         async function handleUpdateProfileView() { 
             const fName = document.getElementById('prof-first-name').value.trim(); 

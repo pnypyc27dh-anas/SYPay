@@ -710,7 +710,10 @@
 
     <!-- جافاسكربت الأساسية (بدون تعديل جوهري بالمنطق) -->
     <script>
-        const webAppUrl = "https://script.google.com/macros/s/AKfycbxdld7FEIONXmBxs9F7HXReOg1EVjqvqzLqPf4u4BcGKJx_hhu58M6sZedL33y5LIn3Ow/exec";
+        // تهيئة الاتصال بقاعدة بيانات Supabase
+const SUPABASE_URL = 'https://wivjfusmdmtjfcefsioc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpdmpmdXNtZG10amZjZWZzaW9jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzM4MTEsImV4cCI6MjEwNDkwOTgxMX0.3g0wyXro9i92kaNRpX16-SrlX7kNbDa7mF_UwuWHcEk';
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let syncInterval = null;
 
         async function sha256(message) {

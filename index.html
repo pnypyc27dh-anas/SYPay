@@ -9,12 +9,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Tajawal:wght=400;500;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght=400;500;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Supabase JS Library -->
+    <!-- Supabase JS Library (استدعاء رسمي واحد فقط) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
@@ -343,9 +343,6 @@
         </button>
     </div>
 
-    <!-- القائمة الجانبية ومودالات الدعم والخصوصية والعمليات (مخفية) -->
-    <!-- (تم اختصار الأكواد المشتركة لتوفير المساحة، يمكنك إضافة نوافذك القديمة هنا مباشرة) -->
-
     <!-- النوافذ (Modals) الأساسية -->
     <div id="plans-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[90]">
         <div class="bg-white w-full max-w-2xl rounded-t-[32px] sm:rounded-[28px] max-h-[85vh] sm:max-h-[75vh] flex flex-col p-6 shadow-2xl relative slide-up-modal">
@@ -511,12 +508,14 @@
 
     <script>
         // ========================================================================
-        // 1. ضع معلومات ربط قاعدة البيانات الخاصة بك هنا:
+        // 1. إعداد اتصال Supabase بشكل آمن ومنع أي تضارب في الأسماء
         // ========================================================================
-        const SUPABASE_URL = 'https://baytojjldklocifridcm.supabase.co'; // استبدل YOUR_PROJECT_ID
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJheXRvampsZGtsb2NpZnJpZGNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTU3MzMsImV4cCI6MjEwNTM5MTczM30.tAN7Qah-3VNwatn2CwgqsyphnkQQjagnKf4pR4WiSwQ'; // استبدل بمفتاح anon
+        const SUPABASE_URL = 'https://baytojjldklocifridcm.supabase.co'; // استبدل برابط مشروعك
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJheXRvampsZGtsb2NpZnJpZGNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTU3MzMsImV4cCI6MjEwNTM5MTczM30.tAN7Qah-3VNwatn2CwgqsyphnkQQjagnKf4pR4WiSwQ'; // استبدل بمفتاح الـ anon
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // تهيئة الكائن العام بأمان تام
+        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = window.supabaseClient;
 
         let currentUser = null, syncInterval = null, currentWalletBalance = 0.00;
         let rawCardNumber = "", lastFourDigits = "", isCardVisible = false, isCustomAmountMode = false;

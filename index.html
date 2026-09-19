@@ -952,8 +952,10 @@ async function executeSubscriptionPurchase() {
                     : tx.status === "مرفوض" ? "bg-red-50 text-red-600 border-red-100" 
                     : "bg-amber-50 text-amber-600 border-amber-100";
 
-        // إذا كان هناك كود رقمي مستلم
-        const codeBlockHtml = tx.serial_code ? `
+        // الشرط: المربع الأسود وزر النسخ يظهران فقط إذا كانت العملية شراء بطاقة رقمية وبها كود
+        const isCodeCard = tx.type === "شراء بطاقة" && tx.serial_code;
+
+        const codeBlockHtml = isCodeCard ? `
             <div class="mt-2.5 p-2 px-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] flex items-center justify-between border border-slate-800" dir="ltr">
                 <span class="tracking-wider font-bold select-all">${tx.serial_code}</span>
                 <button onclick="copyToClipboard('${tx.serial_code}')" class="text-slate-400 hover:text-white p-1 transition" title="نسخ الكود">

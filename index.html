@@ -640,26 +640,120 @@
         showCustomAlert("رمز الوكيل غير مسجل أو قناة الدفع غير مطابقة."); 
     } 
 }
+        async function loadUserTransactions() {
+    if (!currentUser || !currentUser.id) return;
+
+    const { data: txs, error } = await db
+        .from('transactions')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false }); // ترتيب من الأحدث للأقدم
+
+    if (error) {
+        console.error("Error loading transactions:", error);
+        return;
+    }
+
+    const container = document.getElementById('transactions-list-container');
+    if (!container) return;
+
+    if (!txs || txs.length === 0) {
+        container.innerHTML = `<p class="text-center text-gray-400 py-4">لا توجد معاملات سابقة</p>`;
+        return;
+    }
+
+    // بناء واجهة السجلات وعرضها
+    container.innerHTML = txs.map(tx => `
+        <div class="flex justify-between items-center bg-zinc-800/50 p-3 rounded-xl mb-2 border border-zinc-700/50">
+            <div>
+                <p class="font-bold text-white">${tx.transaction_type}</p>
+                <p class="text-xs text-gray-400">${tx.details || ''} - ${new Date(tx.created_at || Date.now()).toLocaleDateString('ar-SA')}</p>
+            </div>
+            <div class="text-left">
+                <span class="block font-bold text-emerald-400">+${tx.amount} $</span>
+                <span class="text-xs px-2 py-0.5 rounded ${tx.status === 'مقبول' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${tx.status}</span>
+            </div>
+        </div>
+    `).join('');
+}
 
         async function submitSubFinalDeposit() { 
-    // البحث عن حقل المبلغ بأكثر من احتمال لتجنب الخطأ
-    const amountInput = document.getElementById('sub-form-amount-select') || 
-                        document.getElementById('sub-amount') || 
-                        document.getElementById('deposit-amount');
-                        
-    const finalAmt = amountInput ? amountInput.value : "10"; // قيمة افتراضية 10 إن لم يوجد حقل
-    
+    // قراءة القيمة الحقيقية من مربع اختيار أو إدخال المبلغ في واجهتك
+    const amountElem = document.getElementById('sub-form-amount-select') || document.getElementById('sub-amount');
     const txNumElem = document.getElementById('sub-form-tx-number');
     const agentElem = document.getElementById('sub-agent-code');
     const methodElem = document.getElementById('sub-payment-method');
 
+    const finalAmt = amountElem ? parseFloat(amountElem.value) : 0;
     const txNum = txNumElem ? txNumElem.value.trim() : ""; 
     const agent = agentElem ? agentElem.value.trim() : ""; 
     const method = methodElem ? methodElem.value : ""; 
     
+    if(!finalAmt || finalAmt <= 0) {
+        return showCustomAlert("يرجى تحديد أو إدخال مبلغ الحوالة بشكل صحيح.");
+    }
     if(!txNum) {
         return showCustomAlert("يرجى إدخال رقم إشعار التحويل بدقة."); 
     }
+    
+    const btn = document.getElementById('sub-deposit-final-btn');
+    if(btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري الإرسال...`;
+    }
+
+    try {
+        // توليد المرجع المالي
+        const { data: txRef } = await db.rpc('generate_ref', { prefix: 'TX-D' });
+        const referenceCode = txRef || ('TX-D-' + Date.now());
+
+        // التأكد من وجود معرف المستخدم الحالي
+        if (!currentUser || !currentUser.id) {
+            throw new Error("جلسة المستخدم غير متوفرة، يرجى إعادة تسجيل الدخول.");
+        }
+
+        // 1. تسجيل طلب الإيداع
+        const { error: depositError } = await db.from('deposit_orders').insert({ 
+            transaction_ref: referenceCode, 
+            user_id: currentUser.id, 
+            amount: finalAmt, 
+            payment_method: method, 
+            agent_code: agent, 
+            transfer_receipt_num: txNum,
+            status: 'معلق'
+        });
+
+        if (depositError) throw depositError;
+
+        // 2. تسجيل الحركة في سجل المعاملات العام لكي تظهر فوراً للعميل
+        const { error: txError } = await db.from('transactions').insert({ 
+            user_id: currentUser.id, 
+            transaction_type: 'شحن رصيد', 
+            details: `شحن عبر الوكيل (${agent}) - إشعار: ${txNum}`, 
+            amount: finalAmt, 
+            status: 'معلق', 
+            transaction_ref: referenceCode 
+        });
+
+        if (txError) throw txError;
+
+        showCustomAlert("تم رفع طلب الشحن بنجاح وفي انتظار تدقيق الإدارة.", false); 
+        
+        // الانتقال للرئيسية وتحديث السجلات
+        if (typeof switchTab === 'function') switchTab('home'); 
+        if (typeof loadUserTransactions === 'function') loadUserTransactions(); 
+        if (typeof silentSyncData === 'function') silentSyncData(); 
+
+    } catch (err) {
+        console.error("Deposit submission error:", err);
+        showCustomAlert("فشل إرسال الطلب: " + (err.message || "خطأ غير معروف"));
+    } finally {
+        if(btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد الشحن`;
+        }
+    }
+}
     
     const btn = document.getElementById('sub-deposit-final-btn');
     if(btn) {

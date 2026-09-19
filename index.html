@@ -429,6 +429,53 @@
         </div>
     </div>
 
+    <!-- نافذة تسليم الكود الرقمي الفاخرة -->
+<div id="code-delivery-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[100]">
+    <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[28px] p-6 shadow-2xl relative text-center space-y-5 slide-up-modal">
+        <!-- أيقونة النجاح -->
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm mx-auto">
+            <i class="ph-fill ph-check-circle text-3xl"></i>
+        </div>
+        
+        <div>
+            <h3 class="text-lg font-black text-slate-900">مبروك! تم استلام بطاقتك</h3>
+            <p id="delivery-item-name" class="text-xs text-slate-500 font-bold mt-1">...</p>
+        </div>
+
+        <!-- بطاقة عرض الكود الرقمي -->
+        <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 relative overflow-hidden text-center space-y-2.5">
+            <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">كود البطاقة الرقمي (Voucher Code)</span>
+            <div class="flex items-center justify-center gap-3 bg-black/40 py-3.5 px-4 rounded-xl border border-white/5" dir="ltr">
+                <span id="delivered-code-text" class="text-lg md:text-xl font-mono font-black text-emerald-400 tracking-[0.15em] select-all tabular-nums">XXXX-XXXX-XXXX-XXXX</span>
+            </div>
+            <p class="text-[10px] text-zinc-400 font-medium">انقر على الأزرار أدناه لنسخ أو مشاركة الكود فوراً</p>
+        </div>
+
+        <!-- أزرار النسخ والمشاركة والإغلاق -->
+        <div class="space-y-2 pt-1">
+            <div class="grid grid-cols-2 gap-2.5">
+                <button onclick="copyDeliveredCode()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95">
+                    <i class="ph-fill ph-copy text-base"></i>
+                    <span>نسخ الكود</span>
+                </button>
+                <button onclick="shareDeliveredCode()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 transition active:scale-95">
+                    <i class="ph-fill ph-share-network text-base"></i>
+                    <span>مشاركة</span>
+                </button>
+            </div>
+            <button onclick="toggleView('code-delivery-modal', false)" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition">
+                تم، إغلاق النافذة
+            </button>
+        </div>
+
+        <div class="border-t border-slate-100 pt-3">
+            <p class="text-[10px] text-slate-400 flex items-center justify-center gap-1.5 font-medium">
+                <i class="ph ph-shield-check text-sm text-emerald-500"></i>
+                تم حفظ هذا الكود في سجل معاملاتك للرجوع إليه بأي وقت
+            </p>
+        </div>
+    </div>
+</div>
     <!-- نافذة التسجيل -->
     <div id="register-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[90]">
         <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[28px] p-6 shadow-2xl relative text-right slide-up-modal">

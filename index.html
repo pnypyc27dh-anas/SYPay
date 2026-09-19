@@ -1045,19 +1045,56 @@ showCodeDeliveryModal(r.code, selectedItemName);
 }
 
         function openAccountInputsModal(productId, fullName, price) { 
-            selectedProductId = productId; selectedItemName = fullName; selectedItemPrice = price; 
-            const isIdFlow = globalProductsRaw.find(p => p.id === productId).type === "ID"; 
-            toggleView('id-fields-container', isIdFlow); toggleView('code-fields-notice', !isIdFlow); toggleView('account-inputs-modal', true); 
-        } 
+    selectedProductId = productId; 
+    selectedItemName = fullName; 
+    selectedItemPrice = price; 
+    
+    // تفريغ خانات الإدخال من أي أرقام سابقة
+    document.getElementById('target-player-id').value = "";
+    document.getElementById('target-player-id-confirm').value = "";
+    
+    // التحقق من نوع المنتج بأمان (ID أم CODE)
+    const prod = globalProductsRaw.find(p => p.id === productId);
+    const isIdFlow = prod && (prod.type || '').trim().toUpperCase() === "ID"; 
+    
+    // إظهار حقول الـ ID وإخفاء تنبيه الكود
+    toggleView('id-fields-container', isIdFlow); 
+    toggleView('code-fields-notice', !isIdFlow); 
+    toggleView('account-inputs-modal', true); 
+} 
 
         function proceedToReview() { 
-            if (globalProductsRaw.find(p => p.id === selectedProductId).type === "ID") { 
-                inputPlayerId = document.getElementById('target-player-id').value.trim(); inputPlayerIdConfirm = document.getElementById('target-player-id-confirm').value.trim(); 
-                if (!inputPlayerId || inputPlayerId !== inputPlayerIdConfirm) return showCustomAlert("معرف الحساب غير متطابق."); 
-                document.getElementById('review-item-player-id').innerText = inputPlayerId; document.getElementById('review-item-delivery-type').innerText = `شحن مباشر`; toggleView('review-id-row', true);
-            } else { toggleView('review-id-row', false); document.getElementById('review-item-delivery-type').innerText = `تسليم الكود فوراً`; } 
-            toggleView('account-inputs-modal', false); document.getElementById('review-item-name').innerText = selectedItemName; document.getElementById('review-item-price').innerText = "$" + selectedItemPrice.toFixed(2); toggleView('purchase-modal', true); 
+    const prod = globalProductsRaw.find(p => p.id === selectedProductId);
+    const isIdFlow = prod && (prod.type || '').trim().toUpperCase() === "ID";
+
+    if (isIdFlow) { 
+        // استخراج معرف اللاعب والتأكد من إزالة المسافات
+        inputPlayerId = document.getElementById('target-player-id').value.trim(); 
+        inputPlayerIdConfirm = document.getElementById('target-player-id-confirm').value.trim(); 
+        
+        // منع العميل من المتابعة إذا كانت الخانات غير متطابقة أو فارغة
+        if (!inputPlayerId || inputPlayerId !== inputPlayerIdConfirm) {
+            return showCustomAlert("معرف الحساب غير متطابق أو فارغ."); 
         }
+
+        // عرض المعرف في نافذة تأكيد الفاتورة
+        document.getElementById('review-item-player-id').innerText = inputPlayerId; 
+        document.getElementById('review-item-delivery-type').innerText = `شحن مباشر`; 
+        toggleView('review-id-row', true);
+    } else { 
+        // تصفير بيانات الآيدي في حال كان المنتج بطاقة رقمية
+        inputPlayerId = "";
+        inputPlayerIdConfirm = "";
+        toggleView('review-id-row', false); 
+        document.getElementById('review-item-delivery-type').innerText = `تسليم الكود فوراً`; 
+    } 
+    
+    // إغلاق نافذة الإدخال وفتح نافذة الفاتورة النهائية
+    toggleView('account-inputs-modal', false); 
+    document.getElementById('review-item-name').innerText = selectedItemName; 
+    document.getElementById('review-item-price').innerText = "$" + selectedItemPrice.toFixed(2); 
+    toggleView('purchase-modal', true); 
+}
         // ==========================================
 // وظائف نافذة تسليم الكود الرقمي
 // ==========================================

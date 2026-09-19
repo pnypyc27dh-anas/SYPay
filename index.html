@@ -90,36 +90,38 @@
 <body class="min-h-screen flex flex-col justify-between antialiased selection:bg-blue-200 selection:text-blue-900">
 
     <!-- التنبيهات المخصصة -->
-    <div id="custom-alert" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-sm px-4 py-3 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border bg-white flex items-center justify-between gap-3 slide-down backdrop-blur-xl">
+    <div id="custom-alert" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-[110] w-[90%] max-w-sm px-4 py-3.5 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.12)] border bg-white/95 flex items-center justify-between gap-3 slide-down backdrop-blur-xl">
         <div class="flex items-center gap-3 w-full">
-            <div id="alert-icon-container" class="p-2 rounded-full bg-red-100 text-red-600 shrink-0"></div>
-            <p id="custom-alert-text" class="text-xs font-bold text-slate-800 leading-snug flex-grow"></p>
+            <div id="alert-icon-container" class="p-2 rounded-xl bg-red-50 text-red-600 shrink-0">
+                <i id="alert-icon" class="ph-fill ph-warning text-lg"></i>
+            </div>
+            <p id="custom-alert-text" class="text-xs font-bold text-slate-800 leading-snug flex-grow text-right"></p>
         </div>
         <button onclick="closeCustomAlert()" class="text-slate-400 hover:text-slate-600 focus:outline-none shrink-0 p-1">
-            <i class="ph ph-x text-lg font-bold"></i>
+            <i class="ph ph-x text-base font-bold"></i>
         </button>
     </div>
 
     <!-- شاشة تسجيل الدخول -->
     <div id="login-screen" class="flex-grow flex flex-col items-center justify-center p-6 fade-in relative">
-        <div class="absolute top-10 left-10 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl mix-blend-multiply"></div>
-        <div class="absolute bottom-10 right-10 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl mix-blend-multiply"></div>
+        <div class="absolute top-10 left-10 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl mix-blend-multiply pointer-events-none"></div>
+        <div class="absolute bottom-10 right-10 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl mix-blend-multiply pointer-events-none"></div>
 
-        <div class="text-center space-y-2 mb-10 relative z-10">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-lg mb-4">
+        <div class="text-center space-y-2 mb-8 relative z-10">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-lg mb-3">
                 <i class="ph ph-wallet text-3xl"></i>
             </div>
             <h1 class="text-5xl font-black text-slate-900 tracking-tight">SY<span class="text-[#005ba3]">Pay</span></h1>
             <p class="text-[10px] text-slate-500 font-bold tracking-[0.25em] uppercase">Premium Digital Wallet</p>
         </div>
 
-        <div class="w-full max-w-md glass-panel p-8 space-y-6 relative z-10">
-            <div class="space-y-5">
+        <div class="w-full max-w-md glass-panel p-8 space-y-5 relative z-10">
+            <div class="space-y-4">
                 <div>
                     <label class="block text-[11px] font-bold text-slate-600 mb-2">الحساب الشخصي (البريد الإلكتروني)</label>
                     <div class="relative">
                         <i class="ph ph-envelope-simple absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
-                        <input id="login-email" type="email" placeholder="name@example.com" class="input-field w-full pr-12 pl-4 py-3.5 text-sm">
+                        <input id="login-email" type="email" placeholder="name@example.com" class="input-field w-full pr-12 pl-4 py-3.5 text-sm" dir="ltr">
                     </div>
                 </div>
                 <div>
@@ -129,7 +131,7 @@
                     </div>
                     <div class="relative">
                         <i class="ph ph-lock-key absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
-                        <input id="login-password" type="password" placeholder="••••••••" class="input-field w-full pr-12 pl-12 py-3.5 text-sm">
+                        <input id="login-password" type="password" placeholder="••••••••" class="input-field w-full pr-12 pl-12 py-3.5 text-sm" dir="ltr">
                         <button onclick="togglePasswordVisibility('login-password', this)" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
                             <i class="ph ph-eye text-xl eye-open"></i>
                             <i class="ph ph-eye-slash text-xl eye-closed hidden"></i>
@@ -137,10 +139,12 @@
                     </div>
                 </div>
             </div>
+            
             <button id="login-btn" onclick="handleLogin()" class="w-full btn-primary text-white font-bold py-4 rounded-xl text-sm flex items-center justify-center gap-2">
                 <span>تسجيل الدخول</span>
                 <i class="ph ph-sign-in text-lg"></i>
             </button>
+            
             <div class="text-center pt-2">
                 <span class="text-xs text-slate-500 font-medium">ليس لديك حساب؟</span>
                 <button onclick="openRegisterModal()" class="text-xs text-[#005ba3] font-bold hover:underline mr-1">إنشاء حساب جديد</button>
@@ -148,7 +152,7 @@
         </div>
     </div>
 
-    <!-- الشاشة الرئيسية -->
+    <!-- الشاشة الرئيسية (Dashboard) -->
     <div id="dashboard-screen" class="hidden flex-col min-h-screen">
         <header class="bg-white/80 backdrop-blur-xl px-6 py-4 border-b border-slate-200/60 sticky top-0 z-30 flex justify-center shadow-sm">
             <div class="w-full max-w-5xl flex justify-between items-center">
@@ -171,7 +175,7 @@
         </header>
 
         <main id="main-dashboard-container" class="p-5 md:p-8 max-w-md md:max-w-5xl mx-auto w-full space-y-6 md:space-y-8">
-            <!-- الواجهة الرئيسية -->
+            <!-- تبويب الرئيسية -->
             <div id="view-home" class="data-view fade-in grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
                 <div class="space-y-6">
                     <div class="glass-panel p-6 text-center space-y-2 relative overflow-hidden">
@@ -219,20 +223,24 @@
                 </div>
             </div>
 
-            <!-- متجر المنتجات -->
+            <!-- تبويب متجر المنتجات -->
             <div id="view-store" class="hidden space-y-6 data-view fade-in md:max-w-4xl md:mx-auto w-full">
                 <div class="flex justify-between items-center bg-white px-5 py-4 rounded-2xl shadow-sm border border-slate-100">
                     <h3 id="store-title-text" class="text-sm md:text-base font-black text-slate-800 flex items-center gap-2"></h3>
-                    <button id="store-nested-back-btn" onclick="renderMainCategoriesView()" class="hidden bg-slate-100 hover:bg-slate-200 text-[#005ba3] text-[11px] font-black px-3 py-2 rounded-xl transition flex items-center gap-1"><i class="ph ph-caret-right"></i> العودة</button>
+                    <button id="store-nested-back-btn" onclick="renderMainCategoriesView()" class="hidden bg-slate-100 hover:bg-slate-200 text-[#005ba3] text-[11px] font-black px-3 py-2 rounded-xl transition flex items-center gap-1">
+                        <i class="ph ph-caret-right"></i> العودة
+                    </button>
                 </div>
                 <div id="store-interactive-box" class="fade-in"></div>
             </div>
 
-            <!-- صفحة الإيداع -->
+            <!-- تبويب صفحة الإيداع -->
             <div id="view-deposit" class="hidden space-y-5 data-view fade-in md:max-w-xl md:mx-auto w-full">
                 <div class="glass-panel p-6 md:p-8 space-y-6">
                     <div class="text-center space-y-1 mb-2">
-                        <div class="inline-flex justify-center items-center w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl mb-2"><i class="ph-fill ph-wallet text-2xl"></i></div>
+                        <div class="inline-flex justify-center items-center w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl mb-2">
+                            <i class="ph-fill ph-wallet text-2xl"></i>
+                        </div>
                         <h3 class="font-black text-lg text-slate-800">تمويل رصيد المحفظة</h3>
                         <p class="text-[11px] text-slate-500 font-medium">قم بإيداع الأموال عبر وكلاء معتمدين.</p>
                     </div>
@@ -258,7 +266,8 @@
                             </div>
                         </div>
                         <button id="sub-deposit-step1-btn" onclick="processSubWalletFetch()" class="w-full btn-primary text-white font-bold py-4 rounded-xl text-xs flex justify-center items-center gap-2 mt-2">
-                            <span>التحقق من حساب الوكيل</span><i class="ph ph-arrow-left font-bold"></i>
+                            <span>التحقق من حساب الوكيل</span>
+                            <i class="ph ph-arrow-left font-bold"></i>
                         </button>
                     </div>
 
@@ -274,12 +283,12 @@
                         </div>
                         <div class="space-y-4 pt-2">
                             <div id="sub-amount-field-container">
-    <label class="block text-[11px] font-bold text-slate-600 mb-2">المبلغ المراد شحنه ($)</label>
-    <div class="relative">
-        <i class="ph ph-currency-dollar absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
-        <input id="sub-form-amount-select" type="number" min="1" step="any" placeholder="أدخل المبلغ (مثال: 10)" class="input-field w-full pr-12 pl-4 py-3.5 text-sm">
-    </div>
-</div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-2">المبلغ المراد شحنه ($)</label>
+                                <div class="relative">
+                                    <i class="ph ph-currency-dollar absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+                                    <input id="sub-form-amount-select" type="number" min="1" step="any" placeholder="أدخل المبلغ (مثال: 10)" class="input-field w-full pr-12 pl-4 py-3.5 text-sm">
+                                </div>
+                            </div>
                             <div>
                                 <label class="block text-[11px] font-bold text-slate-600 mb-2">رقم الإشعار (الرقم المرجعي)</label>
                                 <input id="sub-form-tx-number" type="number" placeholder="أدخل رقم عملية التحويل بدقة" class="input-field w-full px-4 py-3.5 text-sm">
@@ -295,23 +304,19 @@
                 </div>
             </div>
 
-            <!-- صفحة الملف الشخصي -->
+            <!-- تبويب الملف الشخصي -->
             <div id="view-profile" class="hidden space-y-5 data-view fade-in md:max-w-xl md:mx-auto w-full">
                 <div class="glass-panel p-6 md:p-8 space-y-6 text-right">
                     <div class="text-center space-y-1 mb-4">
-                        <div class="inline-flex justify-center items-center w-16 h-16 bg-slate-100 text-slate-600 rounded-full mb-2 border-4 border-white shadow-sm"><i class="ph-fill ph-user text-3xl"></i></div>
+                        <div class="inline-flex justify-center items-center w-16 h-16 bg-slate-100 text-slate-600 rounded-full mb-2 border-4 border-white shadow-sm">
+                            <i class="ph-fill ph-user text-3xl"></i>
+                        </div>
                         <h3 class="font-black text-lg text-slate-800">الملف الشخصي</h3>
                     </div>
                     <div class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 mb-1.5">الاسم الأول</label>
-                                <input id="prof-first-name" type="text" class="input-field w-full px-4 py-3 text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 mb-1.5">اسم العائلة</label>
-                                <input id="prof-last-name" type="text" class="input-field w-full px-4 py-3 text-sm">
-                            </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1.5">الاسم والكنية</label>
+                            <input id="prof-full-name" type="text" class="input-field w-full px-4 py-3 text-sm">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 mb-1.5">رقم الهاتف الجوال</label>
@@ -322,7 +327,7 @@
                         </button>
                     </div>
                     <div class="border-t border-slate-100 pt-6 flex flex-col sm:flex-row gap-3">
-                        <button onclick="triggerPasswordResetFlow()" class="w-full bg-white text-blue-600 font-bold py-3.5 rounded-xl text-xs border border-blue-200 hover:bg-blue-50 transition flex justify-center items-center gap-1.5">
+                        <button onclick="openForgotPasswordModal()" class="w-full bg-white text-blue-600 font-bold py-3.5 rounded-xl text-xs border border-blue-200 hover:bg-blue-50 transition flex justify-center items-center gap-1.5">
                             <i class="ph-fill ph-key"></i> تغيير كلمة المرور
                         </button>
                         <button onclick="triggerDeleteAccountFlow()" class="w-full bg-white text-red-600 font-bold py-3.5 rounded-xl text-xs border border-red-200 hover:bg-red-50 transition flex justify-center items-center gap-1.5">
@@ -350,74 +355,75 @@
         </button>
     </div>
 
-    <!-- خلفية التعتيم للقائمة الجانبية -->
-<div id="side-menu-overlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[80] transition-opacity" onclick="toggleSideMenu(false)"></div>
-
-<!-- لوحة القائمة الجانبية المنزلقة -->
-<div id="side-menu-panel" class="fixed top-0 right-0 h-full w-72 bg-white z-[85] shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out text-right">
-    <div class="space-y-6">
-        <!-- ترويسة القائمة -->
-        <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-            <div class="flex items-center gap-2">
-                <div class="bg-gradient-to-tr from-blue-600 to-blue-400 text-white p-2 rounded-xl shadow-sm">
-                    <i class="ph ph-wallet text-lg"></i>
+    <!-- القائمة الجانبية -->
+    <div id="side-menu-overlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[80] transition-opacity" onclick="toggleSideMenu(false)"></div>
+    <div id="side-menu-panel" class="fixed top-0 right-0 h-full w-72 bg-white z-[85] shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out text-right">
+        <div class="space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                <div class="flex items-center gap-2">
+                    <div class="bg-gradient-to-tr from-blue-600 to-blue-400 text-white p-2 rounded-xl shadow-sm">
+                        <i class="ph ph-wallet text-lg"></i>
+                    </div>
+                    <span class="font-black text-slate-800 text-base">SYPay</span>
                 </div>
-                <span class="font-black text-slate-800 text-base">SYPay</span>
+                <button onclick="toggleSideMenu(false)" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-full bg-slate-50">
+                    <i class="ph ph-x text-lg font-bold"></i>
+                </button>
             </div>
-            <button onclick="toggleSideMenu(false)" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-full bg-slate-50">
-                <i class="ph ph-x text-lg font-bold"></i>
+            <nav class="space-y-1.5">
+                <button onclick="switchTab('home')" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
+                    <i class="ph ph-house text-lg text-blue-600"></i>
+                    <span>الرئيسية</span>
+                </button>
+                <button onclick="switchTab('store')" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
+                    <i class="ph ph-storefront text-lg text-blue-600"></i>
+                    <span>متجر البطاقات</span>
+                </button>
+                <button onclick="switchTab('deposit')" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
+                    <i class="ph ph-wallet text-lg text-blue-600"></i>
+                    <span>شحن الرصيد</span>
+                </button>
+                <button onclick="switchTab('profile')" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
+                    <i class="ph ph-user text-lg text-blue-600"></i>
+                    <span>الملف الشخصي</span>
+                </button>
+            </nav>
+        </div>
+        <div class="border-t border-slate-100 pt-4">
+            <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl text-red-600 bg-red-50 hover:bg-red-100 font-bold text-xs transition">
+                <i class="ph ph-sign-out text-lg"></i>
+                <span>تسجيل الخروج</span>
             </button>
         </div>
-
-        <!-- روابط التنقل السريع -->
-        <nav class="space-y-1.5">
-            <button onclick="switchTab('home')" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
-                <i class="ph ph-house text-lg text-blue-600"></i>
-                <span>الرئيسية</span>
-            </button>
-            <button onclick="switchTab('store')" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
-                <i class="ph ph-storefront text-lg text-blue-600"></i>
-                <span>متجر البطاقات</span>
-            </button>
-            <button onclick="switchTab('deposit')" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
-                <i class="ph ph-wallet text-lg text-blue-600"></i>
-                <span>شحن الرصيد</span>
-            </button>
-            <button onclick="switchTab('profile')" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
-                <i class="ph ph-user text-lg text-blue-600"></i>
-                <span>الملف الشخصي</span>
-            </button>
-        </nav>
     </div>
 
-    <!-- زر تسجيل الخروج -->
-    <div class="border-t border-slate-100 pt-4">
-        <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl text-red-600 bg-red-50 hover:bg-red-100 font-bold text-xs transition">
-            <i class="ph ph-sign-out text-lg"></i>
-            <span>تسجيل الخروج</span>
-        </button>
-    </div>
-</div>
-    <!-- (تم اختصار الأكواد المشتركة لتوفير المساحة، يمكنك إضافة نوافذك القديمة هنا مباشرة) -->
-
-    <!-- النوافذ (Modals) الأساسية -->
+    <!-- نافذة استعراض الباقات -->
     <div id="plans-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[90]">
         <div class="bg-white w-full max-w-2xl rounded-t-[32px] sm:rounded-[28px] max-h-[85vh] sm:max-h-[75vh] flex flex-col p-6 shadow-2xl relative slide-up-modal">
             <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-4">
-                <button onclick="toggleView('plans-modal', false)" class="text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-100"><i class="ph ph-caret-right"></i> رجوع</button>
+                <button onclick="toggleView('plans-modal', false)" class="text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-100">
+                    <i class="ph ph-caret-right"></i> رجوع
+                </button>
                 <h4 id="plans-modal-title" class="text-base font-black text-slate-800 text-center flex-grow">الباقات المتوفرة</h4>
-                <button onclick="closeAllModals()" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full"><i class="ph ph-x font-bold"></i></button>
+                <button onclick="closeAllModals()" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full">
+                    <i class="ph ph-x font-bold"></i>
+                </button>
             </div>
             <div id="plans-container" class="overflow-y-auto flex-grow space-y-3 md:space-y-0 md:grid md:grid-cols-2 md:gap-4 text-right pr-1 pb-4"></div>
         </div>
     </div>
 
+    <!-- نافذة إدخال بيانات الشحن -->
     <div id="account-inputs-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[90]">
         <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[28px] p-6 space-y-5 shadow-2xl relative text-right slide-up-modal">
             <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                <button onclick="toggleView('account-inputs-modal', false)" class="text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-100"><i class="ph ph-caret-right"></i> رجوع</button>
+                <button onclick="toggleView('account-inputs-modal', false)" class="text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-100">
+                    <i class="ph ph-caret-right"></i> رجوع
+                </button>
                 <h3 class="text-base font-black text-slate-800 text-center flex-grow">معلومات الشحن</h3>
-                <button onclick="closeAllModals()" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full"><i class="ph ph-x font-bold"></i></button>
+                <button onclick="closeAllModals()" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full">
+                    <i class="ph ph-x font-bold"></i>
+                </button>
             </div>
             <div class="space-y-4">
                 <div id="id-fields-container">
@@ -437,18 +443,24 @@
             </div>
             <div class="flex gap-3 pt-4 border-t border-slate-100">
                 <button onclick="proceedToReview()" class="w-full btn-primary text-white font-bold py-4 rounded-xl text-xs flex justify-center items-center gap-2">
-                    المتابعة للمراجعة <i class="ph ph-arrow-left"></i>
+                    <span>المتابعة للمراجعة</span>
+                    <i class="ph ph-arrow-left"></i>
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- نافذة مراجعة وتأكيد الفاتورة -->
     <div id="purchase-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[90]">
         <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[28px] p-6 shadow-2xl relative text-right space-y-5 slide-up-modal">
             <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                <button onclick="toggleView('purchase-modal', false); toggleView('account-inputs-modal', true)" class="text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-100"><i class="ph ph-caret-right"></i> تعديل</button>
+                <button onclick="toggleView('purchase-modal', false); toggleView('account-inputs-modal', true)" class="text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-100">
+                    <i class="ph ph-caret-right"></i> تعديل
+                </button>
                 <h3 class="text-base font-black text-slate-800 text-center flex-grow">تأكيد الفاتورة</h3>
-                <button onclick="closeAllModals()" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full"><i class="ph ph-x font-bold"></i></button>
+                <button onclick="closeAllModals()" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full">
+                    <i class="ph ph-x font-bold"></i>
+                </button>
             </div>
             <div class="bg-slate-50 rounded-[20px] border border-slate-100 p-5 space-y-3 text-xs">
                 <div class="flex justify-between border-b border-slate-200/60 pb-3 items-center">
@@ -461,7 +473,9 @@
                 </div>
                 <div id="review-delivery-row" class="flex justify-between border-b border-slate-200/60 pb-3 items-center">
                     <span class="text-slate-500 font-medium">طريقة التسليم:</span>
-                    <span id="review-item-delivery-type" class="font-bold text-emerald-600 flex items-center gap-1"><i class="ph-fill ph-lightning"></i> ...</span>
+                    <span id="review-item-delivery-type" class="font-bold text-emerald-600 flex items-center gap-1">
+                        <i class="ph-fill ph-lightning"></i> ...
+                    </span>
                 </div>
                 <div class="flex justify-between pt-2 text-sm items-center">
                     <span class="font-black text-slate-800">الإجمالي للدفع:</span>
@@ -476,367 +490,360 @@
         </div>
     </div>
 
-    <!-- نافذة تسليم الكود الرقمي الفاخرة -->
-<div id="code-delivery-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[100]">
-    <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[28px] p-6 shadow-2xl relative text-center space-y-5 slide-up-modal">
-        <!-- أيقونة النجاح -->
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm mx-auto">
-            <i class="ph-fill ph-check-circle text-3xl"></i>
-        </div>
-        
-        <div>
-            <h3 class="text-lg font-black text-slate-900">مبروك! تم استلام بطاقتك</h3>
-            <p id="delivery-item-name" class="text-xs text-slate-500 font-bold mt-1">...</p>
-        </div>
-
-        <!-- بطاقة عرض الكود الرقمي -->
-        <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 relative overflow-hidden text-center space-y-2.5">
-            <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">كود البطاقة الرقمي (Voucher Code)</span>
-            <div class="flex items-center justify-center gap-3 bg-black/40 py-3.5 px-4 rounded-xl border border-white/5" dir="ltr">
-                <span id="delivered-code-text" class="text-lg md:text-xl font-mono font-black text-emerald-400 tracking-[0.15em] select-all tabular-nums">XXXX-XXXX-XXXX-XXXX</span>
+    <!-- نافذة تسليم الكود الرقمي -->
+    <div id="code-delivery-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[100]">
+        <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[28px] p-6 shadow-2xl relative text-center space-y-5 slide-up-modal">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm mx-auto">
+                <i class="ph-fill ph-check-circle text-3xl"></i>
             </div>
-            <p class="text-[10px] text-zinc-400 font-medium">انقر على الأزرار أدناه لنسخ أو مشاركة الكود فوراً</p>
-        </div>
+            
+            <div>
+                <h3 class="text-lg font-black text-slate-900">مبروك! تم استلام بطاقتك</h3>
+                <p id="delivery-item-name" class="text-xs text-slate-500 font-bold mt-1">...</p>
+            </div>
 
-        <!-- أزرار النسخ والمشاركة والإغلاق -->
-        <div class="space-y-2 pt-1">
-            <div class="grid grid-cols-2 gap-2.5">
-                <button onclick="copyDeliveredCode()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95">
-                    <i class="ph-fill ph-copy text-base"></i>
-                    <span>نسخ الكود</span>
-                </button>
-                <button onclick="shareDeliveredCode()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 transition active:scale-95">
-                    <i class="ph-fill ph-share-network text-base"></i>
-                    <span>مشاركة</span>
+            <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 relative overflow-hidden text-center space-y-2.5">
+                <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">كود البطاقة الرقمي (Voucher Code)</span>
+                <div class="flex items-center justify-center gap-3 bg-black/40 py-3.5 px-4 rounded-xl border border-white/5" dir="ltr">
+                    <span id="delivered-code-text" class="text-lg md:text-xl font-mono font-black text-emerald-400 tracking-[0.15em] select-all tabular-nums">XXXX-XXXX-XXXX-XXXX</span>
+                </div>
+                <p class="text-[10px] text-zinc-400 font-medium">انقر على الأزرار أدناه لنسخ أو مشاركة الكود فوراً</p>
+            </div>
+
+            <div class="space-y-2 pt-1">
+                <div class="grid grid-cols-2 gap-2.5">
+                    <button onclick="copyDeliveredCode()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95">
+                        <i class="ph-fill ph-copy text-base"></i>
+                        <span>نسخ الكود</span>
+                    </button>
+                    <button onclick="shareDeliveredCode()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 transition active:scale-95">
+                        <i class="ph-fill ph-share-network text-base"></i>
+                        <span>مشاركة</span>
+                    </button>
+                </div>
+                <button onclick="toggleView('code-delivery-modal', false)" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition">
+                    تم، إغلاق النافذة
                 </button>
             </div>
-            <button onclick="toggleView('code-delivery-modal', false)" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition">
-                تم، إغلاق النافذة
-            </button>
-        </div>
 
-        <div class="border-t border-slate-100 pt-3">
-            <p class="text-[10px] text-slate-400 flex items-center justify-center gap-1.5 font-medium">
-                <i class="ph ph-shield-check text-sm text-emerald-500"></i>
-                تم حفظ هذا الكود في سجل معاملاتك للرجوع إليه بأي وقت
-            </p>
+            <div class="border-t border-slate-100 pt-3">
+                <p class="text-[10px] text-slate-400 flex items-center justify-center gap-1.5 font-medium">
+                    <i class="ph ph-shield-check text-sm text-emerald-500"></i>
+                    تم حفظ هذا الكود في سجل معاملاتك للرجوع إليه بأي وقت
+                </p>
+            </div>
         </div>
     </div>
-</div>
-  <!-- نافذة فتح حساب جديد الموحدة -->
-<div id="register-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[90]"> 
-    <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[24px] p-6 shadow-2xl relative text-right" onclick="event.stopPropagation()"> 
-        <div class="flex justify-between pb-3 mb-4 border-b">
-            <h3 class="font-bold text-slate-800 text-sm">فتح حساب جديد</h3>
-            <button onclick="toggleView('register-modal', false)" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
-        </div> 
-        
-        <div class="space-y-3"> 
-            <div class="grid grid-cols-2 gap-2.5"> 
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-400 mb-1">الاسم الأول</label>
-                    <input id="reg-first-name" type="text" placeholder="الاسم الأول" class="w-full rounded-xl px-3 py-2.5 text-xs">
-                </div> 
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-400 mb-1">اسم العائلة</label>
-                    <input id="reg-last-name" type="text" placeholder="اسم العائلة" class="w-full rounded-xl px-3 py-2.5 text-xs">
-                </div> 
-            </div> 
-            <div>
-                <label class="block text-[10px] font-bold text-slate-400 mb-1">البريد الإلكتروني</label>
-                <input id="reg-email" type="email" placeholder="name@example.com" class="w-full rounded-xl px-3 py-2.5 text-xs">
-            </div> 
-            <div>
-                <label class="block text-[10px] font-bold text-slate-400 mb-1">رقم الهاتف</label>
-                <input id="reg-phone" type="tel" placeholder="09xxxxxxxx" class="w-full rounded-xl px-3 py-2.5 text-xs">
-            </div> 
-            <div>
-                <label class="block text-[10px] font-bold text-slate-400 mb-1">كلمة المرور</label>
-                <input id="reg-password" type="password" placeholder="••••••••" class="w-full rounded-xl px-3 py-2.5 text-xs">
-            </div>
-            <div>
-                <label class="block text-[10px] font-bold text-slate-400 mb-1">تأكيد كلمة المرور</label>
-                <input id="reg-confirm-password" type="password" placeholder="••••••••" class="w-full rounded-xl px-3 py-2.5 text-xs">
-            </div>
 
-            <button id="reg-submit-btn" onclick="handleRegisterSubmit()" class="w-full bg-[#005ba3] hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-md mt-2">
-                تأكيد وإنشاء الحساب
-            </button> 
+    <!-- نافذة إنشاء الحساب الموحدة النظيفة -->
+    <div id="register-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-4 z-[95]"> 
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl relative text-right border border-slate-100" onclick="event.stopPropagation()"> 
+            <div class="flex justify-between items-center pb-4 mb-4 border-b border-slate-100">
+                <div>
+                    <h3 class="font-black text-slate-800 text-lg">إنشاء حساب جديد</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">انضم إلى SYPay واستمتع بكافة خدماتنا</p>
+                </div>
+                <button onclick="toggleView('register-modal', false)" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:text-slate-600 font-bold transition">✕</button>
+            </div> 
+            
+            <div class="space-y-3.5"> 
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1.5">الاسم الثلاثي أو المستعار</label>
+                    <input id="reg-name" type="text" placeholder="مثال: أحمد محمد" class="input-field w-full px-4 py-3 text-xs">
+                </div> 
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1.5">البريد الإلكتروني</label>
+                    <input id="reg-email" type="email" placeholder="name@example.com" class="input-field w-full px-4 py-3 text-xs" dir="ltr">
+                </div> 
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1.5">رقم الهاتف الجوال</label>
+                    <input id="reg-phone" type="tel" placeholder="09xxxxxxxx" class="input-field w-full px-4 py-3 text-xs" dir="ltr">
+                </div> 
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1.5">كلمة المرور</label>
+                        <input id="reg-pass" type="password" placeholder="••••••••" class="input-field w-full px-4 py-3 text-xs" dir="ltr">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1.5">تأكيد كلمة المرور</label>
+                        <input id="reg-pass-confirm" type="password" placeholder="••••••••" class="input-field w-full px-4 py-3 text-xs" dir="ltr">
+                    </div>
+                </div>
+
+                <button id="reg-btn" onclick="executeRegisterFlow()" class="w-full btn-primary text-white font-bold py-4 rounded-xl text-xs transition shadow-lg mt-3 flex items-center justify-center gap-2">
+                    <span>تأكيد وإنشاء الحساب</span>
+                    <i class="ph ph-user-plus text-base font-bold"></i>
+                </button> 
+
+                <div class="text-center pt-2">
+                    <p class="text-xs text-slate-500">لديك حساب بالفعل؟ <button onclick="toggleView('register-modal', false)" class="text-[#005ba3] font-bold hover:underline mr-1">تسجيل الدخول</button></p>
+                </div>
+            </div> 
         </div> 
-    </div> 
-</div>
+    </div>
+
+    <!-- نافذة استعادة كلمة المرور -->
+    <div id="forgot-password-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-4 z-[95]">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative text-right border border-slate-100" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center pb-3 mb-3 border-b border-slate-100">
+                <h3 class="font-black text-slate-800 text-base">استعادة كلمة المرور</h3>
+                <button onclick="toggleView('forgot-password-modal', false)" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور فوراً:</p>
+            <div class="space-y-3">
+                <input id="forgot-email" type="email" placeholder="name@example.com" class="input-field w-full px-4 py-3 text-xs" dir="ltr">
+                <button id="forgot-btn" onclick="handleForgotPasswordSubmit()" class="w-full btn-primary text-white font-bold py-3.5 rounded-xl text-xs">
+                    إرسال رابط الاستعادة
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // ========================================================================
-        // 1. ضع معلومات ربط قاعدة البيانات الخاصة بك هنا:
+        // 1. إعدادات الربط مع Supabase
         // ========================================================================
         const SUPABASE_URL = 'https://baytojjldklocifridcm.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJheXRvampsZGtsb2NpZnJpZGNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTU3MzMsImV4cCI6MjEwNTM5MTczM30.tAN7Qah-3VNwatn2CwgqsyphnkQQjagnKf4pR4WiSwQ';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJheXRvampsZGtsb2NpZnJpZGNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTU3MzMsImV4cCI6MjEwNTM5MTczM30.tAN7Qah-3VNwatn2CwgqsyphnkQQjagnKf4pR4WiSwQ';
 
-var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        let currentUser = null, syncInterval = null, currentWalletBalance = 0.00;
-        let rawCardNumber = "", lastFourDigits = "", isCardVisible = false, isCustomAmountMode = false;
-        let selectedProductId = "", selectedItemName = "", selectedItemPrice = 0.00, inputPlayerId = "", inputPlayerIdConfirm = "";
-        let tempRegisterData = {}, globalProductsRaw = [], currentFlowType = "register", globalTransactionsRaw = [];
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // التحقق التلقائي من الجلسة
+        let currentUser = null;
+        let syncInterval = null;
+        let currentWalletBalance = 0.00;
+        let rawCardNumber = "";
+        let lastFourDigits = "";
+        let isCardVisible = false;
+        let selectedProductId = "";
+        let selectedItemName = "";
+        let selectedItemPrice = 0.00;
+        let inputPlayerId = "";
+        let inputPlayerIdConfirm = "";
+        let globalProductsRaw = [];
+        let globalTransactionsRaw = [];
+        let currentDeliveredCode = "";
+
+        // فحص الجلسة الحالية عند تحميل الصفحة
         supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) { currentUser = session.user; postLoginSetup(); }
-        });
-
-        // ========================================================================
-        // 2. دوال المصادقة (Auth)
-        // ========================================================================
-        // -------------------------------------------------------------
-// 1. دالة تسجيل الدخول عبر Supabase
-// -------------------------------------------------------------
-async function handleLogin() {
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    const btn = document.getElementById('login-btn');
-
-    if (!email || !password) {
-        return showCustomAlert("يرجى إدخال البريد الإلكتروني وكلمة المرور.");
-    }
-
-    btn.disabled = true;
-    btn.innerText = "جاري تسجيل الدخول...";
-
-    try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
-
-        if (error) {
-            if (error.message.toLowerCase().includes("email not confirmed")) {
-                return showCustomAlert("يرجى تأكيد بريدك الإلكتروني أولاً عبر الرابط المرسل إليك.");
-            }
-            if (error.message.toLowerCase().includes("invalid login credentials")) {
-                return showCustomAlert("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
-            }
-            return showCustomAlert("فشل تسجيل الدخول: " + error.message);
-        }
-
-        // عند نجاح الدخول
-        currentUser = data.user;
-        currentUserEmail = data.user.email;
-        
-        toggleView('login-screen', false);
-        toggleView('dashboard-screen', true);
-        toggleView('bottom-nav-bar', true);
-        switchTab('home');
-        
-        silentSyncData();
-        fetchStoreProductsDirectly();
-
-    } catch (err) {
-        showCustomAlert("خطأ في الاتصال: " + err.message);
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "تسجيل الدخول";
-    }
-}
-
-// -------------------------------------------------------------
-// 2. دالة فتح نافذة التسجيل
-// -------------------------------------------------------------
-function openRegisterModal() {
-    ['reg-first-name', 'reg-last-name', 'reg-email', 'reg-phone', 'reg-password', 'reg-confirm-password'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = "";
-    });
-    toggleView('register-modal', true);
-}
-
-// -------------------------------------------------------------
-// 3. دالة إنشاء الحساب الجديد عبر Supabase
-// -------------------------------------------------------------
-async function handleRegisterSubmit() {
-    const fName = document.getElementById('reg-first-name').value.trim();
-    const lName = document.getElementById('reg-last-name').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
-    const phone = document.getElementById('reg-phone').value.trim();
-    const password = document.getElementById('reg-password').value;
-    const confirmPass = document.getElementById('reg-confirm-password').value;
-    const btn = document.getElementById('reg-submit-btn');
-
-    if (!fName || !lName || !email || !password) {
-        return showCustomAlert("يرجى ملء جميع الحقول المطلوبة.");
-    }
-
-    if (password !== confirmPass) {
-        return showCustomAlert("كلمتا المرور غير متطابقتين.");
-    }
-
-    if (password.length < 6) {
-        return showCustomAlert("كلمة المرور يجب أن لا تقل عن 6 خانات.");
-    }
-
-    btn.disabled = true;
-    btn.innerText = "جاري إنشاء الحساب...";
-
-    try {
-        const { data, error } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: {
-                    first_name: fName,
-                    last_name: lName,
-                    full_name: `${fName} ${lName}`,
-                    phone: phone
-                },
-                // توجيه المستخدم لنفس رابط الموقع بعد النقر على الرابط في البريد
-                emailRedirectTo: window.location.origin + window.location.pathname
+            if (session && session.user) {
+                currentUser = session.user;
+                postLoginSetup();
             }
         });
 
-        // فحص إذا كان البريد مسجلاً مسبقاً
-        if (error) {
-            if (error.message.toLowerCase().includes("already registered") || error.status === 422) {
-                return showCustomAlert("هذا البريد الإلكتروني مسجل بالفعل! يرجى تسجيل الدخول بدلاً من ذلك.");
+        // الاستماع لتغير حالة المصادقة (بما في ذلك الضغط على رابط التفعيل)
+        supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+                currentUser = session.user;
+                postLoginSetup();
             }
-            return showCustomAlert("تعذر إنشاء الحساب: " + error.message);
-        }
-
-        // فحص إضافي للمستخدمين المسجلين مسبقاً
-        if (data?.user && (!data.user.identities || data.user.identities.length === 0)) {
-            return showCustomAlert("هذا البريد الإلكتروني مسجل بالفعل! يرجى تسجيل الدخول بدلاً من ذلك.");
-        }
-
-        // عند نجاح إنشاء الحساب وإرسال الرابط
-        toggleView('register-modal', false);
-        alert(`🎉 تم إرسال رابط تفعيل الحساب إلى:\n\n${email}\n\nيرجى فتح بريدك الإلكتروني والضغط على الرابط ليتم تفعيل حسابك ودخولك فوراً.`);
-
-    } catch (err) {
-        showCustomAlert("خطأ غير متوقع: " + err.message);
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "تأكيد وإنشاء الحساب";
-    }
-}
-
-// -------------------------------------------------------------
-// 4. مراقبة تفعيل الرابط والدخول التلقائي
-// -------------------------------------------------------------
-supabase.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' && session) {
-        currentUser = session.user;
-        currentUserEmail = session.user.email;
-        
-        toggleView('login-screen', false);
-        toggleView('dashboard-screen', true);
-        toggleView('bottom-nav-bar', true);
-        closeAllModals();
-        
-        silentSyncData();
-        fetchStoreProductsDirectly();
-    }
-});
+        });
 
         function postLoginSetup() {
-            toggleView('login-screen', false); toggleView('dashboard-screen', true); toggleView('bottom-nav-bar', true);
-            switchTab('home'); silentSyncData(); fetchStoreProductsDirectly();
-            if(!syncInterval) syncInterval = setInterval(silentSyncData, 30000);
+            toggleView('login-screen', false);
+            toggleView('dashboard-screen', true);
+            toggleView('bottom-nav-bar', true);
+            closeAllModals();
+            switchTab('home');
+            silentSyncData();
+            fetchStoreProductsDirectly();
+            if (!syncInterval) syncInterval = setInterval(silentSyncData, 30000);
+        }
+
+        // ========================================================================
+        // 2. دوال الحسابات والمصادقة (Auth)
+        // ========================================================================
+        async function handleLogin() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const btn = document.getElementById('login-btn');
+
+            if (!email || !password) {
+                return showCustomAlert("يرجى إدخال البريد الإلكتروني وكلمة المرور.");
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري التحقق...`;
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    if (error.message.toLowerCase().includes("email not confirmed")) {
+                        return showCustomAlert("يرجى تفعيل حسابك أولاً عبر الرابط المرسل لبريدك الإلكتروني.");
+                    }
+                    if (error.message.toLowerCase().includes("invalid login credentials")) {
+                        return showCustomAlert("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+                    }
+                    return showCustomAlert("فشل تسجيل الدخول: " + error.message);
+                }
+
+                currentUser = data.user;
+                postLoginSetup();
+
+            } catch (err) {
+                showCustomAlert("خطأ في الاتصال: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`;
+            }
+        }
+
+        function openRegisterModal() {
+            ['reg-name', 'reg-email', 'reg-phone', 'reg-pass', 'reg-pass-confirm'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = "";
+            });
+            toggleView('register-modal', true);
+        }
+
+        async function executeRegisterFlow() {
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
+            const pass = document.getElementById('reg-pass').value;
+            const passConfirm = document.getElementById('reg-pass-confirm').value;
+            const btn = document.getElementById('reg-btn');
+
+            if (!name || !email || !pass) {
+                return showCustomAlert("يرجى ملء جميع الحقول المطلوبة (الاسم، البريد، كلمة المرور).");
+            }
+
+            if (pass !== passConfirm) {
+                return showCustomAlert("كلمتا المرور غير متطابقتين.");
+            }
+
+            if (pass.length < 6) {
+                return showCustomAlert("كلمة المرور يجب أن لا تقل عن 6 خانات.");
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري إنشاء الحساب...`;
+
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: pass,
+                    options: {
+                        data: {
+                            full_name: name,
+                            phone: phone
+                        },
+                        emailRedirectTo: window.location.origin + window.location.pathname
+                    }
+                });
+
+                if (error) {
+                    if (error.message.toLowerCase().includes("already registered") || error.status === 422) {
+                        return showCustomAlert("هذا البريد الإلكتروني مسجل مسبقاً! يرجى تسجيل الدخول بدلاً من ذلك.");
+                    }
+                    return showCustomAlert("تعذر إنشاء الحساب: " + error.message);
+                }
+
+                if (data?.user && (!data.user.identities || data.user.identities.length === 0)) {
+                    return showCustomAlert("هذا البريد الإلكتروني مسجل مسبقاً! يرجى تسجيل الدخول بدلاً من ذلك.");
+                }
+
+                toggleView('register-modal', false);
+                alert(`🎉 تم إرسال رابط تفعيل الحساب إلى:\n\n${email}\n\nيرجى فتح بريدك الإلكتروني والضغط على الرابط ليتم تفعيل حسابك ودخولك فوراً.`);
+
+            } catch (err) {
+                showCustomAlert("خطأ تقني: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>تأكيد وإنشاء الحساب</span><i class="ph ph-user-plus text-base font-bold"></i>`;
+            }
+        }
+
+        function openForgotPasswordModal() {
+            const input = document.getElementById('forgot-email');
+            if (input) input.value = document.getElementById('login-email').value.trim() || "";
+            toggleView('forgot-password-modal', true);
+        }
+
+        async function handleForgotPasswordSubmit() {
+            const email = document.getElementById('forgot-email').value.trim();
+            const btn = document.getElementById('forgot-btn');
+            if (!email) return showCustomAlert("يرجى إدخال البريد الإلكتروني أولاً.");
+
+            btn.disabled = true;
+            btn.innerText = "جاري الإرسال...";
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + window.location.pathname
+                });
+                if (error) throw error;
+                toggleView('forgot-password-modal', false);
+                alert(`📨 تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك:\n${email}`);
+            } catch (e) {
+                showCustomAlert("فشل الإرسال: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "إرسال رابط الاستعادة";
+            }
         }
 
         async function handleLogout() { 
-            if(syncInterval) { clearInterval(syncInterval); syncInterval = null; } 
-            await supabase.auth.signOut(); currentUser = null; 
-            ['login-email', 'login-password'].forEach(id => document.getElementById(id).value = ""); 
-            closeAllModals(); toggleView('dashboard-screen', false); toggleView('bottom-nav-bar', false); toggleView('login-screen', true); 
+            if (syncInterval) { clearInterval(syncInterval); syncInterval = null; } 
+            await supabase.auth.signOut(); 
+            currentUser = null; 
+            ['login-email', 'login-password'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = "";
+            }); 
+            closeAllModals(); 
+            toggleView('dashboard-screen', false); 
+            toggleView('bottom-nav-bar', false); 
+            toggleView('login-screen', true); 
         }
 
         // ========================================================================
-        // 3. التسجيل واستعادة كلمة المرور (OTP)
-        // ========================================================================
-        function openRegisterModal() { 
-            currentFlowType = "register"; toggleView('register-step-form', true); toggleView('register-step-password', false); toggleView('register-step-otp', false); 
-            document.getElementById('register-modal-title').innerText = "إنشاء حساب جديد (خطوة 1)"; 
-            ['reg-first-name', 'reg-last-name', 'reg-email', 'reg-phone', 'reg-new-pin', 'reg-confirm-pin', 'reg-otp-code'].forEach(id => document.getElementById(id).value = ""); 
-            toggleView('register-modal', true); 
-        }
-
-        function submitRegistration() { 
-            const email = document.getElementById('reg-email').value.trim();
-            if (!email) return showCustomAlert("البريد الإلكتروني إلزامي."); 
-            if (currentFlowType === "register") { 
-                const fName = document.getElementById('reg-first-name').value.trim(), lName = document.getElementById('reg-last-name').value.trim(), phone = document.getElementById('reg-phone').value.trim(); 
-                if (!fName || !lName || !phone) return showCustomAlert("يرجى ملء كافة الخانات."); 
-                tempRegisterData = { firstName: fName, lastName: lName, email: email, phone: phone }; 
-            } else { tempRegisterData = { email: email }; } 
-            toggleView('register-step-form', false); toggleView('register-step-password', true); 
-            document.getElementById('register-modal-title').innerText = currentFlowType === "register" ? "تعيين كلمة المرور (خطوة 2)" : "كلمة المرور الجديدة";
-        }
-
-        async function executeFinalAccountCreationOrReset() { 
-            const password = document.getElementById('reg-new-pin').value, cPassword = document.getElementById('reg-confirm-pin').value, btn = document.getElementById('final-register-btn'); 
-            if (password !== cPassword) return showCustomAlert("كلمات المرور غير متطابقة."); 
-            if (password.length < 8) return showCustomAlert("الحد الأدنى 8 خانات."); 
-            btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> إرسال رمز التحقق...`; 
-            
-            if (currentFlowType === "register") {
-                const { error } = await supabase.auth.signUp({
-                    email: tempRegisterData.email, password: password,
-                    options: { data: { first_name: tempRegisterData.firstName, last_name: tempRegisterData.lastName, phone: tempRegisterData.phone } }
-                });
-                if (error) { showCustomAlert(error.message); btn.disabled = false; btn.innerHTML = `المتابعة`; return; }
-            } else {
-                const { error } = await supabase.auth.resetPasswordForEmail(tempRegisterData.email);
-                if (error) { showCustomAlert(error.message); btn.disabled = false; btn.innerHTML = `المتابعة`; return; }
-            }
-            btn.disabled = false; btn.innerHTML = `المتابعة`;
-            toggleView('register-step-password', false); toggleView('register-step-otp', true); 
-        }
-
-        async function verifyRegistrationOtp() { 
-            const code = document.getElementById('reg-otp-code').value.trim(), btn = document.getElementById('otp-verify-btn'); 
-            if (!code || code.length < 6) return showCustomAlert("أدخل الرمز كاملاً."); 
-            btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> التفعيل...`; 
-            
-            const { error } = await supabase.auth.verifyOtp({
-                email: tempRegisterData.email, token: code, type: currentFlowType === "register" ? 'signup' : 'recovery'
-            });
-            
-            if (error) { showCustomAlert("الرمز غير صحيح."); btn.disabled = false; btn.innerText = "تأكيد الرمز"; } 
-            else {
-                showCustomAlert("تم العملية بنجاح!", false); toggleView('register-modal', false);
-                if (currentFlowType === "register") document.getElementById('login-email').value = tempRegisterData.email;
-            }
-        }
-
-        function triggerPasswordResetFlow() { 
-            closeAllModals(); currentFlowType = "reset"; toggleView('register-step-form', true); toggleView('register-step-otp', false); toggleView('register-step-password', false); 
-            document.getElementById('register-modal-title').innerText = "استعادة كلمة المرور"; 
-            document.getElementById('reg-email').value = ""; toggleView('register-modal', true); 
-        }
-        function openForgotPasswordModal() { triggerPasswordResetFlow(); }
-
-        // ========================================================================
-        // 4. جلب ومزامنة البيانات
+        // 3. جلب ومزامنة البيانات (Profiles & Transactions)
         // ========================================================================
         async function silentSyncData() { 
             if (!currentUser) return;
+
             const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
             if (profile) {
-                currentWalletBalance = parseFloat(profile.balance); 
+                currentWalletBalance = parseFloat(profile.balance || 0); 
                 document.getElementById('live-balance').innerText = "$" + currentWalletBalance.toFixed(2); 
-                const fullName = profile.first_name + " " + profile.last_name;
-                document.getElementById('live-client-name').innerText = document.getElementById('nav-user-name').innerText = fullName; 
-                rawCardNumber = profile.card_number || "0000 0000 0000 0000"; lastFourDigits = rawCardNumber.substring(rawCardNumber.length - 4); 
+                
+                const fullName = profile.full_name || ((profile.first_name || "") + " " + (profile.last_name || "")).trim() || currentUser.email.split('@')[0];
+                document.getElementById('live-client-name').innerText = fullName;
+                document.getElementById('nav-user-name').innerText = fullName; 
+                
+                rawCardNumber = profile.card_number || "0000 0000 0000 0000"; 
+                lastFourDigits = rawCardNumber.substring(rawCardNumber.length - 4); 
                 resetCardVisibility(); 
-                document.getElementById('prof-first-name').value = profile.first_name || "";
-                document.getElementById('prof-last-name').value = profile.last_name || "";
-                document.getElementById('prof-phone').value = profile.phone || "";
+                
+                const profNameInput = document.getElementById('prof-full-name');
+                if (profNameInput) profNameInput.value = fullName;
+                const profPhoneInput = document.getElementById('prof-phone');
+                if (profPhoneInput) profPhoneInput.value = profile.phone || "";
+                
+                const joinDateEl = document.getElementById('live-join-date');
+                if (joinDateEl) {
+                    const d = new Date(profile.created_at || currentUser.created_at);
+                    joinDateEl.innerText = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+                }
             }
             
             const { data: txs } = await supabase.from('transactions').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-            if(txs) {
+            if (txs) {
                 globalTransactionsRaw = txs.map(t => ({
-                    type: t.transaction_type, details: t.details, amount: t.amount + " $",
+                    type: t.transaction_type, 
+                    details: t.details, 
+                    amount: t.amount + " $",
                     date: new Date(t.created_at).toLocaleString('en-US', { hour12: false }),
-                    status: t.status, tx_id: t.transaction_ref, serial_code: t.serial_code
+                    status: t.status, 
+                    tx_id: t.transaction_ref, 
+                    serial_code: t.serial_code
                 }));
                 renderRecentDashboardTransactions(globalTransactionsRaw);
             }
@@ -844,402 +851,472 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
         async function fetchStoreProductsDirectly() { 
             const { data: prods } = await supabase.from('products').select('*').eq('status', 'نشط');
-            if(prods) {
+            if (prods) {
                 globalProductsRaw = prods.map(p => ({
-                    id: p.id, category: p.category, platform: p.platform, package_name: p.package_name, price: parseFloat(p.price), type: p.product_type, image_url: p.image_url
+                    id: p.id, 
+                    category: p.category, 
+                    platform: p.platform, 
+                    package_name: p.package_name, 
+                    price: parseFloat(p.price), 
+                    type: p.product_type, 
+                    image_url: p.image_url
                 }));
             }
         }
 
         // ========================================================================
-        // 5. محرك الشراء الآمن (RPC) وشحن الرصيد
+        // 4. محرك الشراء الآمن (RPC) وشحن الرصيد
         // ========================================================================
-        // ✅ الكود الجديد المحدّث:
-async function executeSubscriptionPurchase() { 
-    // 1. التحقق من كفاية الرصيد قبل إرسال الطلب
-    if (currentWalletBalance < selectedItemPrice) return showCustomAlert("الرصيد غير كافٍ لإتمام الشراء."); 
-    
-    // 2. تفعيل حالة التحميل على الزر لمنع الضغط المتكرر
-    const btn = document.getElementById('confirm-purchase-btn'); 
-    btn.disabled = true; 
-    btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري المعالجة...`; 
-    
-    try {
-        // 3. استدعاء دالة الشراء في Supabase
-        const { data: r, error } = await supabase.rpc('buy_product', {
-            p_user_id: currentUser.id, 
-            p_product_id: selectedProductId, 
-            p_player_id: inputPlayerId, 
-            p_player_id_confirm: inputPlayerIdConfirm
-        });
-        
-        if (error) throw error;
-
-        // 4. معالجة الرد عند النجاح
-        if (r && r.status === "success") { 
-            closeAllModals(); 
-            silentSyncData(); // تحديث الرصيد وقائمة المعاملات فوراً
+        async function executeSubscriptionPurchase() { 
+            if (currentWalletBalance < selectedItemPrice) return showCustomAlert("الرصيد غير كافٍ لإتمام الشراء."); 
             
-            if (r.mode === "CODE") {
-                // فتح نافذة تسليم الكود الفاخرة
-                showCodeDeliveryModal(r.code, selectedItemName);
-            } else {
-                // نافذة تأكيد واضحة لمشتري شحن الـ ID
-                alert(`✅ تم استلام طلب الشحن بنجاح!\n\nالمنتج: ${selectedItemName}\nمعرف اللاعب (ID): ${inputPlayerId}\n\nطلبك قيد التنفيذ وسيصل لحسابك في اللعبة فوراً.`);
-            }
-        } else { 
-            // إظهار رسالة الخطأ القادمة من السيرفر
-            showCustomAlert("فشلت العملية: " + (r ? r.message : "حدث خطأ غير متوقع")); 
-        }
-    } catch (err) {
-        console.error("Purchase Error:", err);
-        showCustomAlert("خطأ في الاتصال: " + err.message);
-    } finally {
-        // إعادة الزر إلى حالته الطبيعية
-        btn.disabled = false; 
-        btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; 
-    }
-}
-        async function processSubWalletFetch() { 
-            const agent = document.getElementById('sub-agent-code').value.trim(), method = document.getElementById('sub-payment-method').value, btn = document.getElementById('sub-deposit-step1-btn'); 
-            if(!agent) return showCustomAlert("يرجى إدخال رمز الوكيل."); 
+            const btn = document.getElementById('confirm-purchase-btn'); 
             btn.disabled = true; 
-            const { data: agentData } = await supabase.from('agents').select('*').eq('agent_code', agent).eq('payment_method', method).single();
-            if(agentData) { 
-                document.getElementById('sub-display-agent-name').innerText = agentData.agent_name; document.getElementById('sub-display-wallet-number').innerText = agentData.wallet_address; 
-                toggleView('deposit-sub-step1', false); toggleView('deposit-sub-step2', true); 
-            } else { showCustomAlert("رمز الوكيل غير مسجل."); } 
-            btn.disabled = false; 
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري المعالجة...`; 
+            
+            try {
+                const { data: r, error } = await supabase.rpc('buy_product', {
+                    p_user_id: currentUser.id, 
+                    p_product_id: selectedProductId, 
+                    p_player_id: inputPlayerId, 
+                    p_player_id_confirm: inputPlayerIdConfirm
+                });
+                
+                if (error) throw error;
+
+                if (r && r.status === "success") { 
+                    closeAllModals(); 
+                    silentSyncData(); 
+                    
+                    if (r.mode === "CODE") {
+                        showCodeDeliveryModal(r.code, selectedItemName);
+                    } else {
+                        alert(`✅ تم استلام طلب الشحن بنجاح!\n\nالمنتج: ${selectedItemName}\nمعرف اللاعب (ID): ${inputPlayerId}\n\nطلبك قيد التنفيذ وسيصل لحسابك في اللعبة فوراً.`);
+                    }
+                } else { 
+                    showCustomAlert("فشلت العملية: " + (r ? r.message : "حدث خطأ غير متوقع")); 
+                }
+            } catch (err) {
+                console.error("Purchase Error:", err);
+                showCustomAlert("خطأ في الاتصال: " + err.message);
+            } finally {
+                btn.disabled = false; 
+                btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; 
+            }
+        }
+
+        async function processSubWalletFetch() { 
+            const agent = document.getElementById('sub-agent-code').value.trim();
+            const method = document.getElementById('sub-payment-method').value;
+            const btn = document.getElementById('sub-deposit-step1-btn'); 
+            
+            if (!agent) return showCustomAlert("يرجى إدخال رمز الوكيل."); 
+            btn.disabled = true; 
+            
+            try {
+                const { data: agentData } = await supabase.from('agents').select('*').eq('agent_code', agent).eq('payment_method', method).single();
+                if (agentData) { 
+                    document.getElementById('sub-display-agent-name').innerText = agentData.agent_name; 
+                    document.getElementById('sub-display-wallet-number').innerText = agentData.wallet_address; 
+                    toggleView('deposit-sub-step1', false); 
+                    toggleView('deposit-sub-step2', true); 
+                } else { 
+                    showCustomAlert("رمز الوكيل غير مسجل."); 
+                } 
+            } catch(e) {
+                showCustomAlert("تعذر التحقق من الوكيل.");
+            } finally {
+                btn.disabled = false; 
+            }
         }
 
         async function submitSubFinalDeposit() { 
-    const amtInput = document.getElementById('sub-form-amount-select');
-    const finalAmt = amtInput ? amtInput.value.trim() : "";
-    const txNum = document.getElementById('sub-form-tx-number').value.trim();
-    const agent = document.getElementById('sub-agent-code').value.trim();
-    const method = document.getElementById('sub-payment-method').value;
-    const btn = document.getElementById('sub-deposit-final-btn'); 
+            const amtInput = document.getElementById('sub-form-amount-select');
+            const finalAmt = amtInput ? amtInput.value.trim() : "";
+            const txNum = document.getElementById('sub-form-tx-number').value.trim();
+            const agent = document.getElementById('sub-agent-code').value.trim();
+            const method = document.getElementById('sub-payment-method').value;
+            const btn = document.getElementById('sub-deposit-final-btn'); 
 
-    if(!finalAmt || !txNum) return showCustomAlert("البيانات الماليّة إجبارية."); 
-    
-    btn.disabled = true; 
-    btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري الإرسال...`;
+            if (!finalAmt || !txNum) return showCustomAlert("البيانات الماليّة إجبارية."); 
+            
+            btn.disabled = true; 
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري الإرسال...`;
 
-    try {
-        // 1. توليد رقم مرجعي (احتياطياً في حال عدم وجود دالة RPC في السيرفر)
-        let txRef = 'TX-D' + Math.floor(100000 + Math.random() * 900000);
-        const { data: rpcRef, error: rpcErr } = await supabase.rpc('generate_ref', { prefix: 'TX-D' });
-        if (!rpcErr && rpcRef) {
-            txRef = rpcRef;
+            try {
+                let txRef = 'TX-D' + Math.floor(100000 + Math.random() * 900000);
+                const { data: rpcRef, error: rpcErr } = await supabase.rpc('generate_ref', { prefix: 'TX-D' });
+                if (!rpcErr && rpcRef) {
+                    txRef = rpcRef;
+                }
+
+                const { error: depError } = await supabase.from('deposit_orders').insert({ 
+                    transaction_ref: txRef, 
+                    user_id: currentUser.id, 
+                    amount: parseFloat(finalAmt), 
+                    payment_method: method, 
+                    agent_code: agent, 
+                    transfer_receipt_num: txNum 
+                });
+
+                if (depError) throw depError;
+
+                const { error: txError } = await supabase.from('transactions').insert({ 
+                    user_id: currentUser.id, 
+                    transaction_type: 'شحن رصيد', 
+                    details: 'طلب تمويل عبر الوكيل', 
+                    amount: parseFloat(finalAmt), 
+                    status: 'معلق', 
+                    transaction_ref: txRef 
+                });
+
+                if (txError) throw txError;
+
+                showCustomAlert("تم رفع الطلب بنجاح للتدقيق.", false); 
+                switchTab('home'); 
+                silentSyncData(); 
+
+            } catch (err) {
+                console.error("Supabase Insert Error:", err);
+                showCustomAlert("فشل الحفظ: " + (err.message || "خطأ في الصلاحيات أو قاعدة البيانات"));
+            } finally {
+                btn.disabled = false; 
+                btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد الشحن`;
+            }
         }
 
-        // 2. إدخال سجل طلب الإيداع
-        const { error: depError } = await supabase.from('deposit_orders').insert({ 
-            transaction_ref: txRef, 
-            user_id: currentUser.id, 
-            amount: parseFloat(finalAmt), 
-            payment_method: method, 
-            agent_code: agent, 
-            transfer_receipt_num: txNum 
-        });
-
-        if (depError) throw depError;
-
-        // 3. إدخال سجل الحركة في المعاملات
-        const { error: txError } = await supabase.from('transactions').insert({ 
-            user_id: currentUser.id, 
-            transaction_type: 'شحن رصيد', 
-            details: 'طلب تمويل عبر الوكيل', 
-            amount: parseFloat(finalAmt), 
-            status: 'معلق', 
-            transaction_ref: txRef 
-        });
-
-        if (txError) throw txError;
-
-        showCustomAlert("تم رفع الطلب بنجاح للتدقيق.", false); 
-        switchTab('home'); 
-        silentSyncData(); 
-
-    } catch (err) {
-        console.error("Supabase Insert Error:", err);
-        showCustomAlert("فشل الحفظ: " + (err.message || "خطأ في الصلاحيات أو قاعدة البيانات"));
-    } finally {
-        btn.disabled = false; 
-        btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد الشحن`;
-    }
-}
-
         // ========================================================================
-        // 6. واجهة المستخدم والتنقل والتحكم
+        // 5. واجهة المستخدم والتنقل
         // ========================================================================
-        function toggleView(id, show) { const el = document.getElementById(id); if(el) el.classList.toggle('hidden', !show); }
-        function closeAllModals() { ['register-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'code-delivery-modal'].forEach(id => toggleView(id, false)); }
+        function toggleView(id, show) { 
+            const el = document.getElementById(id); 
+            if (el) el.classList.toggle('hidden', !show); 
+        }
+
+        function closeAllModals() { 
+            ['register-modal', 'forgot-password-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'code-delivery-modal'].forEach(id => toggleView(id, false)); 
+        }
+
         function toggleSideMenu(open) {
-    const overlay = document.getElementById('side-menu-overlay');
-    const panel = document.getElementById('side-menu-panel');
-    if (!overlay || !panel) return;
+            const overlay = document.getElementById('side-menu-overlay');
+            const panel = document.getElementById('side-menu-panel');
+            if (!overlay || !panel) return;
 
-    if (open) {
-        overlay.classList.remove('hidden');
-        setTimeout(() => panel.classList.remove('translate-x-full'), 10);
-    } else {
-        panel.classList.add('translate-x-full');
-        setTimeout(() => overlay.classList.add('hidden'), 300);
-    }
-}
+            if (open) {
+                overlay.classList.remove('hidden');
+                setTimeout(() => panel.classList.remove('translate-x-full'), 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
         function switchTab(tab) {
-            closeAllModals(); toggleSideMenu(false); document.querySelectorAll('.data-view').forEach(v => v.classList.add('hidden'));
+            closeAllModals(); 
+            toggleSideMenu(false); 
+            document.querySelectorAll('.data-view').forEach(v => v.classList.add('hidden'));
+            
             const map = { 'home':'view-home', 'store':'view-store', 'deposit':'view-deposit', 'profile':'view-profile' };
             toggleView(map[tab], true);
-            if(tab === 'store') renderMainCategoriesView();
+            
+            ['nav-btn-home', 'nav-btn-store', 'nav-btn-deposit', 'nav-btn-profile'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 focus:outline-none transition-all flex-1 py-2.5 rounded-2xl";
+                }
+            });
+            const activeBtn = document.getElementById('nav-btn-' + tab);
+            if (activeBtn) {
+                activeBtn.className = "flex flex-col items-center gap-1 text-blue-600 bg-blue-50 focus:outline-none transition-all flex-1 py-2.5 rounded-2xl";
+            }
+
+            if (tab === 'store') renderMainCategoriesView();
         }
         
-        function showCustomAlert(text, isErr=true) {
-            document.getElementById('custom-alert-text').innerText = text;
-            toggleView('custom-alert', true); setTimeout(() => toggleView('custom-alert', false), 5000);
+        function showCustomAlert(text, isErr = true) {
+            const alertText = document.getElementById('custom-alert-text');
+            const iconContainer = document.getElementById('alert-icon-container');
+            const icon = document.getElementById('alert-icon');
+            
+            if (alertText) alertText.innerText = text;
+            if (iconContainer && icon) {
+                if (isErr) {
+                    iconContainer.className = "p-2 rounded-xl bg-red-50 text-red-600 shrink-0";
+                    icon.className = "ph-fill ph-warning text-lg";
+                } else {
+                    iconContainer.className = "p-2 rounded-xl bg-emerald-50 text-emerald-600 shrink-0";
+                    icon.className = "ph-fill ph-check-circle text-lg";
+                }
+            }
+            toggleView('custom-alert', true); 
+            setTimeout(() => toggleView('custom-alert', false), 5000);
         }
+        function closeCustomAlert() { toggleView('custom-alert', false); }
         
-        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => showCustomAlert("تم النسخ", false)); }
-        function toggleCardVisibility() { isCardVisible = !isCardVisible; document.getElementById('live-card-number').innerText = isCardVisible ? rawCardNumber : "•••• •••• •••• " + lastFourDigits; }
-        function resetCardVisibility() { isCardVisible = false; toggleCardVisibility(); }
-        
-        function showCustomPrompt(desc, callback) {
-            document.getElementById('custom-prompt-desc').innerText = desc; toggleView('custom-prompt', true);
-            document.getElementById('custom-prompt-confirm-btn').onclick = async () => {
-                const val = document.getElementById('custom-prompt-input').value; toggleView('custom-prompt', false);
-                if(val) await callback(val);
-            };
+        function copyToClipboard(text) { 
+            navigator.clipboard.writeText(text).then(() => showCustomAlert("تم النسخ للحافظة بنجاح.", false)); 
         }
-        function closeCustomPrompt() { toggleView('custom-prompt', false); }
+
+        function toggleCardVisibility() { 
+            isCardVisible = !isCardVisible; 
+            document.getElementById('live-card-number').innerText = isCardVisible ? rawCardNumber : "•••• •••• •••• " + lastFourDigits; 
+            const openEye = document.getElementById('card-eye-open');
+            const closedEye = document.getElementById('card-eye-closed');
+            if (openEye && closedEye) {
+                openEye.style.display = isCardVisible ? "inline-block" : "none";
+                closedEye.style.display = isCardVisible ? "none" : "inline-block";
+            }
+        }
+        function resetCardVisibility() { 
+            isCardVisible = false; 
+            document.getElementById('live-card-number').innerText = "•••• •••• •••• " + lastFourDigits;
+            const openEye = document.getElementById('card-eye-open');
+            const closedEye = document.getElementById('card-eye-closed');
+            if (openEye && closedEye) {
+                openEye.style.display = "none";
+                closedEye.style.display = "inline-block";
+            }
+        }
+
+        function togglePasswordVisibility(fieldId, btn) {
+            const field = document.getElementById(fieldId);
+            const openIcon = btn.querySelector('.eye-open');
+            const closedIcon = btn.querySelector('.eye-closed');
+            if (!field) return;
+            if (field.type === "password") {
+                field.type = "text";
+                if (openIcon) openIcon.classList.add('hidden');
+                if (closedIcon) closedIcon.classList.remove('hidden');
+            } else {
+                field.type = "password";
+                if (closedIcon) closedIcon.classList.add('hidden');
+                if (openIcon) openIcon.classList.remove('hidden');
+            }
+        }
 
         async function triggerDeleteAccountFlow() { 
-            showCustomPrompt("أدخل كلمة المرور لتأكيد تعطيل الحساب:", async function(pass) { 
-                const { error } = await supabase.auth.signInWithPassword({ email: currentUser.email, password: pass });
-                if (error) return showCustomAlert("كلمة المرور غير صحيحة."); 
+            if (confirm("تحذير: هل أنت متأكد من رغبتك في تعطيل هذا الحساب؟")) {
                 await supabase.from('profiles').update({ status: 'محذوف' }).eq('id', currentUser.id);
-                showCustomAlert("تم تعطيل الحساب بنجاح.", false); handleLogout(); 
-            }); 
+                showCustomAlert("تم تعطيل الحساب بنجاح.", false); 
+                handleLogout(); 
+            }
         }
 
         async function handleUpdateProfileView() { 
-            const fName = document.getElementById('prof-first-name').value.trim(), lName = document.getElementById('prof-last-name').value.trim(), phone = document.getElementById('prof-phone').value.trim(); 
-            if (!fName || !lName || !phone) return showCustomAlert("يجب تعبئة كافة الحقول."); 
-            const { error } = await supabase.from('profiles').update({ first_name: fName, last_name: lName, phone: phone }).eq('id', currentUser.id);
-            if(!error) { showCustomAlert("تم تعديل البيانات بنجاح.", false); silentSyncData(); switchTab('home'); } 
+            const fullName = document.getElementById('prof-full-name').value.trim();
+            const phone = document.getElementById('prof-phone').value.trim();
+            if (!fullName) return showCustomAlert("يرجى إدخال الاسم."); 
+
+            const { error } = await supabase.from('profiles').update({ full_name: fullName, phone: phone }).eq('id', currentUser.id);
+            if (!error) { 
+                showCustomAlert("تم تعديل البيانات بنجاح.", false); 
+                silentSyncData(); 
+                switchTab('home'); 
+            } else {
+                showCustomAlert("فشل الحفظ: " + error.message);
+            }
         }
 
         function renderRecentDashboardTransactions(txArray) {
-    const container = document.getElementById('dashboard-recent-tx');
-    if (!container) return;
-    container.innerHTML = "";
+            const container = document.getElementById('dashboard-recent-tx');
+            if (!container) return;
+            container.innerHTML = "";
 
-    if (txArray.length === 0) {
-        container.innerHTML = `<p class="text-center text-xs text-slate-400 py-6">لا توجد معاملات مسجلة حتى الآن.</p>`;
-        return;
-    }
+            if (txArray.length === 0) {
+                container.innerHTML = `<p class="text-center text-xs text-slate-400 py-6">لا توجد معاملات مسجلة حتى الآن.</p>`;
+                return;
+            }
 
-    txArray.slice(0, 5).forEach(tx => {
-        const badge = tx.status === "مقبول" ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
-                    : tx.status === "مرفوض" ? "bg-red-50 text-red-600 border-red-100" 
-                    : "bg-amber-50 text-amber-600 border-amber-100";
+            txArray.slice(0, 5).forEach(tx => {
+                const badge = tx.status === "مقبول" ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
+                            : tx.status === "مرفوض" ? "bg-red-50 text-red-600 border-red-100" 
+                            : "bg-amber-50 text-amber-600 border-amber-100";
 
-        // الشرط: المربع الأسود وزر النسخ يظهران فقط إذا كانت العملية شراء بطاقة رقمية وبها كود
-        const isCodeCard = tx.type === "شراء بطاقة" && tx.serial_code;
+                const isCodeCard = tx.type === "شراء بطاقة" && tx.serial_code;
 
-        const codeBlockHtml = isCodeCard ? `
-            <div class="mt-2.5 p-2 px-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] flex items-center justify-between border border-slate-800" dir="ltr">
-                <span class="tracking-wider font-bold select-all">${tx.serial_code}</span>
-                <button onclick="copyToClipboard('${tx.serial_code}')" class="text-slate-400 hover:text-white p-1 transition" title="نسخ الكود">
-                    <i class="ph-fill ph-copy text-sm"></i>
-                </button>
-            </div>
-        ` : '';
-
-        container.innerHTML += `
-            <div class="p-4 bg-white border border-slate-100 rounded-2xl text-right mb-2.5 shadow-sm">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-xs font-black text-slate-800">${tx.type}</p>
-                        <p class="text-[10px] text-slate-500 mt-0.5">${tx.details}</p>
-                        <p class="text-[9px] text-slate-400 font-sans mt-1">${tx.date}</p>
+                const codeBlockHtml = isCodeCard ? `
+                    <div class="mt-2.5 p-2 px-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] flex items-center justify-between border border-slate-800" dir="ltr">
+                        <span class="tracking-wider font-bold select-all">${tx.serial_code}</span>
+                        <button onclick="copyToClipboard('${tx.serial_code}')" class="text-slate-400 hover:text-white p-1 transition" title="نسخ الكود">
+                            <i class="ph-fill ph-copy text-sm"></i>
+                        </button>
                     </div>
-                    <div class="flex flex-col items-end gap-1">
-                        <span class="text-sm font-black text-slate-800 font-sans tabular-numeric">${tx.amount}</span>
-                        <span class="px-2 py-0.5 rounded-lg text-[9px] font-bold border ${badge}">${tx.status}</span>
+                ` : '';
+
+                container.innerHTML += `
+                    <div class="p-4 bg-white border border-slate-100 rounded-2xl text-right mb-2.5 shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-black text-slate-800">${tx.type}</p>
+                                <p class="text-[10px] text-slate-500 mt-0.5">${tx.details}</p>
+                                <p class="text-[9px] text-slate-400 font-sans mt-1">${tx.date}</p>
+                            </div>
+                            <div class="flex flex-col items-end gap-1">
+                                <span class="text-sm font-black text-slate-800 font-sans tabular-numeric">${tx.amount}</span>
+                                <span class="px-2 py-0.5 rounded-lg text-[9px] font-bold border ${badge}">${tx.status}</span>
+                            </div>
+                        </div>
+                        ${codeBlockHtml}
                     </div>
-                </div>
-                ${codeBlockHtml}
-            </div>
-        `;
-    });
-}
+                `;
+            });
+        }
         
         function renderMainCategoriesView() {
             document.getElementById('store-title-text').innerHTML = `متجر المجموعات الرقمية`;
-            const innerGrid = document.getElementById('store-interactive-box'); innerGrid.innerHTML = `<div id="dash-categories-container" class="grid grid-cols-2 gap-4"></div>`;
+            const innerGrid = document.getElementById('store-interactive-box'); 
+            innerGrid.innerHTML = `<div id="dash-categories-container" class="grid grid-cols-2 gap-4"></div>`;
             const categories = [...new Set(globalProductsRaw.map(p => p.category))];
             categories.forEach(cat => {
-                const div = document.createElement('div'); div.className = "glass-panel flex flex-col items-center justify-center gap-3 h-32 cursor-pointer font-black text-sm text-slate-700 bg-white";
-                div.innerHTML = `<span>${cat}</span>`; div.onclick = () => renderNestedPlatformsView(cat); 
+                const div = document.createElement('div'); 
+                div.className = "glass-panel flex flex-col items-center justify-center gap-3 h-32 cursor-pointer font-black text-sm text-slate-700 bg-white hover:bg-slate-50 transition";
+                div.innerHTML = `<span>${cat}</span>`; 
+                div.onclick = () => renderNestedPlatformsView(cat); 
                 document.getElementById('dash-categories-container').appendChild(div);
             });
         }
 
         function renderNestedPlatformsView(categoryName) {
-    document.getElementById('store-title-text').innerHTML = `منصات: ${categoryName}`;
-    const backBtn = document.getElementById('store-nested-back-btn');
-    if (backBtn) backBtn.classList.remove('hidden');
+            document.getElementById('store-title-text').innerHTML = `منصات: ${categoryName}`;
+            const backBtn = document.getElementById('store-nested-back-btn');
+            if (backBtn) backBtn.classList.remove('hidden');
 
-    const innerList = document.getElementById('store-interactive-box');
-    innerList.innerHTML = `<div class="bg-white border border-slate-100 rounded-[24px] p-2 divide-y divide-slate-100 text-right shadow-sm"></div>`;
-    
-    // استخراج أسماء المنصات الفريدة داخل التصنيف
-    const platforms = [...new Set(globalProductsRaw.filter(p => p.category === categoryName).map(p => p.platform))];
-    
-    platforms.forEach(pName => {
-        // استخراج رابط الأيقونة الخاص بهذه المنصة
-        const platformItem = globalProductsRaw.find(p => p.category === categoryName && p.platform === pName);
-        const iconUrl = platformItem && platformItem.image_url ? platformItem.image_url : '';
+            const innerList = document.getElementById('store-interactive-box');
+            innerList.innerHTML = `<div class="bg-white border border-slate-100 rounded-[24px] p-2 divide-y divide-slate-100 text-right shadow-sm"></div>`;
+            
+            const platforms = [...new Set(globalProductsRaw.filter(p => p.category === categoryName).map(p => p.platform))];
+            
+            platforms.forEach(pName => {
+                const platformItem = globalProductsRaw.find(p => p.category === categoryName && p.platform === pName);
+                const iconUrl = platformItem && platformItem.image_url ? platformItem.image_url : '';
 
-        const div = document.createElement('div');
-        div.className = "flex justify-between items-center py-3.5 px-4 cursor-pointer hover:bg-slate-50 rounded-2xl transition";
-        div.onclick = () => openPlansModal(pName, categoryName);
-        
-        // رسم الأيقونة بجانب اسم اللعبة أو المنصة
-        div.innerHTML = `
-            <div class="flex items-center gap-3">
-                ${iconUrl ? `<img src="${iconUrl}" alt="${pName}" referrerpolicy="no-referrer" class="w-11 h-11 rounded-xl object-contain bg-slate-50 border border-slate-100 p-1 shadow-sm">` : `<div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">${pName[0]}</div>`}
-                <span class="font-bold text-sm text-slate-800">${pName}</span>
-            </div>
-            <span class="text-blue-500 text-xs bg-blue-50 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">عرض الباقات <i class="ph ph-caret-left"></i></span>
-        `;
-        innerList.querySelector('div').appendChild(div);
-    });
-}
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center py-3.5 px-4 cursor-pointer hover:bg-slate-50 rounded-2xl transition";
+                div.onclick = () => openPlansModal(pName, categoryName);
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        ${iconUrl ? `<img src="${iconUrl}" alt="${pName}" referrerpolicy="no-referrer" class="w-11 h-11 rounded-xl object-contain bg-slate-50 border border-slate-100 p-1 shadow-sm">` : `<div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">${pName[0]}</div>`}
+                        <span class="font-bold text-sm text-slate-800">${pName}</span>
+                    </div>
+                    <span class="text-blue-500 text-xs bg-blue-50 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">عرض الباقات <i class="ph ph-caret-left"></i></span>
+                `;
+                innerList.querySelector('div').appendChild(div);
+            });
+        }
 
         function openPlansModal(platformName, categoryName) { 
-    document.getElementById('plans-modal-title').innerText = `باقات منصة ${platformName}`; 
-    const container = document.getElementById('plans-container'); 
-    container.innerHTML = ""; 
-    
-    const plans = globalProductsRaw.filter(p => p.category === categoryName && p.platform === platformName); 
-    
-    plans.forEach(plan => { 
-        const card = document.createElement('div'); 
-        card.className = "bg-white border border-slate-100 p-3.5 rounded-[22px] flex justify-between items-center gap-3 text-right shadow-sm"; 
-        card.innerHTML = `
-            <div class="flex items-center gap-3">
-                ${plan.image_url ? `<img src="${plan.image_url}" alt="${plan.package_name}" referrerpolicy="no-referrer" class="w-11 h-11 rounded-xl object-contain bg-slate-50 border border-slate-100 p-1 shrink-0">` : ''}
-                <div class="flex flex-col">
-                    <span class="text-xs font-bold text-slate-800 leading-snug">${plan.package_name}</span>
-                    <span class="text-[10px] text-slate-400 mt-1">${plan.type === 'CODE' ? 'تسليم فوري (كود)' : 'شحن مباشر (ID)'}</span>
-                </div>
-            </div>
-            <div class="flex flex-col items-end gap-1.5 shrink-0">
-                <span class="text-sm font-black text-blue-600 tabular-numeric financial-amount">$${plan.price.toFixed(2)}</span>
-                <button onclick="openAccountInputsModal('${plan.id}', '${plan.package_name}', ${plan.price})" class="bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold px-3.5 py-1.5 rounded-xl transition">شراء</button>
-            </div>
-        `; 
-        container.appendChild(card); 
-    }); 
-    toggleView('plans-modal', true); 
-}
+            document.getElementById('plans-modal-title').innerText = `باقات منصة ${platformName}`; 
+            const container = document.getElementById('plans-container'); 
+            container.innerHTML = ""; 
+            
+            const plans = globalProductsRaw.filter(p => p.category === categoryName && p.platform === platformName); 
+            
+            plans.forEach(plan => { 
+                const card = document.createElement('div'); 
+                card.className = "bg-white border border-slate-100 p-3.5 rounded-[22px] flex justify-between items-center gap-3 text-right shadow-sm"; 
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        ${plan.image_url ? `<img src="${plan.image_url}" alt="${plan.package_name}" referrerpolicy="no-referrer" class="w-11 h-11 rounded-xl object-contain bg-slate-50 border border-slate-100 p-1 shrink-0">` : ''}
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-slate-800 leading-snug">${plan.package_name}</span>
+                            <span class="text-[10px] text-slate-400 mt-1">${plan.type === 'CODE' ? 'تسليم فوري (كود)' : 'شحن مباشر (ID)'}</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1.5 shrink-0">
+                        <span class="text-sm font-black text-blue-600 tabular-numeric financial-amount">$${plan.price.toFixed(2)}</span>
+                        <button onclick="openAccountInputsModal('${plan.id}', '${plan.package_name}', ${plan.price})" class="bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold px-3.5 py-1.5 rounded-xl transition">شراء</button>
+                    </div>
+                `; 
+                container.appendChild(card); 
+            }); 
+            toggleView('plans-modal', true); 
+        }
 
         function openAccountInputsModal(productId, fullName, price) { 
-    selectedProductId = productId; 
-    selectedItemName = fullName; 
-    selectedItemPrice = price; 
-    
-    // تفريغ خانات الإدخال من أي أرقام سابقة
-    document.getElementById('target-player-id').value = "";
-    document.getElementById('target-player-id-confirm').value = "";
-    
-    // التحقق من نوع المنتج بأمان (ID أم CODE)
-    const prod = globalProductsRaw.find(p => p.id === productId);
-    const isIdFlow = prod && (prod.type || '').trim().toUpperCase() === "ID"; 
-    
-    // إظهار حقول الـ ID وإخفاء تنبيه الكود
-    toggleView('id-fields-container', isIdFlow); 
-    toggleView('code-fields-notice', !isIdFlow); 
-    toggleView('account-inputs-modal', true); 
-} 
+            selectedProductId = productId; 
+            selectedItemName = fullName; 
+            selectedItemPrice = price; 
+            
+            document.getElementById('target-player-id').value = "";
+            document.getElementById('target-player-id-confirm').value = "";
+            
+            const prod = globalProductsRaw.find(p => p.id === productId);
+            const isIdFlow = prod && (prod.type || '').trim().toUpperCase() === "ID"; 
+            
+            toggleView('id-fields-container', isIdFlow); 
+            toggleView('code-fields-notice', !isIdFlow); 
+            toggleView('account-inputs-modal', true); 
+        } 
 
         function proceedToReview() { 
-    const prod = globalProductsRaw.find(p => p.id === selectedProductId);
-    const isIdFlow = prod && (prod.type || '').trim().toUpperCase() === "ID";
+            const prod = globalProductsRaw.find(p => p.id === selectedProductId);
+            const isIdFlow = prod && (prod.type || '').trim().toUpperCase() === "ID";
 
-    if (isIdFlow) { 
-        // استخراج معرف اللاعب والتأكد من إزالة المسافات
-        inputPlayerId = document.getElementById('target-player-id').value.trim(); 
-        inputPlayerIdConfirm = document.getElementById('target-player-id-confirm').value.trim(); 
-        
-        // منع العميل من المتابعة إذا كانت الخانات غير متطابقة أو فارغة
-        if (!inputPlayerId || inputPlayerId !== inputPlayerIdConfirm) {
-            return showCustomAlert("معرف الحساب غير متطابق أو فارغ."); 
+            if (isIdFlow) { 
+                inputPlayerId = document.getElementById('target-player-id').value.trim(); 
+                inputPlayerIdConfirm = document.getElementById('target-player-id-confirm').value.trim(); 
+                
+                if (!inputPlayerId || inputPlayerId !== inputPlayerIdConfirm) {
+                    return showCustomAlert("معرف الحساب غير متطابق أو فارغ."); 
+                }
+
+                document.getElementById('review-item-player-id').innerText = inputPlayerId; 
+                document.getElementById('review-item-delivery-type').innerText = `شحن مباشر`; 
+                toggleView('review-id-row', true);
+            } else { 
+                inputPlayerId = "";
+                inputPlayerIdConfirm = "";
+                toggleView('review-id-row', false); 
+                document.getElementById('review-item-delivery-type').innerText = `تسليم الكود فوراً`; 
+            } 
+            
+            toggleView('account-inputs-modal', false); 
+            document.getElementById('review-item-name').innerText = selectedItemName; 
+            document.getElementById('review-item-price').innerText = "$" + selectedItemPrice.toFixed(2); 
+            toggleView('purchase-modal', true); 
         }
 
-        // عرض المعرف في نافذة تأكيد الفاتورة
-        document.getElementById('review-item-player-id').innerText = inputPlayerId; 
-        document.getElementById('review-item-delivery-type').innerText = `شحن مباشر`; 
-        toggleView('review-id-row', true);
-    } else { 
-        // تصفير بيانات الآيدي في حال كان المنتج بطاقة رقمية
-        inputPlayerId = "";
-        inputPlayerIdConfirm = "";
-        toggleView('review-id-row', false); 
-        document.getElementById('review-item-delivery-type').innerText = `تسليم الكود فوراً`; 
-    } 
-    
-    // إغلاق نافذة الإدخال وفتح نافذة الفاتورة النهائية
-    toggleView('account-inputs-modal', false); 
-    document.getElementById('review-item-name').innerText = selectedItemName; 
-    document.getElementById('review-item-price').innerText = "$" + selectedItemPrice.toFixed(2); 
-    toggleView('purchase-modal', true); 
-}
-        // ==========================================
-// وظائف نافذة تسليم الكود الرقمي
-// ==========================================
-let currentDeliveredCode = "";
-
-// 1. دالة فتح النافذة وعرض الكود واسم المنتج المخصص
-function showCodeDeliveryModal(code, itemName) {
-    currentDeliveredCode = code;
-    document.getElementById('delivered-code-text').innerText = code;
-    document.getElementById('delivery-item-name').innerText = itemName || "البطاقة الرقمية";
-    toggleView('code-delivery-modal', true);
-}
-
-// 2. دالة نسخ الكود إلى الحافظة عند الضغط على "نسخ الكود"
-function copyDeliveredCode() {
-    if (!currentDeliveredCode) return;
-    navigator.clipboard.writeText(currentDeliveredCode).then(() => {
-        showCustomAlert("تم نسخ كود البطاقة بنجاح!", false);
-    }).catch(() => {
-        showCustomAlert("تعذر النسخ، يمكنك نسخ الكود يدوياً.");
-    });
-}
-
-// 3. دالة فتح نافذة المشاركة (واتساب / تيليجرام) على أجهزة الموبايل
-async function shareDeliveredCode() {
-    if (!currentDeliveredCode) return;
-    const shareData = {
-        title: 'كود البطاقة الرقمية - SYPay',
-        text: `كود البطاقة الخاص بك: ${currentDeliveredCode}\nتم الشراء عبر تطبيق SYPay.`
-    };
-
-    if (navigator.share) {
-        try {
-            await navigator.share(shareData);
-        } catch (err) {
-            // لا تفعل شيئاً إذا قام المستخدم بإلغاء المشاركة
+        function backToSubStep1() {
+            toggleView('deposit-sub-step2', false);
+            toggleView('deposit-sub-step1', true);
         }
-    } else {
-        // إذا كان المتصفح لا يدعم زر المشاركة المباشرة (مثل بعض أجهزة الكمبيوتر)
-        copyDeliveredCode();
-        showCustomAlert("تم نسخ الكود لمشاركته (المتصفح لا يدعم المشاركة المباشرة).", false);
-    }
-}
+
+        // ========================================================================
+        // 6. تسليم ومشاركة الكود الرقمي
+        // ========================================================================
+        function showCodeDeliveryModal(code, itemName) {
+            currentDeliveredCode = code;
+            document.getElementById('delivered-code-text').innerText = code;
+            document.getElementById('delivery-item-name').innerText = itemName || "البطاقة الرقمية";
+            toggleView('code-delivery-modal', true);
+        }
+
+        function copyDeliveredCode() {
+            if (!currentDeliveredCode) return;
+            navigator.clipboard.writeText(currentDeliveredCode).then(() => {
+                showCustomAlert("تم نسخ كود البطاقة بنجاح!", false);
+            }).catch(() => {
+                showCustomAlert("تعذر النسخ، يمكنك نسخ الكود يدوياً.");
+            });
+        }
+
+        async function shareDeliveredCode() {
+            if (!currentDeliveredCode) return;
+            const shareData = {
+                title: 'كود البطاقة الرقمية - SYPay',
+                text: `كود البطاقة الخاص بك: ${currentDeliveredCode}\nتم الشراء عبر تطبيق SYPay.`
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                } catch (err) {}
+            } else {
+                copyDeliveredCode();
+                showCustomAlert("تم نسخ الكود لمشاركته.", false);
+            }
+        }
     </script>
 </body>
 </html>

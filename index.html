@@ -607,15 +607,39 @@
         }
 
         async function processSubWalletFetch() { 
-            const agent = document.getElementById('sub-agent-code').value.trim(), method = document.getElementById('sub-payment-method').value; 
-            if(!agent) return showCustomAlert("يرجى إدخال رمز الوكيل."); 
-            const { data: agentData } = await db.from('agents').select('*').eq('agent_code', agent).eq('payment_method', method).single();
-            if(agentData) { 
-                document.getElementById('sub-display-agent-name').innerText = agentData.agent_name; 
-                document.getElementById('sub-display-wallet-number').innerText = agentData.wallet_address; 
-                toggleView('deposit-sub-step1', false); toggleView('deposit-sub-step2', true); 
-            } else { showCustomAlert("رمز الوكيل غير مسجل."); } 
-        }
+    const agent = document.getElementById('sub-agent-code').value.trim();
+    const method = document.getElementById('sub-payment-method').value; 
+    const btn = document.getElementById('sub-deposit-step1-btn');
+    
+    if(!agent) return showCustomAlert("يرجى إدخال رمز الوكيل."); 
+    
+    btn.disabled = true;
+    btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري التحقق...`;
+
+    // استخدام maybeSingle لمنع انهيار الطلب برمز 406 إذا لم يتم العثور على الوكيل
+    const { data: agentData, error } = await db
+        .from('agents')
+        .select('*')
+        .eq('agent_code', agent)
+        .eq('payment_method', method)
+        .maybeSingle();
+        
+    btn.disabled = false;
+    btn.innerHTML = `<span>التحقق من حساب الوكيل</span><i class="ph ph-arrow-left font-bold"></i>`;
+
+    if (error) {
+        return showCustomAlert("حدث خطأ أثناء الاتصال بقاعدة البيانات.");
+    }
+
+    if (agentData) { 
+        document.getElementById('sub-display-agent-name').innerText = agentData.agent_name; 
+        document.getElementById('sub-display-wallet-number').innerText = agentData.wallet_address; 
+        toggleView('deposit-sub-step1', false); 
+        toggleView('deposit-sub-step2', true); 
+    } else { 
+        showCustomAlert("رمز الوكيل غير مسجل أو قناة الدفع غير مطابقة."); 
+    } 
+}
 
         async function submitSubFinalDeposit() { 
             const finalAmt = document.getElementById('sub-form-amount-select').value; 

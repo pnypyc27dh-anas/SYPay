@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="referrer" content="no-referrer">
     <title>SYPay - المحفظة الرقمية ومتجر الاشتراكات</title>
     
     <!-- Tailwind CSS -->
@@ -823,27 +824,64 @@ var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
         function renderNestedPlatformsView(categoryName) {
-            document.getElementById('store-title-text').innerHTML = `منصات: ${categoryName}`;
-            const innerList = document.getElementById('store-interactive-box'); innerList.innerHTML = `<div class="bg-white border rounded-[24px] p-2 divide-y text-right"></div>`;
-            const platforms = [...new Set(globalProductsRaw.filter(p => p.category === categoryName).map(p => p.platform))];
-            platforms.forEach(pName => {
-                const div = document.createElement('div'); div.className = "flex justify-between items-center py-4 px-5 cursor-pointer font-bold text-sm text-slate-800";
-                div.onclick = () => openPlansModal(pName, categoryName); div.innerHTML = `<span>${pName}</span><span class="text-blue-500 text-xs bg-blue-50 px-3 py-1.5 rounded-lg">عرض الباقات</span>`; 
-                innerList.querySelector('div').appendChild(div);
-            });
-        }
+    document.getElementById('store-title-text').innerHTML = `منصات: ${categoryName}`;
+    const backBtn = document.getElementById('store-nested-back-btn');
+    if (backBtn) backBtn.classList.remove('hidden');
+
+    const innerList = document.getElementById('store-interactive-box');
+    innerList.innerHTML = `<div class="bg-white border border-slate-100 rounded-[24px] p-2 divide-y divide-slate-100 text-right shadow-sm"></div>`;
+    
+    // استخراج أسماء المنصات الفريدة داخل التصنيف
+    const platforms = [...new Set(globalProductsRaw.filter(p => p.category === categoryName).map(p => p.platform))];
+    
+    platforms.forEach(pName => {
+        // استخراج رابط الأيقونة الخاص بهذه المنصة
+        const platformItem = globalProductsRaw.find(p => p.category === categoryName && p.platform === pName);
+        const iconUrl = platformItem && platformItem.image_url ? platformItem.image_url : '';
+
+        const div = document.createElement('div');
+        div.className = "flex justify-between items-center py-3.5 px-4 cursor-pointer hover:bg-slate-50 rounded-2xl transition";
+        div.onclick = () => openPlansModal(pName, categoryName);
+        
+        // رسم الأيقونة بجانب اسم اللعبة أو المنصة
+        div.innerHTML = `
+            <div class="flex items-center gap-3">
+                ${iconUrl ? `<img src="${iconUrl}" alt="${pName}" referrerpolicy="no-referrer" class="w-11 h-11 rounded-xl object-contain bg-slate-50 border border-slate-100 p-1 shadow-sm">` : `<div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">${pName[0]}</div>`}
+                <span class="font-bold text-sm text-slate-800">${pName}</span>
+            </div>
+            <span class="text-blue-500 text-xs bg-blue-50 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">عرض الباقات <i class="ph ph-caret-left"></i></span>
+        `;
+        innerList.querySelector('div').appendChild(div);
+    });
+}
 
         function openPlansModal(platformName, categoryName) { 
-            document.getElementById('plans-modal-title').innerText = `باقات منصة ${platformName}`; 
-            const container = document.getElementById('plans-container'); container.innerHTML = ""; 
-            const plans = globalProductsRaw.filter(p => p.category === categoryName && p.platform === platformName); 
-            plans.forEach(plan => { 
-                const card = document.createElement('div'); card.className = "bg-white border p-3 rounded-[24px] flex justify-between gap-3 text-right"; 
-                card.innerHTML = `<div class="flex flex-col"><span class="text-sm font-bold text-slate-800">${plan.package_name}</span><span class="text-[10px] text-slate-400 mt-1">${plan.type === 'CODE' ? 'تسليم فوري' : 'شحن مباشر'}</span></div><div class="flex flex-col items-end gap-2"><span class="text-base font-black text-blue-600 tabular-numeric">$${plan.price.toFixed(2)}</span><button onclick="openAccountInputsModal('${plan.id}', '${plan.package_name}', ${plan.price})" class="bg-slate-900 text-white text-[10px] font-bold px-4 py-2 rounded-xl w-full">شراء</button></div>`; 
-                container.appendChild(card); 
-            }); 
-            toggleView('plans-modal', true); 
-        }
+    document.getElementById('plans-modal-title').innerText = `باقات منصة ${platformName}`; 
+    const container = document.getElementById('plans-container'); 
+    container.innerHTML = ""; 
+    
+    const plans = globalProductsRaw.filter(p => p.category === categoryName && p.platform === platformName); 
+    
+    plans.forEach(plan => { 
+        const card = document.createElement('div'); 
+        card.className = "bg-white border border-slate-100 p-3.5 rounded-[22px] flex justify-between items-center gap-3 text-right shadow-sm"; 
+        card.innerHTML = `
+            <div class="flex items-center gap-3">
+                ${plan.image_url ? `<img src="${plan.image_url}" alt="${plan.package_name}" referrerpolicy="no-referrer" class="w-11 h-11 rounded-xl object-contain bg-slate-50 border border-slate-100 p-1 shrink-0">` : ''}
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold text-slate-800 leading-snug">${plan.package_name}</span>
+                    <span class="text-[10px] text-slate-400 mt-1">${plan.type === 'CODE' ? 'تسليم فوري (كود)' : 'شحن مباشر (ID)'}</span>
+                </div>
+            </div>
+            <div class="flex flex-col items-end gap-1.5 shrink-0">
+                <span class="text-sm font-black text-blue-600 tabular-numeric financial-amount">$${plan.price.toFixed(2)}</span>
+                <button onclick="openAccountInputsModal('${plan.id}', '${plan.package_name}', ${plan.price})" class="bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold px-3.5 py-1.5 rounded-xl transition">شراء</button>
+            </div>
+        `; 
+        container.appendChild(card); 
+    }); 
+    toggleView('plans-modal', true); 
+}
 
         function openAccountInputsModal(productId, fullName, price) { 
             selectedProductId = productId; selectedItemName = fullName; selectedItemPrice = price; 

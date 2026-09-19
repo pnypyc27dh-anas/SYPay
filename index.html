@@ -668,20 +668,43 @@ var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         // ========================================================================
         // 5. محرك الشراء الآمن (RPC) وشحن الرصيد
         // ========================================================================
-        async function executeSubscriptionPurchase() { 
-            if (currentWalletBalance < selectedItemPrice) return showCustomAlert("الرصيد غير كافٍ."); 
-            const btn = document.getElementById('confirm-purchase-btn'); btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري المعالجة...`; 
+        // ✅ الكود الجديد المحدّث:
+async function executeSubscriptionPurchase() { 
+    if (currentWalletBalance < selectedItemPrice) return showCustomAlert("الرصيد غير كافٍ."); 
+    const btn = document.getElementById('confirm-purchase-btn'); 
+    btn.disabled = true; 
+    btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري المعالجة...`; 
+    
+    try {
+        const { data: r, error } = await supabase.rpc('buy_product', {
+            p_user_id: currentUser.id, 
+            p_product_id: selectedProductId, 
+            p_player_id: inputPlayerId, 
+            p_player_id_confirm: inputPlayerIdConfirm
+        });
+        
+        if (error) throw error;
+
+        if (r && r.status === "success") { 
+            closeAllModals(); 
+            silentSyncData(); 
             
-            const { data: r, error } = await supabase.rpc('buy_product', {
-                p_user_id: currentUser.id, p_product_id: selectedProductId, p_player_id: inputPlayerId, p_player_id_confirm: inputPlayerIdConfirm
-            });
-            
-            if (r && r.status === "success") { 
-                showCustomAlert(r.mode === "CODE" ? `تم الاستلام بنجاح!` : "الطلب قيد التنفيذ.", false); 
-                closeAllModals(); silentSyncData(); 
-            } else { showCustomAlert("فشلت المعاملة: " + (r ? r.message : error.message)); }
-            btn.disabled = false; btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; 
+            if (r.mode === "CODE") {
+                // إظهار الكود المستلم فوراً للمشتري
+                alert(`🎉 مبروك! كود بطاقتك هو:\n\n${r.code}\n\n(تم حفظ الكود أيضاً في سجل معاملاتك)`);
+            } else {
+                showCustomAlert("تم رفع طلب الشحن بنجاح وهو قيد المعالجة.", false); 
+            }
+        } else { 
+            showCustomAlert("فشلت العملية: " + (r ? r.message : "حدث خطأ غير متوقع")); 
         }
+    } catch (err) {
+        showCustomAlert("خطأ: " + err.message);
+    } finally {
+        btn.disabled = false; 
+        btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; 
+    }
+}
 
         async function processSubWalletFetch() { 
             const agent = document.getElementById('sub-agent-code').value.trim(), method = document.getElementById('sub-payment-method').value, btn = document.getElementById('sub-deposit-step1-btn'); 

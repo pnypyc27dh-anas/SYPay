@@ -492,7 +492,7 @@
             if (session) { currentUser = session.user; postLoginSetup(); }
         });
 
-        async function handleLogin() {
+        window.handleLogin = async function handleLogin() {
     // جلب حقول البريد وكلمة المرور
     const emailInput = document.getElementById('login-email') || document.getElementById('email');
     const passwordInput = document.getElementById('login-password') || document.getElementById('password');
@@ -523,7 +523,7 @@
         console.error("Login error:", err);
         showCustomAlert("فشل تسجيل الدخول: " + (err.message || "تأكد من صحة البيانات"));
     }
-}
+};
         function postLoginSetup() {
             toggleView('login-screen', false); toggleView('dashboard-screen', true); toggleView('bottom-nav-bar', true);
             switchTab('home'); silentSyncData(); fetchStoreProductsDirectly();

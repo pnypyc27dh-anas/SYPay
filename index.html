@@ -695,16 +695,62 @@ var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
         async function submitSubFinalDeposit() { 
-            const finalAmt = isCustomAmountMode ? document.getElementById('sub-form-amount-input-free').value.trim() : document.getElementById('sub-form-amount-select').value; 
-            const txNum = document.getElementById('sub-form-tx-number').value.trim(), agent = document.getElementById('sub-agent-code').value.trim(), method = document.getElementById('sub-payment-method').value, btn = document.getElementById('sub-deposit-final-btn'); 
-            if(!finalAmt || !txNum) return showCustomAlert("البيانات الماليّة إجبارية."); 
-            btn.disabled = true; 
-            const { data: txRef } = await supabase.rpc('generate_ref', { prefix: 'TX-D' });
-            await supabase.from('deposit_orders').insert({ transaction_ref: txRef, user_id: currentUser.id, amount: parseFloat(finalAmt), payment_method: method, agent_code: agent, transfer_receipt_num: txNum });
-            await supabase.from('transactions').insert({ user_id: currentUser.id, transaction_type: 'شحن رصيد', details: 'طلب تمويل عبر الوكيل', amount: parseFloat(finalAmt), status: 'معلق', transaction_ref: txRef });
-            showCustomAlert("تم رفع الطلب بنجاح للتدقيق.", false); switchTab('home'); silentSyncData(); 
-            btn.disabled = false; 
+    const amtInput = document.getElementById('sub-form-amount-select');
+    const finalAmt = amtInput ? amtInput.value.trim() : "";
+    const txNum = document.getElementById('sub-form-tx-number').value.trim();
+    const agent = document.getElementById('sub-agent-code').value.trim();
+    const method = document.getElementById('sub-payment-method').value;
+    const btn = document.getElementById('sub-deposit-final-btn'); 
+
+    if(!finalAmt || !txNum) return showCustomAlert("البيانات الماليّة إجبارية."); 
+    
+    btn.disabled = true; 
+    btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري الإرسال...`;
+
+    try {
+        // 1. توليد رقم مرجعي (احتياطياً في حال عدم وجود دالة RPC في السيرفر)
+        let txRef = 'TX-D' + Math.floor(100000 + Math.random() * 900000);
+        const { data: rpcRef, error: rpcErr } = await supabase.rpc('generate_ref', { prefix: 'TX-D' });
+        if (!rpcErr && rpcRef) {
+            txRef = rpcRef;
         }
+
+        // 2. إدخال سجل طلب الإيداع
+        const { error: depError } = await supabase.from('deposit_orders').insert({ 
+            transaction_ref: txRef, 
+            user_id: currentUser.id, 
+            amount: parseFloat(finalAmt), 
+            payment_method: method, 
+            agent_code: agent, 
+            transfer_receipt_num: txNum 
+        });
+
+        if (depError) throw depError;
+
+        // 3. إدخال سجل الحركة في المعاملات
+        const { error: txError } = await supabase.from('transactions').insert({ 
+            user_id: currentUser.id, 
+            transaction_type: 'شحن رصيد', 
+            details: 'طلب تمويل عبر الوكيل', 
+            amount: parseFloat(finalAmt), 
+            status: 'معلق', 
+            transaction_ref: txRef 
+        });
+
+        if (txError) throw txError;
+
+        showCustomAlert("تم رفع الطلب بنجاح للتدقيق.", false); 
+        switchTab('home'); 
+        silentSyncData(); 
+
+    } catch (err) {
+        console.error("Supabase Insert Error:", err);
+        showCustomAlert("فشل الحفظ: " + (err.message || "خطأ في الصلاحيات أو قاعدة البيانات"));
+    } finally {
+        btn.disabled = false; 
+        btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد الشحن`;
+    }
+}
 
         // ========================================================================
         // 6. واجهة المستخدم والتنقل والتحكم

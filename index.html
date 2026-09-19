@@ -492,18 +492,39 @@
             if (session) { currentUser = session.user; postLoginSetup(); }
         });
 
-        // دوال المصادقة وتسجيل الدخول
-        async function handleLogin() { 
-            const email = document.getElementById('login-email').value.trim();
-            const pass = document.getElementById('login-password').value;
-            const btn = document.getElementById('login-btn'); 
-            if (!email || !pass) return showCustomAlert("يرجى إدخال البريد الإلكتروني وكلمة المرور."); 
-            btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري التحقق...`; 
-            
-            const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
-            if (error) { showCustomAlert("بيانات الدخول غير صحيحة."); btn.disabled = false; btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`; } 
-            else { currentUser = data.user; postLoginSetup(); }
-        }
+        async function handleLogin() {
+    // جلب حقول البريد الإلكتروني وكلمة المرور (مع احتمال اختلاف الـ ID بحسب تصميمك)
+    const emailInput = document.getElementById('login-email') || document.getElementById('email');
+    const passwordInput = document.getElementById('login-password') || document.getElementById('password');
+    
+    const email = emailInput ? emailInput.value.trim() : '';
+    const password = passwordInput ? passwordInput.value.trim() : '';
+    
+    if (!email || !password) {
+        return showCustomAlert("يرجى إدخال البريد الإلكتروني وكلمة المرور.");
+    }
+    
+    try {
+        // تنفيذ تسجيل الدخول عبر Supabase Auth
+        const { data, error } = await db.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+        
+        if (error) throw error;
+        
+        // حفظ المستخدم الحالي والانتقال للرئيسية
+        currentUser = data.user;
+        showCustomAlert("تم تسجيل الدخول بنجاح!", false);
+        
+        if (typeof switchTab === 'function') switchTab('home');
+        if (typeof silentSyncData === 'function') silentSyncData();
+        
+    } catch (err) {
+        console.error("Login error:", err);
+        showCustomAlert("فشل تسجيل الدخول: " + (err.message || "تأكد من صحة البيانات"));
+    }
+}
 
         function postLoginSetup() {
             toggleView('login-screen', false); toggleView('dashboard-screen', true); toggleView('bottom-nav-bar', true);

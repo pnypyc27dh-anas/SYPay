@@ -955,21 +955,6 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
             } catch(e) { 
                 console.error("فشل المزامنة مع متجر المنتجات:", e); 
             } 
-        }
-
-        async function syncData() { 
-            try { 
-                const response = await fetch(webAppUrl, { method: 'POST', body: JSON.stringify({ action: "sync_profile", email: currentUserEmail, token: currentUserToken }) }); 
-                const r = await response.json(); if (r.status === "success") populateDashboard(r);
-            } catch (err) {}  
-        } 
-
-        async function silentSyncData() { 
-            if (!currentUserEmail || !currentUserToken) return;
-            try { 
-                const response = await fetch(webAppUrl, { method: 'POST', body: JSON.stringify({ action: "sync_profile", email: currentUserEmail, token: currentUserToken }) }); 
-                const r = await response.json(); if (r.status === "success") populateDashboard(r);
-            } catch (err) {}
         } 
 
         function populateDashboard(data) { 
@@ -1284,24 +1269,6 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
             }
         } 
 
-        async function handleUpdateProfileView() { 
-            const fName = document.getElementById('prof-first-name').value.trim(); 
-            const lName = document.getElementById('prof-last-name').value.trim(); 
-            const phone = document.getElementById('prof-phone').value.trim(); 
-            const btn = document.getElementById('prof-update-btn'); 
-            if (!fName || !lName || !phone) return showCustomAlert("خطأ: يجب تعبئة كافة الحقول."); 
-            if (/[0-9!"';<>@#$%*?&]/.test(fName) || /[0-9!"';<>@#$%*?&]/.test(lName)) return showCustomAlert("خطأ: حقول الأسماء تقبل محارف نصية فقط."); 
-            if (!/^09\d{8}$/.test(phone)) return showCustomAlert("خطأ: تنسيق رقم الهاتف غير صالح."); 
-            btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> التحديث...`; 
-            try { 
-                const response = await fetch(webAppUrl, { method: 'POST', body: JSON.stringify({ action: "update_profile", email: currentUserEmail, token: currentUserToken, first_name: fName, last_name: lName, phone: phone }) }); 
-                const r = await response.json(); 
-                if(r.status === "success") { showCustomAlert("تم تعديل البيانات بنجاح.", false); silentSyncData(); switchTab('home'); } 
-                else { showCustomAlert(r.message); } 
-            } catch(e) { showCustomAlert("خطأ في الاتصال."); } 
-            finally { btn.disabled = false; btn.innerHTML = `<i class="ph-fill ph-floppy-disk text-lg"></i> حفظ وتحديث البيانات`; } 
-        }
-
         async function triggerDeleteAccountFlow() { 
             showCustomPrompt("تنبيه: سيتم تعطيل الحساب مع الاحتفاظ بسجل العمليات. أدخل كلمة المرور للتأكيد:", async function(confirmPassword) { 
                 const hashA = await sha256(confirmPassword); 
@@ -1412,6 +1379,74 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
             ['login-email', 'login-password'].forEach(id => document.getElementById(id).value = ""); 
             toggleSideMenu(false); closeAllModals(); toggleView('dashboard-screen', false); toggleView('bottom-nav-bar', false); toggleView('login-screen', true); 
         }
+        // 1. الدالة المسؤولة عن المزامنة الصامتة في الخلفية (تحديث الرصيد كل 30 ثانية)
+async function silentSyncData() { 
+    if (!currentUserEmail || !currentUserToken) return;
+    try { 
+        // استدعاء دالة المزامنة السريعة من Supabase
+        const { data: r, error } = await supabaseClient.rpc('sync_user_profile', {
+            p_email: currentUserEmail,
+            p_token: currentUserToken
+        });
+        
+        if (error) throw error;
+        
+        if (r.status === "success") {
+            populateDashboard(r);
+        } else {
+            // إذا الجلسة منتهية أو الحساب معطل، نقوم بإخراجه فوراً
+            handleLogout();
+        }
+    } catch (err) {
+        console.error("فشل المزامنة الصامتة", err);
+    }
+} 
+
+// 2. المزامنة اليدوية (نفس الصامتة ولكن للإجراءات المباشرة)
+async function syncData() { 
+    await silentSyncData();
+}
+
+// 3. الدالة المسؤولة عن حفظ تحديثات الملف الشخصي
+async function handleUpdateProfileView() { 
+    const fName = document.getElementById('prof-first-name').value.trim(); 
+    const lName = document.getElementById('prof-last-name').value.trim(); 
+    const phone = document.getElementById('prof-phone').value.trim(); 
+    const btn = document.getElementById('prof-update-btn'); 
+    
+    if (!fName || !lName || !phone) return showCustomAlert("خطأ: يجب تعبئة كافة الحقول."); 
+    if (/[0-9!"';<>@#$\%*?&]/.test(fName) \vert{}\vert{} /[0-9!"';<>@#$%*?&]/.test(lName)) return showCustomAlert("خطأ: حقول الأسماء تقبل حروفاً فقط."); 
+    if (!/^09\d{8}$/.test(phone)) return showCustomAlert("خطأ: تنسيق رقم الهاتف غير صالح."); 
+    
+    btn.disabled = true; 
+    btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري التحديث...`; 
+    
+    try { 
+        // الإرسال المباشر لـ Supabase بدلاً من شيتس
+        const { data: r, error } = await supabaseClient.rpc('update_user_profile', {
+            p_email: currentUserEmail,
+            p_token: currentUserToken,
+            p_first_name: fName,
+            p_last_name: lName,
+            p_phone: phone
+        });
+
+        if (error) throw error;
+
+        if(r.status === "success") { 
+            showCustomAlert("تم تعديل البيانات بنجاح.", false); 
+            silentSyncData(); // جلب البيانات الجديدة وتحديث الواجهة
+            switchTab('home'); 
+        } else { 
+            showCustomAlert(r.message); 
+        } 
+    } catch(e) { 
+        showCustomAlert("خطأ في الاتصال بقاعدة البيانات."); 
+    } finally { 
+        btn.disabled = false; 
+        btn.innerHTML = `<i class="ph-fill ph-floppy-disk text-lg"></i> حفظ وتحديث البيانات`; 
+    } 
+}
     </script>
 </body>
 </html>

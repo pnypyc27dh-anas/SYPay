@@ -764,12 +764,16 @@ var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         // ========================================================================
         // ✅ الكود الجديد المحدّث:
 async function executeSubscriptionPurchase() { 
-    if (currentWalletBalance < selectedItemPrice) return showCustomAlert("الرصيد غير كافٍ."); 
+    // 1. التحقق من كفاية الرصيد قبل إرسال الطلب
+    if (currentWalletBalance < selectedItemPrice) return showCustomAlert("الرصيد غير كافٍ لإتمام الشراء."); 
+    
+    // 2. تفعيل حالة التحميل على الزر لمنع الضغط المتكرر
     const btn = document.getElementById('confirm-purchase-btn'); 
     btn.disabled = true; 
     btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري المعالجة...`; 
     
     try {
+        // 3. استدعاء دالة الشراء في Supabase
         const { data: r, error } = await supabase.rpc('buy_product', {
             p_user_id: currentUser.id, 
             p_product_id: selectedProductId, 
@@ -779,27 +783,31 @@ async function executeSubscriptionPurchase() {
         
         if (error) throw error;
 
+        // 4. معالجة الرد عند النجاح
         if (r && r.status === "success") { 
             closeAllModals(); 
-            silentSyncData(); 
+            silentSyncData(); // تحديث الرصيد وقائمة المعاملات فوراً
             
             if (r.mode === "CODE") {
-                // إظهار الكود المستلم فوراً للمشتري
-showCodeDeliveryModal(r.code, selectedItemName);
+                // فتح نافذة تسليم الكود الفاخرة
+                showCodeDeliveryModal(r.code, selectedItemName);
             } else {
-                showCustomAlert("تم رفع طلب الشحن بنجاح وهو قيد المعالجة.", false); 
+                // نافذة تأكيد واضحة لمشتري شحن الـ ID
+                alert(`✅ تم استلام طلب الشحن بنجاح!\n\nالمنتج: ${selectedItemName}\nمعرف اللاعب (ID): ${inputPlayerId}\n\nطلبك قيد التنفيذ وسيصل لحسابك في اللعبة فوراً.`);
             }
         } else { 
+            // إظهار رسالة الخطأ القادمة من السيرفر
             showCustomAlert("فشلت العملية: " + (r ? r.message : "حدث خطأ غير متوقع")); 
         }
     } catch (err) {
-        showCustomAlert("خطأ: " + err.message);
+        console.error("Purchase Error:", err);
+        showCustomAlert("خطأ في الاتصال: " + err.message);
     } finally {
+        // إعادة الزر إلى حالته الطبيعية
         btn.disabled = false; 
         btn.innerHTML = `<i class="ph-fill ph-check-circle text-xl"></i> تأكيد ودفع`; 
     }
 }
-
         async function processSubWalletFetch() { 
             const agent = document.getElementById('sub-agent-code').value.trim(), method = document.getElementById('sub-payment-method').value, btn = document.getElementById('sub-deposit-step1-btn'); 
             if(!agent) return showCustomAlert("يرجى إدخال رمز الوكيل."); 

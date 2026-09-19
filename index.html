@@ -1052,10 +1052,10 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
             try { 
                 const hashA = await sha256(plainPassword); 
                 
-                const { data: r, error } = await supabaseClient.rpc('login_user', {
-                    p_email: email,
-                    p_hash_a: hashA
-                });
+                const { data: r, error } = await supabaseClient.rpc('auth_user_login', {
+    user_email: email,
+    user_hash: hashA
+});
 
                 if (error) throw error;
 

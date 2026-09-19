@@ -83,13 +83,11 @@
         .slide-up-modal { animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUpModal { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
         .hidden { display: none !important; }
-        .skeleton-line { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; }
-        @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between antialiased selection:bg-blue-200 selection:text-blue-900">
 
-    <!-- التنبيهات المخصصة -->
+    <!-- نافذة التنبيهات المخصصة -->
     <div id="custom-alert" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-[110] w-[90%] max-w-sm px-4 py-3.5 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.12)] border bg-white/95 flex items-center justify-between gap-3 slide-down backdrop-blur-xl">
         <div class="flex items-center gap-3 w-full">
             <div id="alert-icon-container" class="p-2 rounded-xl bg-red-50 text-red-600 shrink-0">
@@ -102,7 +100,7 @@
         </button>
     </div>
 
-    <!-- شاشة تسجيل الدخول -->
+    <!-- 1. شاشة تسجيل الدخول -->
     <div id="login-screen" class="flex-grow flex flex-col items-center justify-center p-6 fade-in relative">
         <div class="absolute top-10 left-10 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl mix-blend-multiply pointer-events-none"></div>
         <div class="absolute bottom-10 right-10 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl mix-blend-multiply pointer-events-none"></div>
@@ -152,7 +150,7 @@
         </div>
     </div>
 
-    <!-- الشاشة الرئيسية (Dashboard) -->
+    <!-- 2. الشاشة الرئيسية للوحة التحكم (Dashboard) -->
     <div id="dashboard-screen" class="hidden flex-col min-h-screen">
         <header class="bg-white/80 backdrop-blur-xl px-6 py-4 border-b border-slate-200/60 sticky top-0 z-30 flex justify-center shadow-sm">
             <div class="w-full max-w-5xl flex justify-between items-center">
@@ -223,18 +221,18 @@
                 </div>
             </div>
 
-            <!-- تبويب متجر المنتجات -->
+            <!-- تبويب المتجر -->
             <div id="view-store" class="hidden space-y-6 data-view fade-in md:max-w-4xl md:mx-auto w-full">
                 <div class="flex justify-between items-center bg-white px-5 py-4 rounded-2xl shadow-sm border border-slate-100">
                     <h3 id="store-title-text" class="text-sm md:text-base font-black text-slate-800 flex items-center gap-2"></h3>
                     <button id="store-nested-back-btn" onclick="renderMainCategoriesView()" class="hidden bg-slate-100 hover:bg-slate-200 text-[#005ba3] text-[11px] font-black px-3 py-2 rounded-xl transition flex items-center gap-1">
-                        <i class="ph ph-caret-right"></i> العودة
+                        <i class="ph ph-caret-right"></i> العودة للمجموعات
                     </button>
                 </div>
                 <div id="store-interactive-box" class="fade-in"></div>
             </div>
 
-            <!-- تبويب صفحة الإيداع -->
+            <!-- تبويب شحن الرصيد -->
             <div id="view-deposit" class="hidden space-y-5 data-view fade-in md:max-w-xl md:mx-auto w-full">
                 <div class="glass-panel p-6 md:p-8 space-y-6">
                     <div class="text-center space-y-1 mb-2">
@@ -242,7 +240,7 @@
                             <i class="ph-fill ph-wallet text-2xl"></i>
                         </div>
                         <h3 class="font-black text-lg text-slate-800">تمويل رصيد المحفظة</h3>
-                        <p class="text-[11px] text-slate-500 font-medium">قم بإيداع الأموال عبر وكلاء معتمدين.</p>
+                        <p class="text-[11px] text-slate-500 font-medium">قم بإيداع الأموال عبر وكلاء معتمدين في منطقتك.</p>
                     </div>
 
                     <div id="deposit-sub-step1" class="space-y-5 pt-2">
@@ -290,13 +288,13 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold text-slate-600 mb-2">رقم الإشعار (الرقم المرجعي)</label>
-                                <input id="sub-form-tx-number" type="number" placeholder="أدخل رقم عملية التحويل بدقة" class="input-field w-full px-4 py-3.5 text-sm">
+                                <label class="block text-[11px] font-bold text-slate-600 mb-2">رقم الإشعار (الرقم المرجعي للتحويل)</label>
+                                <input id="sub-form-tx-number" type="number" placeholder="أدخل رقم إشعار التحويل بدقة" class="input-field w-full px-4 py-3.5 text-sm">
                             </div>
                         </div>
                         <div class="flex gap-3 pt-2">
                             <button id="sub-deposit-final-btn" onclick="submitSubFinalDeposit()" class="w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl text-xs transition shadow-md flex justify-center items-center gap-1.5">
-                                <i class="ph-fill ph-check-circle text-lg"></i> تأكيد الشحن
+                                <i class="ph-fill ph-check-circle text-lg"></i> تأكيد طلب الشحن
                             </button>
                             <button onclick="backToSubStep1()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-4 rounded-xl text-xs transition">رجوع</button>
                         </div>
@@ -304,7 +302,7 @@
                 </div>
             </div>
 
-            <!-- تبويب الملف الشخصي -->
+            <!-- تبويب الحساب الشخصي -->
             <div id="view-profile" class="hidden space-y-5 data-view fade-in md:max-w-xl md:mx-auto w-full">
                 <div class="glass-panel p-6 md:p-8 space-y-6 text-right">
                     <div class="text-center space-y-1 mb-4">
@@ -315,7 +313,7 @@
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1.5">الاسم والكنية</label>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1.5">الاسم الثلاثي أو المستعار</label>
                             <input id="prof-full-name" type="text" class="input-field w-full px-4 py-3 text-sm">
                         </div>
                         <div>
@@ -339,7 +337,7 @@
         </main>
     </div>
 
-    <!-- شريط التنقل السفلي -->
+    <!-- شريط التنقل السفلي المخصص للموبايل -->
     <div id="bottom-nav-bar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[380px] md:max-w-md bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] z-[60] flex justify-around items-center p-2 transition-all duration-300">
         <button id="nav-btn-home" onclick="switchTab('home')" class="flex flex-col items-center gap-1 text-blue-600 bg-blue-50 focus:outline-none transition-all flex-1 py-2.5 rounded-2xl">
             <i class="ph-fill ph-house text-2xl"></i><span class="text-[9px] font-black tracking-wide">الرئيسية</span>
@@ -355,7 +353,7 @@
         </button>
     </div>
 
-    <!-- القائمة الجانبية -->
+    <!-- القائمة الجانبية السريعة -->
     <div id="side-menu-overlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[80] transition-opacity" onclick="toggleSideMenu(false)"></div>
     <div id="side-menu-panel" class="fixed top-0 right-0 h-full w-72 bg-white z-[85] shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out text-right">
         <div class="space-y-6">
@@ -396,6 +394,8 @@
             </button>
         </div>
     </div>
+
+    <!-- 3. النوافذ المنبثقة (Modals) -->
 
     <!-- نافذة استعراض الباقات -->
     <div id="plans-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[90]">
@@ -535,7 +535,7 @@
         </div>
     </div>
 
-    <!-- نافذة إنشاء الحساب الموحدة النظيفة -->
+    <!-- نافذة إنشاء حساب جديد -->
     <div id="register-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-4 z-[95]"> 
         <div class="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl relative text-right border border-slate-100" onclick="event.stopPropagation()"> 
             <div class="flex justify-between items-center pb-4 mb-4 border-b border-slate-100">
@@ -602,11 +602,11 @@
         </div>
     </div>
 
-    
-<script>
-        // ========================================================================
-        // 1. دوال الواجهة الأساسية (تعمل أولاً وتضمن عدم تجمد الأزرار نهائياً)
-        // ========================================================================
+    <!-- ======================================================================== -->
+    <!-- السكربت البرمجي الكامل والمحصن -->
+    <!-- ======================================================================== -->
+    <script>
+        // --- 1. دوال الواجهة الأساسية (تعريف مبكر لتجنب ReferenceError) ---
         function toggleView(id, show) { 
             const el = document.getElementById(id); 
             if (el) el.classList.toggle('hidden', !show); 
@@ -631,9 +631,62 @@
             toggleView('forgot-password-modal', true);
         }
 
-        // ========================================================================
-        // 2. تهيئة عميل Supabase الآمنة (Crash-Proof)
-        // ========================================================================
+        function toggleSideMenu(open) {
+            const overlay = document.getElementById('side-menu-overlay');
+            const panel = document.getElementById('side-menu-panel');
+            if (!overlay || !panel) return;
+
+            if (open) {
+                overlay.classList.remove('hidden');
+                setTimeout(() => panel.classList.remove('translate-x-full'), 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function showCustomAlert(text, isErr = true) {
+            const alertText = document.getElementById('custom-alert-text');
+            const iconContainer = document.getElementById('alert-icon-container');
+            const icon = document.getElementById('alert-icon');
+            
+            if (alertText) alertText.innerText = text;
+            if (iconContainer && icon) {
+                if (isErr) {
+                    iconContainer.className = "p-2 rounded-xl bg-red-50 text-red-600 shrink-0";
+                    icon.className = "ph-fill ph-warning text-lg";
+                } else {
+                    iconContainer.className = "p-2 rounded-xl bg-emerald-50 text-emerald-600 shrink-0";
+                    icon.className = "ph-fill ph-check-circle text-lg";
+                }
+            }
+            toggleView('custom-alert', true); 
+            setTimeout(() => toggleView('custom-alert', false), 5000);
+        }
+
+        function closeCustomAlert() { toggleView('custom-alert', false); }
+
+        function copyToClipboard(text) { 
+            navigator.clipboard.writeText(text).then(() => showCustomAlert("تم النسخ للحافظة بنجاح.", false)); 
+        }
+
+        function togglePasswordVisibility(fieldId, btn) {
+            const field = document.getElementById(fieldId);
+            const openIcon = btn.querySelector('.eye-open');
+            const closedIcon = btn.querySelector('.eye-closed');
+            if (!field) return;
+            if (field.type === "password") {
+                field.type = "text";
+                if (openIcon) openIcon.classList.add('hidden');
+                if (closedIcon) closedIcon.classList.remove('hidden');
+            } else {
+                field.type = "password";
+                if (closedIcon) closedIcon.classList.add('hidden');
+                if (openIcon) openIcon.classList.remove('hidden');
+            }
+        }
+
+        // --- 2. إعداد عميل Supabase والمتغيرات العامة ---
         const SUPABASE_URL = 'https://baytojjldklocifridcm.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJheXRvampsZGtsb2NpZnJpZGNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTU3MzMsImV4cCI6MjEwNTM5MTczM30.tAN7Qah-3VNwatn2CwgqsyphnkQQjagnKf4pR4WiSwQ';
 
@@ -641,7 +694,7 @@
         if (window.supabase && window.supabase.createClient) {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         } else {
-            console.error("تنبيه: تعذر تحميل مكتبة Supabase من الرابط الخارجي CDN.");
+            console.error("Supabase CDN not ready yet.");
         }
 
         let currentUser = null;
@@ -659,31 +712,77 @@
         let globalTransactionsRaw = [];
         let currentDeliveredCode = "";
 
-        // فحص الجلسة والاستماع للتغييرات بشرط جاهزية العميل
+        // التحقق من الجلسة والاستماع لتأكيد الرابط
         if (supabase) {
-            supabase.auth.getSession().then(({ data }) => {
-                if (data && data.session && data.session.user) {
-                    currentUser = data.session.user;
+            supabase.auth.getSession().then(({ data: { session } }) => {
+                if (session && session.user) {
+                    currentUser = session.user;
                     postLoginSetup();
                 }
             });
 
             supabase.auth.onAuthStateChange(async (event, session) => {
-                if (event === 'SIGNED_IN' && session) {
+                if (event === 'SIGNED_IN' && session && session.user) {
                     currentUser = session.user;
                     postLoginSetup();
                 }
             });
         }
-        function openRegisterModal() {
-            ['reg-name', 'reg-email', 'reg-phone', 'reg-pass', 'reg-pass-confirm'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = "";
-            });
-            toggleView('register-modal', true);
+
+        function postLoginSetup() {
+            toggleView('login-screen', false);
+            toggleView('dashboard-screen', true);
+            toggleView('bottom-nav-bar', true);
+            closeAllModals();
+            switchTab('home');
+            silentSyncData();
+            fetchStoreProductsDirectly();
+            if (!syncInterval) syncInterval = setInterval(silentSyncData, 30000);
+        }
+
+        // --- 3. دوال المصادقة والحسابات ---
+        async function handleLogin() {
+            if (!supabase) return showCustomAlert("جاري الاتصال بالخادم، يرجى الانتظار...");
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const btn = document.getElementById('login-btn');
+
+            if (!email || !password) {
+                return showCustomAlert("يرجى إدخال البريد الإلكتروني وكلمة المرور.");
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري التحقق...`;
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    if (error.message.toLowerCase().includes("email not confirmed")) {
+                        return showCustomAlert("يرجى تفعيل حسابك أولاً عبر الرابط المرسل لبريدك الإلكتروني.");
+                    }
+                    if (error.message.toLowerCase().includes("invalid login credentials")) {
+                        return showCustomAlert("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+                    }
+                    return showCustomAlert("فشل تسجيل الدخول: " + error.message);
+                }
+
+                currentUser = data.user;
+                postLoginSetup();
+
+            } catch (err) {
+                showCustomAlert("خطأ في الاتصال: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`;
+            }
         }
 
         async function executeRegisterFlow() {
+            if (!supabase) return showCustomAlert("جاري الاتصال بالخادم، يرجى الانتظار...");
             const name = document.getElementById('reg-name').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const phone = document.getElementById('reg-phone').value.trim();
@@ -741,13 +840,8 @@
             }
         }
 
-        function openForgotPasswordModal() {
-            const input = document.getElementById('forgot-email');
-            if (input) input.value = document.getElementById('login-email').value.trim() || "";
-            toggleView('forgot-password-modal', true);
-        }
-
         async function handleForgotPasswordSubmit() {
+            if (!supabase) return;
             const email = document.getElementById('forgot-email').value.trim();
             const btn = document.getElementById('forgot-btn');
             if (!email) return showCustomAlert("يرجى إدخال البريد الإلكتروني أولاً.");
@@ -771,7 +865,7 @@
 
         async function handleLogout() { 
             if (syncInterval) { clearInterval(syncInterval); syncInterval = null; } 
-            await supabase.auth.signOut(); 
+            if (supabase) await supabase.auth.signOut(); 
             currentUser = null; 
             ['login-email', 'login-password'].forEach(id => {
                 const el = document.getElementById(id);
@@ -783,11 +877,9 @@
             toggleView('login-screen', true); 
         }
 
-        // ========================================================================
-        // 3. جلب ومزامنة البيانات (Profiles & Transactions)
-        // ========================================================================
+        // --- 4. جلب وتحديث البيانات ---
         async function silentSyncData() { 
-            if (!currentUser) return;
+            if (!currentUser || !supabase) return;
 
             const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
             if (profile) {
@@ -830,6 +922,7 @@
         } 
 
         async function fetchStoreProductsDirectly() { 
+            if (!supabase) return;
             const { data: prods } = await supabase.from('products').select('*').eq('status', 'نشط');
             if (prods) {
                 globalProductsRaw = prods.map(p => ({
@@ -844,10 +937,9 @@
             }
         }
 
-        // ========================================================================
-        // 4. محرك الشراء الآمن (RPC) وشحن الرصيد
-        // ========================================================================
+        // --- 5. الشراء والإيداع ---
         async function executeSubscriptionPurchase() { 
+            if (!supabase) return;
             if (currentWalletBalance < selectedItemPrice) return showCustomAlert("الرصيد غير كافٍ لإتمام الشراء."); 
             
             const btn = document.getElementById('confirm-purchase-btn'); 
@@ -886,6 +978,7 @@
         }
 
         async function processSubWalletFetch() { 
+            if (!supabase) return;
             const agent = document.getElementById('sub-agent-code').value.trim();
             const method = document.getElementById('sub-payment-method').value;
             const btn = document.getElementById('sub-deposit-step1-btn'); 
@@ -911,6 +1004,7 @@
         }
 
         async function submitSubFinalDeposit() { 
+            if (!supabase) return;
             const amtInput = document.getElementById('sub-form-amount-select');
             const finalAmt = amtInput ? amtInput.value.trim() : "";
             const txNum = document.getElementById('sub-form-tx-number').value.trim();
@@ -965,32 +1059,12 @@
             }
         }
 
-        // ========================================================================
-        // 5. واجهة المستخدم والتنقل
-        // ========================================================================
-        function toggleView(id, show) { 
-            const el = document.getElementById(id); 
-            if (el) el.classList.toggle('hidden', !show); 
+        function backToSubStep1() {
+            toggleView('deposit-sub-step2', false);
+            toggleView('deposit-sub-step1', true);
         }
 
-        function closeAllModals() { 
-            ['register-modal', 'forgot-password-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'code-delivery-modal'].forEach(id => toggleView(id, false)); 
-        }
-
-        function toggleSideMenu(open) {
-            const overlay = document.getElementById('side-menu-overlay');
-            const panel = document.getElementById('side-menu-panel');
-            if (!overlay || !panel) return;
-
-            if (open) {
-                overlay.classList.remove('hidden');
-                setTimeout(() => panel.classList.remove('translate-x-full'), 10);
-            } else {
-                panel.classList.add('translate-x-full');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
-        }
-
+        // --- 6. واجهة المستخدم وعرض البيانات ---
         function switchTab(tab) {
             closeAllModals(); 
             toggleSideMenu(false); 
@@ -1012,30 +1086,6 @@
 
             if (tab === 'store') renderMainCategoriesView();
         }
-        
-        function showCustomAlert(text, isErr = true) {
-            const alertText = document.getElementById('custom-alert-text');
-            const iconContainer = document.getElementById('alert-icon-container');
-            const icon = document.getElementById('alert-icon');
-            
-            if (alertText) alertText.innerText = text;
-            if (iconContainer && icon) {
-                if (isErr) {
-                    iconContainer.className = "p-2 rounded-xl bg-red-50 text-red-600 shrink-0";
-                    icon.className = "ph-fill ph-warning text-lg";
-                } else {
-                    iconContainer.className = "p-2 rounded-xl bg-emerald-50 text-emerald-600 shrink-0";
-                    icon.className = "ph-fill ph-check-circle text-lg";
-                }
-            }
-            toggleView('custom-alert', true); 
-            setTimeout(() => toggleView('custom-alert', false), 5000);
-        }
-        function closeCustomAlert() { toggleView('custom-alert', false); }
-        
-        function copyToClipboard(text) { 
-            navigator.clipboard.writeText(text).then(() => showCustomAlert("تم النسخ للحافظة بنجاح.", false)); 
-        }
 
         function toggleCardVisibility() { 
             isCardVisible = !isCardVisible; 
@@ -1047,6 +1097,7 @@
                 closedEye.style.display = isCardVisible ? "none" : "inline-block";
             }
         }
+
         function resetCardVisibility() { 
             isCardVisible = false; 
             document.getElementById('live-card-number').innerText = "•••• •••• •••• " + lastFourDigits;
@@ -1055,22 +1106,6 @@
             if (openEye && closedEye) {
                 openEye.style.display = "none";
                 closedEye.style.display = "inline-block";
-            }
-        }
-
-        function togglePasswordVisibility(fieldId, btn) {
-            const field = document.getElementById(fieldId);
-            const openIcon = btn.querySelector('.eye-open');
-            const closedIcon = btn.querySelector('.eye-closed');
-            if (!field) return;
-            if (field.type === "password") {
-                field.type = "text";
-                if (openIcon) openIcon.classList.add('hidden');
-                if (closedIcon) closedIcon.classList.remove('hidden');
-            } else {
-                field.type = "password";
-                if (closedIcon) closedIcon.classList.add('hidden');
-                if (openIcon) openIcon.classList.remove('hidden');
             }
         }
 
@@ -1097,6 +1132,7 @@
             }
         }
 
+        // عرض سجل العمليات: بدون زر نسخ لطلبات الـ ID ومعه زر نسخ للأكواد
         function renderRecentDashboardTransactions(txArray) {
             const container = document.getElementById('dashboard-recent-tx');
             if (!container) return;
@@ -1112,7 +1148,7 @@
                             : tx.status === "مرفوض" ? "bg-red-50 text-red-600 border-red-100" 
                             : "bg-amber-50 text-amber-600 border-amber-100";
 
-                const isCodeCard = tx.type === "شراء بطاقة" && tx.serial_code;
+                const isCodeCard = tx.type === "شراء بطاقة" && tx.serial_code && tx.serial_code !== "-";
 
                 const codeBlockHtml = isCodeCard ? `
                     <div class="mt-2.5 p-2 px-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] flex items-center justify-between border border-slate-800" dir="ltr">
@@ -1257,14 +1293,6 @@
             toggleView('purchase-modal', true); 
         }
 
-        function backToSubStep1() {
-            toggleView('deposit-sub-step2', false);
-            toggleView('deposit-sub-step1', true);
-        }
-
-        // ========================================================================
-        // 6. تسليم ومشاركة الكود الرقمي
-        // ========================================================================
         function showCodeDeliveryModal(code, itemName) {
             currentDeliveredCode = code;
             document.getElementById('delivered-code-text').innerText = code;

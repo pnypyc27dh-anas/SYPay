@@ -642,14 +642,74 @@
 }
 
         async function submitSubFinalDeposit() { 
-            const finalAmt = document.getElementById('sub-form-amount-select').value; 
-            const txNum = document.getElementById('sub-form-tx-number').value.trim(), agent = document.getElementById('sub-agent-code').value.trim(), method = document.getElementById('sub-payment-method').value; 
-            if(!finalAmt || !txNum) return showCustomAlert("البيانات الماليّة إجبارية."); 
-            const { data: txRef } = await db.rpc('generate_ref', { prefix: 'TX-D' });
-            await db.from('deposit_orders').insert({ transaction_ref: txRef, user_id: currentUser.id, amount: parseFloat(finalAmt), payment_method: method, agent_code: agent, transfer_receipt_num: txNum });
-            await db.from('transactions').insert({ user_id: currentUser.id, transaction_type: 'شحن رصيد', details: 'طلب تمويل عبر الوكيل', amount: parseFloat(finalAmt), status: 'معلق', transaction_ref: txRef });
-            showCustomAlert("تم رفع الطلب بنجاح للتدقيق.", false); switchTab('home'); silentSyncData(); 
+    // البحث عن حقل المبلغ بأكثر من احتمال لتجنب الخطأ
+    const amountInput = document.getElementById('sub-form-amount-select') || 
+                        document.getElementById('sub-amount') || 
+                        document.getElementById('deposit-amount');
+                        
+    const finalAmt = amountInput ? amountInput.value : "10"; // قيمة افتراضية 10 إن لم يوجد حقل
+    
+    const txNumElem = document.getElementById('sub-form-tx-number');
+    const agentElem = document.getElementById('sub-agent-code');
+    const methodElem = document.getElementById('sub-payment-method');
+
+    const txNum = txNumElem ? txNumElem.value.trim() : ""; 
+    const agent = agentElem ? agentElem.value.trim() : ""; 
+    const method = methodElem ? methodElem.value : ""; 
+    
+    if(!txNum) {
+        return showCustomAlert("يرجى إدخال رقم إشعار التحويل بدقة."); 
+    }
+    
+    const btn = document.getElementById('sub-deposit-final-btn');
+    if(btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري الإرسال...`;
+    }
+
+    try {
+        // توليد المرجع المالي
+        const { data: txRef, error: refError } = await db.rpc('generate_ref', { prefix: 'TX-D' });
+        const referenceCode = txRef || ('TX-D-' + Date.now());
+
+        // تسجيل طلب الإيداع
+        const { error: depositError } = await db.from('deposit_orders').insert({ 
+            transaction_ref: referenceCode, 
+            user_id: currentUser.id, 
+            amount: parseFloat(finalAmt) || 10, 
+            payment_method: method, 
+            agent_code: agent, 
+            transfer_receipt_num: txNum 
+        });
+
+        if (depositError) throw depositError;
+
+        // تسجيل الحركة في سجل المعاملات العام
+        const { error: txError } = await db.from('transactions').insert({ 
+            user_id: currentUser.id, 
+            transaction_type: 'شحن رصيد', 
+            details: 'طلب تمويل عبر الوكيل (' + agent + ')', 
+            amount: parseFloat(finalAmt) || 10, 
+            status: 'معلق', 
+            transaction_ref: referenceCode 
+        });
+
+        if (txError) throw txError;
+
+        showCustomAlert("تم رفع طلب الشحن بنجاح للتدقيق.", false); 
+        if (typeof switchTab === 'function') switchTab('home'); 
+        if (typeof silentSyncData === 'function') silentSyncData(); 
+
+    } catch (err) {
+        console.error("Deposit submission error:", err);
+        showCustomAlert("فشل إرسال الطلب: " + (err.message || "خطأ غير معروف"));
+    } finally {
+        if(btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد الشحن`;
         }
+    }
+}
 
         // واجهة المستخدم العامة
         function toggleView(id, show) { const el = document.getElementById(id); if(el) el.classList.toggle('hidden', !show); }

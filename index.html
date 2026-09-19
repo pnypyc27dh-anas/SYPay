@@ -514,10 +514,9 @@
         // 1. ضع معلومات ربط قاعدة البيانات الخاصة بك هنا:
         // ========================================================================
         const SUPABASE_URL = 'https://baytojjldklocifridcm.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJheXRvampsZGtsb2NpZnJpZGNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTU3MzMsImV4cCI6MjEwNTM5MTczM30.tAN7Qah-3VNwatn2CwgqsyphnkQQjagnKf4pR4WiSwQ'; // استبدل بمفتاح anon
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJheXRvampsZGtsb2NpZnJpZGNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTU3MzMsImV4cCI6MjEwNTM5MTczM30.tAN7Qah-3VNwatn2CwgqsyphnkQQjagnKf4pR4WiSwQ';
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let currentUser = null, syncInterval = null, currentWalletBalance = 0.00;
         let rawCardNumber = "", lastFourDigits = "", isCardVisible = false, isCustomAmountMode = false;
         let selectedProductId = "", selectedItemName = "", selectedItemPrice = 0.00, inputPlayerId = "", inputPlayerIdConfirm = "";

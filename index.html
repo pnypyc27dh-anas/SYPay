@@ -738,7 +738,7 @@ async function executeSubscriptionPurchase() {
             
             if (r.mode === "CODE") {
                 // إظهار الكود المستلم فوراً للمشتري
-                alert(`🎉 مبروك! كود بطاقتك هو:\n\n${r.code}\n\n(تم حفظ الكود أيضاً في سجل معاملاتك)`);
+showCodeDeliveryModal(r.code, selectedItemName);
             } else {
                 showCustomAlert("تم رفع طلب الشحن بنجاح وهو قيد المعالجة.", false); 
             }
@@ -827,7 +827,7 @@ async function executeSubscriptionPurchase() {
         // 6. واجهة المستخدم والتنقل والتحكم
         // ========================================================================
         function toggleView(id, show) { const el = document.getElementById(id); if(el) el.classList.toggle('hidden', !show); }
-        function closeAllModals() { ['register-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal'].forEach(id => toggleView(id, false)); }
+        function closeAllModals() { ['register-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'code-delivery-modal'].forEach(id => toggleView(id, false)); }
         function toggleSideMenu(open) {
             const overlay = document.getElementById('side-menu-overlay'), panel = document.getElementById('side-menu-panel');
             if(open) { overlay.classList.remove('hidden'); setTimeout(() => panel?.classList.remove('-translate-x-full'), 10); } 
@@ -967,6 +967,49 @@ async function executeSubscriptionPurchase() {
             } else { toggleView('review-id-row', false); document.getElementById('review-item-delivery-type').innerText = `تسليم الكود فوراً`; } 
             toggleView('account-inputs-modal', false); document.getElementById('review-item-name').innerText = selectedItemName; document.getElementById('review-item-price').innerText = "$" + selectedItemPrice.toFixed(2); toggleView('purchase-modal', true); 
         }
+        // ==========================================
+// وظائف نافذة تسليم الكود الرقمي
+// ==========================================
+let currentDeliveredCode = "";
+
+// 1. دالة فتح النافذة وعرض الكود واسم المنتج المخصص
+function showCodeDeliveryModal(code, itemName) {
+    currentDeliveredCode = code;
+    document.getElementById('delivered-code-text').innerText = code;
+    document.getElementById('delivery-item-name').innerText = itemName || "البطاقة الرقمية";
+    toggleView('code-delivery-modal', true);
+}
+
+// 2. دالة نسخ الكود إلى الحافظة عند الضغط على "نسخ الكود"
+function copyDeliveredCode() {
+    if (!currentDeliveredCode) return;
+    navigator.clipboard.writeText(currentDeliveredCode).then(() => {
+        showCustomAlert("تم نسخ كود البطاقة بنجاح!", false);
+    }).catch(() => {
+        showCustomAlert("تعذر النسخ، يمكنك نسخ الكود يدوياً.");
+    });
+}
+
+// 3. دالة فتح نافذة المشاركة (واتساب / تيليجرام) على أجهزة الموبايل
+async function shareDeliveredCode() {
+    if (!currentDeliveredCode) return;
+    const shareData = {
+        title: 'كود البطاقة الرقمية - SYPay',
+        text: `كود البطاقة الخاص بك: ${currentDeliveredCode}\nتم الشراء عبر تطبيق SYPay.`
+    };
+
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+        } catch (err) {
+            // لا تفعل شيئاً إذا قام المستخدم بإلغاء المشاركة
+        }
+    } else {
+        // إذا كان المتصفح لا يدعم زر المشاركة المباشرة (مثل بعض أجهزة الكمبيوتر)
+        copyDeliveredCode();
+        showCustomAlert("تم نسخ الكود لمشاركته (المتصفح لا يدعم المشاركة المباشرة).", false);
+    }
+}
     </script>
 </body>
 </html>

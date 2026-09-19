@@ -514,7 +514,7 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJheXRvampsZGtsb2NpZnJpZGNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTU3MzMsImV4cCI6MjEwNTM5MTczM30.tAN7Qah-3VNwatn2CwgqsyphnkQQjagnKf4pR4WiSwQ'; // استبدل بمفتاح الـ anon
 
         // تهيئة الكائن العام بأمان تام
-        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const supabase = window.supabaseClient;
 
         let currentUser = null, syncInterval = null, currentWalletBalance = 0.00;

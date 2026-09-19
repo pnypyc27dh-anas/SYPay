@@ -523,92 +523,48 @@
         </div>
     </div>
 </div>
-    <!-- نافذة التسجيل -->
-    <div id="register-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[90]">
-        <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[28px] p-6 shadow-2xl relative text-right slide-up-modal">
-            <div class="flex justify-between pb-4 border-b border-slate-100 mb-5 items-center">
-                <h3 id="register-modal-title" class="font-black text-slate-800 text-lg">فتح حساب جديد</h3>
-                <button onclick="toggleView('register-modal', false)" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full"><i class="ph ph-x font-bold"></i></button>
+  <!-- نافذة فتح حساب جديد الموحدة -->
+<div id="register-modal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end sm:items-center justify-center p-4 z-[90]"> 
+    <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[24px] p-6 shadow-2xl relative text-right" onclick="event.stopPropagation()"> 
+        <div class="flex justify-between pb-3 mb-4 border-b">
+            <h3 class="font-bold text-slate-800 text-sm">فتح حساب جديد</h3>
+            <button onclick="toggleView('register-modal', false)" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
+        </div> 
+        
+        <div class="space-y-3"> 
+            <div class="grid grid-cols-2 gap-2.5"> 
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1">الاسم الأول</label>
+                    <input id="reg-first-name" type="text" placeholder="الاسم الأول" class="w-full rounded-xl px-3 py-2.5 text-xs">
+                </div> 
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1">اسم العائلة</label>
+                    <input id="reg-last-name" type="text" placeholder="اسم العائلة" class="w-full rounded-xl px-3 py-2.5 text-xs">
+                </div> 
+            </div> 
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">البريد الإلكتروني</label>
+                <input id="reg-email" type="email" placeholder="name@example.com" class="w-full rounded-xl px-3 py-2.5 text-xs">
+            </div> 
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">رقم الهاتف</label>
+                <input id="reg-phone" type="tel" placeholder="09xxxxxxxx" class="w-full rounded-xl px-3 py-2.5 text-xs">
+            </div> 
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">كلمة المرور</label>
+                <input id="reg-password" type="password" placeholder="••••••••" class="w-full rounded-xl px-3 py-2.5 text-xs">
             </div>
-            
-            <div id="register-step-form" class="space-y-4">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 mb-1.5">الاسم الأول</label>
-                        <input id="reg-first-name" type="text" class="input-field w-full px-4 py-3 text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 mb-1.5">اسم العائلة</label>
-                        <input id="reg-last-name" type="text" class="input-field w-full px-4 py-3 text-xs">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 mb-1.5">البريد الإلكتروني</label>
-                    <input id="reg-email" type="email" class="input-field w-full px-4 py-3.5 text-sm" dir="ltr">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 mb-1.5">رقم الجوال</label>
-                    <input id="reg-phone" type="tel" class="input-field w-full px-4 py-3.5 text-sm tracking-widest text-left" dir="ltr">
-                </div>
-                <button onclick="submitRegistration()" class="w-full btn-primary text-white font-bold py-4 rounded-xl text-sm mt-2 flex justify-center items-center gap-2">
-                    المتابعة <i class="ph ph-arrow-left"></i>
-                </button>
-            </div>
-            
-            <div id="register-step-password" class="hidden space-y-4">
-                <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100 text-[11px] text-amber-800 leading-relaxed font-bold flex gap-3 items-start">
-                    <i class="ph-fill ph-warning-circle text-amber-500 text-lg shrink-0 mt-0.5"></i>
-                    <p>شروط الأمان: 8 خانات كحد أدنى.</p>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 mb-1.5">كلمة المرور الجديدة</label>
-                    <div class="relative">
-                        <i class="ph ph-lock-key absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
-                        <input id="reg-new-pin" type="password" class="input-field w-full pr-12 pl-12 py-3.5 text-sm" dir="ltr">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 mb-1.5">تأكيد كلمة المرور</label>
-                    <div class="relative">
-                        <i class="ph ph-lock-key absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
-                        <input id="reg-confirm-pin" type="password" class="input-field w-full pr-12 pl-12 py-3.5 text-sm" dir="ltr">
-                    </div>
-                </div>
-                <button id="final-register-btn" onclick="executeFinalAccountCreationOrReset()" class="w-full btn-primary text-white font-bold py-4 rounded-xl text-sm mt-2 flex justify-center items-center gap-2">
-                    <i class="ph-fill ph-check-circle text-lg"></i> تأكيد وحفظ
-                </button>
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">تأكيد كلمة المرور</label>
+                <input id="reg-confirm-password" type="password" placeholder="••••••••" class="w-full rounded-xl px-3 py-2.5 text-xs">
             </div>
 
-            <div id="register-step-otp" class="hidden space-y-6 text-center py-4">
-                <div class="inline-flex justify-center items-center w-16 h-16 bg-blue-50 text-blue-500 rounded-full mb-2">
-                    <i class="ph-fill ph-envelope-open text-3xl"></i>
-                </div>
-                <p class="text-xs text-slate-600 font-medium">أرسلنا رمز تحقق (6 أرقام) إلى بريدك الإلكتروني، يرجى إدخاله هنا:</p>
-                <input id="reg-otp-code" type="tel" maxlength="6" placeholder="000000" class="input-field w-40 text-center tracking-[0.4em] py-3 text-xl mx-auto block font-mono font-bold" dir="ltr">
-                <button id="otp-verify-btn" onclick="verifyRegistrationOtp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl text-sm transition">
-                    تأكيد الرمز
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة تأكيد الهوية المصغرة -->
-    <div id="custom-prompt" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[110]">
-        <div class="bg-white w-full max-w-sm rounded-[24px] p-6 shadow-2xl text-right space-y-5 slide-down">
-            <div class="flex items-center gap-2 mb-2">
-                <i class="ph-fill ph-lock-key text-red-500 text-xl"></i>
-                <h4 class="text-sm font-black text-slate-800">تأكيد الهوية الشخصية</h4>
-            </div>
-            <p id="custom-prompt-desc" class="text-[11px] text-slate-500 leading-relaxed font-medium"></p>
-            <div class="relative">
-                <input id="custom-prompt-input" type="password" class="input-field w-full pl-12 pr-4 py-3.5 text-sm text-left" dir="ltr">
-            </div>
-            <div class="flex gap-2 pt-2">
-                <button id="custom-prompt-confirm-btn" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-3.5 rounded-xl transition shadow-md">تأكيد الإجراء</button>
-                <button onclick="closeCustomPrompt()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold py-3.5 rounded-xl transition">إلغاء</button>
-            </div>
-        </div>
-    </div>
+            <button id="reg-submit-btn" onclick="handleRegisterSubmit()" class="w-full bg-[#005ba3] hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-md mt-2">
+                تأكيد وإنشاء الحساب
+            </button> 
+        </div> 
+    </div> 
+</div>
 
     <script>
         // ========================================================================
@@ -631,17 +587,153 @@ var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         // ========================================================================
         // 2. دوال المصادقة (Auth)
         // ========================================================================
-        async function handleLogin() { 
-            const email = document.getElementById('login-email').value.trim();
-            const pass = document.getElementById('login-password').value;
-            const btn = document.getElementById('login-btn'); 
-            if (!email || !pass) return showCustomAlert("يرجى إدخال البريد الإلكتروني وكلمة المرور."); 
-            btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري التحقق...`; 
-            
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
-            if (error) { showCustomAlert("بيانات الدخول غير صحيحة."); btn.disabled = false; btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`; } 
-            else { currentUser = data.user; postLoginSetup(); }
+        // -------------------------------------------------------------
+// 1. دالة تسجيل الدخول عبر Supabase
+// -------------------------------------------------------------
+async function handleLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const btn = document.getElementById('login-btn');
+
+    if (!email || !password) {
+        return showCustomAlert("يرجى إدخال البريد الإلكتروني وكلمة المرور.");
+    }
+
+    btn.disabled = true;
+    btn.innerText = "جاري تسجيل الدخول...";
+
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            if (error.message.toLowerCase().includes("email not confirmed")) {
+                return showCustomAlert("يرجى تأكيد بريدك الإلكتروني أولاً عبر الرابط المرسل إليك.");
+            }
+            if (error.message.toLowerCase().includes("invalid login credentials")) {
+                return showCustomAlert("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+            }
+            return showCustomAlert("فشل تسجيل الدخول: " + error.message);
         }
+
+        // عند نجاح الدخول
+        currentUser = data.user;
+        currentUserEmail = data.user.email;
+        
+        toggleView('login-screen', false);
+        toggleView('dashboard-screen', true);
+        toggleView('bottom-nav-bar', true);
+        switchTab('home');
+        
+        silentSyncData();
+        fetchStoreProductsDirectly();
+
+    } catch (err) {
+        showCustomAlert("خطأ في الاتصال: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "تسجيل الدخول";
+    }
+}
+
+// -------------------------------------------------------------
+// 2. دالة فتح نافذة التسجيل
+// -------------------------------------------------------------
+function openRegisterModal() {
+    ['reg-first-name', 'reg-last-name', 'reg-email', 'reg-phone', 'reg-password', 'reg-confirm-password'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+    });
+    toggleView('register-modal', true);
+}
+
+// -------------------------------------------------------------
+// 3. دالة إنشاء الحساب الجديد عبر Supabase
+// -------------------------------------------------------------
+async function handleRegisterSubmit() {
+    const fName = document.getElementById('reg-first-name').value.trim();
+    const lName = document.getElementById('reg-last-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const phone = document.getElementById('reg-phone').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const confirmPass = document.getElementById('reg-confirm-password').value;
+    const btn = document.getElementById('reg-submit-btn');
+
+    if (!fName || !lName || !email || !password) {
+        return showCustomAlert("يرجى ملء جميع الحقول المطلوبة.");
+    }
+
+    if (password !== confirmPass) {
+        return showCustomAlert("كلمتا المرور غير متطابقتين.");
+    }
+
+    if (password.length < 6) {
+        return showCustomAlert("كلمة المرور يجب أن لا تقل عن 6 خانات.");
+    }
+
+    btn.disabled = true;
+    btn.innerText = "جاري إنشاء الحساب...";
+
+    try {
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    first_name: fName,
+                    last_name: lName,
+                    full_name: `${fName} ${lName}`,
+                    phone: phone
+                },
+                // توجيه المستخدم لنفس رابط الموقع بعد النقر على الرابط في البريد
+                emailRedirectTo: window.location.origin + window.location.pathname
+            }
+        });
+
+        // فحص إذا كان البريد مسجلاً مسبقاً
+        if (error) {
+            if (error.message.toLowerCase().includes("already registered") || error.status === 422) {
+                return showCustomAlert("هذا البريد الإلكتروني مسجل بالفعل! يرجى تسجيل الدخول بدلاً من ذلك.");
+            }
+            return showCustomAlert("تعذر إنشاء الحساب: " + error.message);
+        }
+
+        // فحص إضافي للمستخدمين المسجلين مسبقاً
+        if (data?.user && (!data.user.identities || data.user.identities.length === 0)) {
+            return showCustomAlert("هذا البريد الإلكتروني مسجل بالفعل! يرجى تسجيل الدخول بدلاً من ذلك.");
+        }
+
+        // عند نجاح إنشاء الحساب وإرسال الرابط
+        toggleView('register-modal', false);
+        alert(`🎉 تم إرسال رابط تفعيل الحساب إلى:\n\n${email}\n\nيرجى فتح بريدك الإلكتروني والضغط على الرابط ليتم تفعيل حسابك ودخولك فوراً.`);
+
+    } catch (err) {
+        showCustomAlert("خطأ غير متوقع: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "تأكيد وإنشاء الحساب";
+    }
+}
+
+// -------------------------------------------------------------
+// 4. مراقبة تفعيل الرابط والدخول التلقائي
+// -------------------------------------------------------------
+supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+        currentUser = session.user;
+        currentUserEmail = session.user.email;
+        
+        toggleView('login-screen', false);
+        toggleView('dashboard-screen', true);
+        toggleView('bottom-nav-bar', true);
+        closeAllModals();
+        
+        silentSyncData();
+        fetchStoreProductsDirectly();
+    }
+});
 
         function postLoginSetup() {
             toggleView('login-screen', false); toggleView('dashboard-screen', true); toggleView('bottom-nav-bar', true);

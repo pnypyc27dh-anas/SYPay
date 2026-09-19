@@ -602,14 +602,47 @@
         </div>
     </div>
 
-    <script>
+    
+<script>
         // ========================================================================
-        // 1. إعدادات الربط مع Supabase
+        // 1. دوال الواجهة الأساسية (تعمل أولاً وتضمن عدم تجمد الأزرار نهائياً)
+        // ========================================================================
+        function toggleView(id, show) { 
+            const el = document.getElementById(id); 
+            if (el) el.classList.toggle('hidden', !show); 
+        }
+
+        function closeAllModals() { 
+            ['register-modal', 'forgot-password-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'code-delivery-modal'].forEach(id => toggleView(id, false)); 
+        }
+
+        function openRegisterModal() {
+            ['reg-name', 'reg-email', 'reg-phone', 'reg-pass', 'reg-pass-confirm'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = "";
+            });
+            toggleView('register-modal', true);
+        }
+
+        function openForgotPasswordModal() {
+            const input = document.getElementById('forgot-email');
+            const loginEmail = document.getElementById('login-email');
+            if (input && loginEmail) input.value = loginEmail.value.trim();
+            toggleView('forgot-password-modal', true);
+        }
+
+        // ========================================================================
+        // 2. تهيئة عميل Supabase الآمنة (Crash-Proof)
         // ========================================================================
         const SUPABASE_URL = 'https://baytojjldklocifridcm.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJheXRvampsZGtsb2NpZnJpZGNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTU3MzMsImV4cCI6MjEwNTM5MTczM30.tAN7Qah-3VNwatn2CwgqsyphnkQQjagnKf4pR4WiSwQ';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabase = null;
+        if (window.supabase && window.supabase.createClient) {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else {
+            console.error("تنبيه: تعذر تحميل مكتبة Supabase من الرابط الخارجي CDN.");
+        }
 
         let currentUser = null;
         let syncInterval = null;
@@ -626,75 +659,22 @@
         let globalTransactionsRaw = [];
         let currentDeliveredCode = "";
 
-        // فحص الجلسة الحالية عند تحميل الصفحة
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session && session.user) {
-                currentUser = session.user;
-                postLoginSetup();
-            }
-        });
-
-        // الاستماع لتغير حالة المصادقة (بما في ذلك الضغط على رابط التفعيل)
-        supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_IN' && session) {
-                currentUser = session.user;
-                postLoginSetup();
-            }
-        });
-
-        function postLoginSetup() {
-            toggleView('login-screen', false);
-            toggleView('dashboard-screen', true);
-            toggleView('bottom-nav-bar', true);
-            closeAllModals();
-            switchTab('home');
-            silentSyncData();
-            fetchStoreProductsDirectly();
-            if (!syncInterval) syncInterval = setInterval(silentSyncData, 30000);
-        }
-
-        // ========================================================================
-        // 2. دوال الحسابات والمصادقة (Auth)
-        // ========================================================================
-        async function handleLogin() {
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            const btn = document.getElementById('login-btn');
-
-            if (!email || !password) {
-                return showCustomAlert("يرجى إدخال البريد الإلكتروني وكلمة المرور.");
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري التحقق...`;
-
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (error) {
-                    if (error.message.toLowerCase().includes("email not confirmed")) {
-                        return showCustomAlert("يرجى تفعيل حسابك أولاً عبر الرابط المرسل لبريدك الإلكتروني.");
-                    }
-                    if (error.message.toLowerCase().includes("invalid login credentials")) {
-                        return showCustomAlert("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
-                    }
-                    return showCustomAlert("فشل تسجيل الدخول: " + error.message);
+        // فحص الجلسة والاستماع للتغييرات بشرط جاهزية العميل
+        if (supabase) {
+            supabase.auth.getSession().then(({ data }) => {
+                if (data && data.session && data.session.user) {
+                    currentUser = data.session.user;
+                    postLoginSetup();
                 }
+            });
 
-                currentUser = data.user;
-                postLoginSetup();
-
-            } catch (err) {
-                showCustomAlert("خطأ في الاتصال: " + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`;
-            }
+            supabase.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN' && session) {
+                    currentUser = session.user;
+                    postLoginSetup();
+                }
+            });
         }
-
         function openRegisterModal() {
             ['reg-name', 'reg-email', 'reg-phone', 'reg-pass', 'reg-pass-confirm'].forEach(id => {
                 const el = document.getElementById(id);

@@ -32,7 +32,7 @@
             background-size: 24px 24px;
             color: #0f172a; 
             overflow-x: hidden; 
-            padding-bottom: 110px;
+            padding-bottom: 35px;
             -webkit-tap-highlight-color: transparent;
         }
         ::-webkit-scrollbar { width: 6px; }
@@ -83,8 +83,6 @@
         .slide-up-modal { animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUpModal { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
         .hidden { display: none !important; }
-        .animate-spin-fast { animation: spin 0.6s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between antialiased selection:bg-blue-200 selection:text-blue-900">
@@ -152,7 +150,7 @@
     <div id="dashboard-screen" class="hidden flex-col min-h-screen">
         <header class="bg-white/80 backdrop-blur-xl px-6 py-4 border-b border-slate-200/60 sticky top-0 z-30 flex justify-center shadow-sm">
             <div class="w-full max-w-5xl flex justify-between items-center">
-                <!-- اللوغو مع إمكانية النقر للعودة للرئيسية -->
+                <!-- النقر على اللوغو يفتح الرئيسية فوراً -->
                 <div onclick="switchTab('home')" class="flex items-center gap-3 cursor-pointer hover:opacity-90 active:scale-95 transition select-none" title="الرئيسية">
                     <div class="bg-gradient-to-tr from-blue-600 to-blue-400 text-white p-2 rounded-xl shadow-md">
                         <i class="ph ph-wallet text-xl"></i>
@@ -166,12 +164,7 @@
                         <span id="nav-user-name" class="text-xs font-black text-slate-700">...</span>
                     </div>
 
-                    <!-- زر التحديث اليدوي للرصيد -->
-                    <button onclick="manualDataRefresh()" id="btn-header-refresh" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition" title="تحديث الرصيد والبيانات">
-                        <i class="ph ph-arrows-clockwise text-lg" id="icon-header-refresh"></i>
-                    </button>
-
-                    <!-- زر القائمة الجانبية (البرغر) -->
+                    <!-- زر القائمة الجانبية (منبثقة من اليسار) -->
                     <button onclick="toggleSideMenu(true)" class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 transition" title="القائمة">
                         <i class="ph ph-list text-xl"></i>
                     </button>
@@ -222,7 +215,7 @@
                         <h3 class="text-sm font-black text-slate-800 flex items-center gap-2">
                             <i class="ph-fill ph-clock-counter-clockwise text-blue-500"></i> أحدث المعاملات
                         </h3>
-                        <button onclick="openAllOrdersModal()" class="text-[11px] text-blue-600 hover:underline font-bold">عرض الكل</button>
+                        <button onclick="openAllOrdersModal()" class="text-[11px] text-blue-600 hover:underline font-bold">عرض السجل الشامل</button>
                     </div>
                     <div id="dashboard-recent-tx" class="space-y-3 flex-grow"></div>
                 </div>
@@ -250,7 +243,7 @@
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <label class="block text-[11px] font-bold text-slate-600">رمز الوكيل المعتمد</label>
-                                <button onclick="openAgentsDirectoryModal()" class="text-[10px] text-blue-600 font-bold hover:underline flex items-center gap-1"><i class="ph ph-magnifying-glass"></i> البحث عن وكيل</button>
+                                <button onclick="openAgentsDirectoryModal()" class="text-[10px] text-blue-600 font-bold hover:underline flex items-center gap-1"><i class="ph ph-magnifying-glass"></i> دليل الوكلاء</button>
                             </div>
                             <div class="relative">
                                 <i class="ph ph-identification-badge absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
@@ -346,22 +339,6 @@
         </main>
     </div>
 
-    <!-- شريط التنقل السفلي -->
-    <div id="bottom-nav-bar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[380px] md:max-w-md bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] z-[60] flex justify-around items-center p-2 transition-all duration-300">
-        <button id="nav-btn-home" onclick="switchTab('home')" class="flex flex-col items-center gap-1 text-blue-600 bg-blue-50 focus:outline-none transition-all flex-1 py-2.5 rounded-2xl">
-            <i class="ph-fill ph-house text-2xl"></i><span class="text-[9px] font-black tracking-wide">الرئيسية</span>
-        </button>
-        <button id="nav-btn-store" onclick="switchTab('store')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 focus:outline-none transition-all flex-1 py-2.5 rounded-2xl">
-            <i class="ph ph-storefront text-2xl"></i><span class="text-[9px] font-bold tracking-wide">المتجر</span>
-        </button>
-        <button id="nav-btn-deposit" onclick="switchTab('deposit')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 focus:outline-none transition-all flex-1 py-2.5 rounded-2xl">
-            <i class="ph ph-wallet text-2xl"></i><span class="text-[9px] font-bold tracking-wide">الشحن</span>
-        </button>
-        <button id="nav-btn-profile" onclick="switchTab('profile')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 focus:outline-none transition-all flex-1 py-2.5 rounded-2xl">
-            <i class="ph ph-user text-2xl"></i><span class="text-[9px] font-bold tracking-wide">حسابي</span>
-        </button>
-    </div>
-
     <!-- خلفية التعتيم للقائمة الجانبية -->
     <div id="side-menu-overlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[80] transition-opacity" onclick="toggleSideMenu(false)"></div>
 
@@ -384,22 +361,8 @@
                 </button>
             </div>
 
-            <!-- مؤشرات حالة قنوات الدفع -->
-            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3">
-                <p class="text-[10px] font-black text-slate-500 mb-2 flex items-center justify-between">
-                    <span>حالة بوابات الدفع</span>
-                    <span class="text-[9px] text-emerald-600 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> تعمل بنشاط</span>
-                </p>
-                <div class="flex items-center justify-between text-[10px] font-bold text-slate-600 pt-1 border-t border-slate-200/60">
-                    <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> سيرياتل</span>
-                    <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> MTN</span>
-                    <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> شام كاش</span>
-                </div>
-            </div>
-
-            <!-- المجموعات الوظيفية للتنقل -->
+            <!-- روابط التنقل الأساسية -->
             <nav class="space-y-4">
-                <!-- 1. الخدمات الأساسية -->
                 <div>
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2 px-2">الخدمات الأساسية</p>
                     <div class="space-y-1">
@@ -415,46 +378,20 @@
                             <i class="ph ph-wallet text-lg text-blue-600"></i>
                             <span>شحن وتعبئة الرصيد</span>
                         </button>
-                    </div>
-                </div>
-
-                <!-- 2. مشترياتي وسجلاتي -->
-                <div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2 px-2">مشترياتي وسجلاتي</p>
-                    <div class="space-y-1">
-                        <button onclick="openVouchersModal()" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
-                            <div class="flex items-center gap-3">
-                                <i class="ph ph-ticket text-lg text-emerald-600"></i>
-                                <span>خزينة أكوادي الرقمية</span>
-                            </div>
-                            <span class="bg-emerald-50 text-emerald-600 text-[9px] px-2 py-0.5 rounded-md font-black">جاهزة</span>
-                        </button>
                         <button onclick="openAllOrdersModal()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
-                            <i class="ph ph-receipt text-lg text-slate-600"></i>
-                            <span>سجل المعاملات الشامل</span>
+                            <i class="ph ph-receipt text-lg text-emerald-600"></i>
+                            <span>سجل المعاملات والطلبات</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- 3. الشبكة والمعلومات -->
                 <div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2 px-2">الشبكة والشفافية</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2 px-2">الشبكة والمساعدة</p>
                     <div class="space-y-1">
                         <button onclick="openAgentsDirectoryModal()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
                             <i class="ph ph-users-three text-lg text-blue-600"></i>
                             <span>دليل الوكلاء المعتمدين</span>
                         </button>
-                        <button onclick="openExchangeRateCalculator()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
-                            <i class="ph ph-calculator text-lg text-amber-500"></i>
-                            <span>حاسبة أسعار الصرف</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 4. المساعدة والأمان -->
-                <div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2 px-2">المساعدة والأمان</p>
-                    <div class="space-y-1">
                         <button onclick="openSupportModal()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
                             <i class="ph ph-headset text-lg text-indigo-500"></i>
                             <span>الدعم الفني المباشر</span>
@@ -489,21 +426,7 @@
         </div>
     </div>
 
-    <!-- ==================== النوافذ المنبثقة (Modals) ==================== -->
-
-    <!-- نافذة خزينة الأكواد الرقمية -->
-    <div id="vouchers-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[95]">
-        <div class="bg-white w-full max-w-lg rounded-t-[32px] sm:rounded-[28px] max-h-[85vh] flex flex-col p-6 shadow-2xl relative slide-up-modal text-right">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-4">
-                <div class="flex items-center gap-2">
-                    <div class="p-2 rounded-xl bg-emerald-50 text-emerald-600"><i class="ph-fill ph-ticket text-xl"></i></div>
-                    <h4 class="text-base font-black text-slate-800">خزينة أكوادي الرقمية</h4>
-                </div>
-                <button onclick="toggleView('vouchers-modal', false)" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full"><i class="ph ph-x font-bold"></i></button>
-            </div>
-            <div id="vouchers-container" class="overflow-y-auto flex-grow space-y-3 pr-1 pb-2"></div>
-        </div>
-    </div>
+    <!-- ==================== النوافذ المنبثقة ==================== -->
 
     <!-- نافذة سجل المعاملات الشامل -->
     <div id="all-orders-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[95]">
@@ -511,15 +434,14 @@
             <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-3">
                 <div class="flex items-center gap-2">
                     <div class="p-2 rounded-xl bg-blue-50 text-blue-600"><i class="ph-fill ph-receipt text-xl"></i></div>
-                    <h4 class="text-base font-black text-slate-800">سجل المعاملات الشامل</h4>
+                    <h4 class="text-base font-black text-slate-800">سجل المعاملات والطلبات</h4>
                 </div>
                 <button onclick="toggleView('all-orders-modal', false)" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full"><i class="ph ph-x font-bold"></i></button>
             </div>
-            <!-- تصفية المعاملات -->
             <div class="flex gap-2 pb-3 overflow-x-auto text-[11px] font-bold">
                 <button onclick="filterOrdersHistory('ALL')" class="order-filter-btn active bg-slate-900 text-white px-3 py-1.5 rounded-xl">الكل</button>
-                <button onclick="filterOrdersHistory('CODE')" class="order-filter-btn bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl">البطاقات</button>
-                <button onclick="filterOrdersHistory('DIRECT_ID')" class="order-filter-btn bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl">شحن فوري</button>
+                <button onclick="filterOrdersHistory('CODE')" class="order-filter-btn bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl">البطاقات الرقمية</button>
+                <button onclick="filterOrdersHistory('DIRECT_ID')" class="order-filter-btn bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl">شحن فوري (ID)</button>
                 <button onclick="filterOrdersHistory('DEPOSIT')" class="order-filter-btn bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl">الإيداعات</button>
             </div>
             <div id="all-orders-container" class="overflow-y-auto flex-grow space-y-3 pr-1 pb-2"></div>
@@ -537,40 +459,6 @@
                 <button onclick="toggleView('agents-modal', false)" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full"><i class="ph ph-x font-bold"></i></button>
             </div>
             <div id="agents-list-container" class="overflow-y-auto flex-grow space-y-3 pr-1 pb-2"></div>
-        </div>
-    </div>
-
-    <!-- نافذة حاسبة أسعار الصرف -->
-    <div id="exchange-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[95]">
-        <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[28px] p-6 shadow-2xl relative slide-up-modal text-right space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                <div class="flex items-center gap-2">
-                    <div class="p-2 rounded-xl bg-amber-50 text-amber-600"><i class="ph-fill ph-calculator text-xl"></i></div>
-                    <h4 class="text-base font-black text-slate-800">حاسبة أسعار الصرف</h4>
-                </div>
-                <button onclick="toggleView('exchange-modal', false)" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full"><i class="ph ph-x font-bold"></i></button>
-            </div>
-            <div class="bg-amber-50 border border-amber-100 rounded-2xl p-3.5 text-xs text-amber-800 font-bold flex justify-between items-center">
-                <span>السعر المعتمد للشحن:</span>
-                <span class="font-mono text-sm">1$ = 15,000 ل.س</span>
-            </div>
-            <div>
-                <label class="block text-[11px] font-bold text-slate-600 mb-2">المبلغ بالدولار ($)</label>
-                <input id="calc-usd-input" type="number" value="10" oninput="calculateExchangeRate()" class="input-field w-full px-4 py-3 text-sm font-mono" dir="ltr">
-            </div>
-            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-2 text-xs">
-                <div class="flex justify-between items-center text-slate-500">
-                    <span>المعادل بالليرة السورية:</span>
-                    <span id="calc-syp-result" class="text-base font-black text-slate-800 font-mono">150,000 ل.س</span>
-                </div>
-                <div class="flex justify-between items-center text-slate-400 text-[11px] border-t border-slate-200/60 pt-2">
-                    <span>العمولة التقريبية (سيرياتل/شام):</span>
-                    <span class="font-bold text-emerald-600">0% بدون رسوم إضافية</span>
-                </div>
-            </div>
-            <button onclick="toggleView('exchange-modal', false); switchTab('deposit')" class="w-full btn-primary text-white font-bold py-3.5 rounded-xl text-xs flex justify-center items-center gap-2">
-                <span>التوجه للشحن الآن</span><i class="ph ph-arrow-left"></i>
-            </button>
         </div>
     </div>
 
@@ -610,7 +498,7 @@
         </div>
     </div>
 
-    <!-- نافذة المعلومات الموحدة (من نحن / سياسة الخصوصية / الشروط) -->
+    <!-- نافذة المعلومات الموحدة -->
     <div id="info-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[95]">
         <div class="bg-white w-full max-w-lg rounded-t-[32px] sm:rounded-[28px] max-h-[80vh] flex flex-col p-6 shadow-2xl relative slide-up-modal text-right">
             <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-4">
@@ -627,7 +515,7 @@
         </div>
     </div>
 
-    <!-- النوافذ الأساسية للمتجر (الباقات والشراء والتسليم) -->
+    <!-- النوافذ الأساسية للمتجر -->
     <div id="plans-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[90]">
         <div class="bg-white w-full max-w-2xl rounded-t-[32px] sm:rounded-[28px] max-h-[85vh] sm:max-h-[75vh] flex flex-col p-6 shadow-2xl relative slide-up-modal">
             <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-4">
@@ -854,16 +742,22 @@
         }
 
         function postLoginSetup() {
-            toggleView('login-screen', false); toggleView('dashboard-screen', true); toggleView('bottom-nav-bar', true);
-            switchTab('home'); silentSyncData(); fetchStoreProductsDirectly();
+            toggleView('login-screen', false); 
+            toggleView('dashboard-screen', true);
+            switchTab('home'); 
+            silentSyncData(); 
+            fetchStoreProductsDirectly();
             if(!syncInterval) syncInterval = setInterval(silentSyncData, 30000);
         }
 
         async function handleLogout() { 
             if(syncInterval) { clearInterval(syncInterval); syncInterval = null; } 
-            await supabase.auth.signOut(); currentUser = null; 
+            await supabase.auth.signOut(); 
+            currentUser = null; 
             ['login-email', 'login-password'].forEach(id => document.getElementById(id).value = ""); 
-            closeAllModals(); toggleView('dashboard-screen', false); toggleView('bottom-nav-bar', false); toggleView('login-screen', true); 
+            closeAllModals(); 
+            toggleView('dashboard-screen', false); 
+            toggleView('login-screen', true); 
         }
 
         function togglePasswordVisibility(fieldId, btnEl) {
@@ -978,16 +872,6 @@
             }
         } 
 
-        async function manualDataRefresh() {
-            const icon = document.getElementById('icon-header-refresh');
-            if (icon) icon.classList.add('animate-spin-fast');
-            await silentSyncData();
-            setTimeout(() => {
-                if (icon) icon.classList.remove('animate-spin-fast');
-                showCustomAlert("تم تحديث الرصيد والبيانات بنجاح", false);
-            }, 600);
-        }
-
         async function fetchStoreProductsDirectly() { 
             const { data: prods } = await supabase.from('products').select('*').eq('status', 'نشط');
             if(prods) {
@@ -998,7 +882,7 @@
         }
 
         // ========================================================================
-        // 5. محرك الشراء الآمن (RPC) وشحن الرصيد
+        // 5. محرك الشراء والتمويل
         // ========================================================================
         async function executeSubscriptionPurchase() { 
             if (currentWalletBalance < selectedItemPrice) return showCustomAlert("الرصيد غير كافٍ لإتمام الشراء."); 
@@ -1112,7 +996,7 @@
         function toggleView(id, show) { const el = document.getElementById(id); if(el) el.classList.toggle('hidden', !show); }
         
         function closeAllModals() { 
-            ['register-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'code-delivery-modal', 'vouchers-modal', 'all-orders-modal', 'agents-modal', 'exchange-modal', 'support-modal', 'info-modal'].forEach(id => toggleView(id, false)); 
+            ['register-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'code-delivery-modal', 'all-orders-modal', 'agents-modal', 'support-modal', 'info-modal'].forEach(id => toggleView(id, false)); 
         }
         
         function toggleSideMenu(open) {
@@ -1130,26 +1014,11 @@
         }
 
         function switchTab(tab) {
-            closeAllModals(); toggleSideMenu(false); document.querySelectorAll('.data-view').forEach(v => v.classList.add('hidden'));
+            closeAllModals(); 
+            toggleSideMenu(false); 
+            document.querySelectorAll('.data-view').forEach(v => v.classList.add('hidden'));
             const map = { 'home':'view-home', 'store':'view-store', 'deposit':'view-deposit', 'profile':'view-profile' };
             toggleView(map[tab], true);
-            
-            // تحديث تصميم أزرار الشريط السفلي
-            ['home', 'store', 'deposit', 'profile'].forEach(t => {
-                const btn = document.getElementById(`nav-btn-${t}`);
-                if (btn) {
-                    if (t === tab) {
-                        btn.className = "flex flex-col items-center gap-1 text-blue-600 bg-blue-50 focus:outline-none transition-all flex-1 py-2.5 rounded-2xl";
-                        const icon = btn.querySelector('i');
-                        if (icon) icon.className = icon.className.replace('ph ', 'ph-fill ');
-                    } else {
-                        btn.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 focus:outline-none transition-all flex-1 py-2.5 rounded-2xl";
-                        const icon = btn.querySelector('i');
-                        if (icon) icon.className = icon.className.replace('ph-fill ', 'ph ');
-                    }
-                }
-            });
-
             if(tab === 'store') renderMainCategoriesView();
         }
         
@@ -1233,7 +1102,6 @@
 
             let extraContentHtml = '';
 
-            // عزل الشحن الفوري عن الأكواد الرقمية بدقة
             if (tx.delivery_type === 'CODE' && hasCleanCode) {
                 extraContentHtml = `
                     <div class="mt-2.5 p-2 px-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] flex items-center justify-between border border-slate-800" dir="ltr">
@@ -1288,50 +1156,8 @@
         }
 
         // ========================================================================
-        // 8. وظائف النوافذ والتبويبات الجديدة المضافة
+        // 8. سجل المعاملات ودليل الوكلاء والدعم والمعلومات
         // ========================================================================
-        
-        // خزينة أكوادي الرقمية
-        function openVouchersModal() {
-            toggleSideMenu(false);
-            const container = document.getElementById('vouchers-container');
-            container.innerHTML = "";
-
-            const vouchers = globalTransactionsRaw.filter(tx => {
-                const cleanCode = tx.serial_code ? String(tx.serial_code).trim() : '';
-                const hasCleanCode = cleanCode !== '' && !['null', 'undefined', 'none', 'n/a', '0', '-'].includes(cleanCode.toLowerCase());
-                return (tx.delivery_type === 'CODE' || !tx.delivery_type) && hasCleanCode && tx.type !== 'شحن مباشر';
-            });
-
-            if (vouchers.length === 0) {
-                container.innerHTML = `
-                    <div class="py-12 text-center space-y-3">
-                        <div class="w-14 h-14 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto text-3xl"><i class="ph ph-ticket"></i></div>
-                        <p class="text-xs text-slate-500 font-bold">لا توجد أكواد أو بطاقات مشتراة حتى الآن.</p>
-                        <button onclick="toggleView('vouchers-modal', false); switchTab('store')" class="text-xs text-blue-600 font-black hover:underline">زيارة المتجر لشراء بطاقتك الأولى</button>
-                    </div>
-                `;
-            } else {
-                vouchers.forEach(v => {
-                    const card = document.createElement('div');
-                    card.className = "bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2";
-                    card.innerHTML = `
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="font-black text-slate-800">${v.details || v.type}</span>
-                            <span class="text-[10px] text-slate-400 font-sans">${v.date}</span>
-                        </div>
-                        <div class="p-2.5 bg-slate-900 text-emerald-400 rounded-xl font-mono text-xs flex items-center justify-between" dir="ltr">
-                            <span class="font-bold select-all tracking-wider">${v.serial_code}</span>
-                            <button onclick="copyToClipboard('${v.serial_code}')" class="text-slate-400 hover:text-white p-1 transition"><i class="ph-fill ph-copy text-base"></i></button>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            }
-            toggleView('vouchers-modal', true);
-        }
-
-        // سجل المعاملات الشامل مع التصفية
         let currentOrderFilter = 'ALL';
         function openAllOrdersModal() {
             toggleSideMenu(false);
@@ -1369,7 +1195,6 @@
             });
         }
 
-        // دليل الوكلاء المعتمدين
         async function openAgentsDirectoryModal() {
             toggleSideMenu(false);
             const container = document.getElementById('agents-list-container');
@@ -1380,7 +1205,6 @@
             container.innerHTML = "";
 
             if (!agents || agents.length === 0) {
-                // عرض وكلاء افتراضيين في حال عدم وجود سجلات بقاعدة البيانات
                 const defaultAgents = [
                     { name: "وكيل دمشق وريفها", code: "101", payment: "سيرياتل كاش / شام كاش", phone: "963900000001" },
                     { name: "وكيل حلب والمنطقة الشمالية", code: "102", payment: "سيرياتل كاش / MTN", phone: "963900000002" },
@@ -1411,27 +1235,11 @@
             container.appendChild(card);
         }
 
-        // حاسبة أسعار الصرف
-        function openExchangeRateCalculator() {
-            toggleSideMenu(false);
-            calculateExchangeRate();
-            toggleView('exchange-modal', true);
-        }
-
-        function calculateExchangeRate() {
-            const usd = parseFloat(document.getElementById('calc-usd-input').value) || 0;
-            const rate = 15000; // سعر الصرف المعتمد
-            const syp = usd * rate;
-            document.getElementById('calc-syp-result').innerText = syp.toLocaleString() + " ل.س";
-        }
-
-        // الدعم الفني المباشر
         function openSupportModal() {
             toggleSideMenu(false);
             toggleView('support-modal', true);
         }
 
-        // مشاركة المنصة
         async function sharePlatform() {
             toggleSideMenu(false);
             const shareData = {
@@ -1447,7 +1255,6 @@
             }
         }
 
-        // النوافذ التعريفية والقانونية
         const INFO_CONTENT = {
             about: {
                 title: "عن منصة SYPay",

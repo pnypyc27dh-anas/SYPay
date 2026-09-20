@@ -716,7 +716,7 @@
         function openForgotPasswordModal() { triggerPasswordResetFlow(); }
 
         // ========================================================================
-        // 4. جلب ومزامنة البيانات
+        // 4. جلب ومزامنة البيانات (محدث لدعم أعمدة التسليم الجديدة delivery_type & player_id)
         // ========================================================================
         async function silentSyncData() { 
             if (!currentUser) return;
@@ -733,12 +733,20 @@
                 document.getElementById('prof-phone').value = profile.phone || "";
             }
             
+            // جلب المعاملات مع الحقول المعمارية الجديدة
             const { data: txs } = await supabase.from('transactions').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
             if(txs) {
                 globalTransactionsRaw = txs.map(t => ({
-                    type: t.transaction_type, details: t.details, amount: t.amount + " $",
+                    type: t.transaction_type, 
+                    details: t.details, 
+                    amount: t.amount + " $",
                     date: new Date(t.created_at).toLocaleString('en-US', { hour12: false }),
-                    status: t.status, tx_id: t.transaction_ref, serial_code: t.serial_code
+                    status: t.status, 
+                    tx_id: t.transaction_ref, 
+                    serial_code: t.serial_code,
+                    delivery_type: t.delivery_type, // 'CODE' أو 'DIRECT_ID' أو 'WALLET_DEPOSIT'
+                    player_id: t.player_id,         // معرف اللاعب المنفصل
+                    raw: t
                 }));
                 renderRecentDashboardTransactions(globalTransactionsRaw);
             }
@@ -837,13 +845,17 @@
 
                 if (depError) throw depError;
 
+                // إدراج حركة الإيداع مع تحديد نوع التسليم 'WALLET_DEPOSIT' صراحة
                 const { error: txError } = await supabase.from('transactions').insert({ 
                     user_id: currentUser.id, 
                     transaction_type: 'شحن رصيد', 
                     details: 'طلب تمويل عبر الوكيل', 
                     amount: parseFloat(finalAmt), 
                     status: 'معلق', 
-                    transaction_ref: txRef 
+                    transaction_ref: txRef,
+                    delivery_type: 'WALLET_DEPOSIT',
+                    player_id: null,
+                    serial_code: null
                 });
 
                 if (txError) throw txError;
@@ -891,7 +903,7 @@
             toggleView('custom-alert', true); setTimeout(() => toggleView('custom-alert', false), 5000);
         }
         
-        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => showCustomAlert("تم النسخ", false)); }
+        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => showCustomAlert("تم النسخ بنجاح", false)); }
         function toggleCardVisibility() { isCardVisible = !isCardVisible; document.getElementById('live-card-number').innerText = isCardVisible ? rawCardNumber : "•••• •••• •••• " + lastFourDigits; }
         function resetCardVisibility() { isCardVisible = false; toggleCardVisibility(); }
         
@@ -921,7 +933,7 @@
         }
 
         // ========================================================================
-        // الدالة المحدثة: منع ظهور المستطيل الأسود عند الشحن المباشر أو انعدام الكود
+        // 7. عرض المعاملات بالحل الجذري الصارم (مع التوافق التلقائي للبيانات القديمة)
         // ========================================================================
         function renderRecentDashboardTransactions(txArray) {
             const container = document.getElementById('dashboard-recent-tx');
@@ -934,26 +946,54 @@
             }
 
             txArray.slice(0, 5).forEach(tx => {
-                const badge = tx.status === "مقبول" ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
+                const badge = tx.status === "مقبول" || tx.status === "مكتمل" ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
                             : tx.status === "مرفوض" ? "bg-red-50 text-red-600 border-red-100" 
                             : "bg-amber-50 text-amber-600 border-amber-100";
 
-                // التحقق الدقيق: استبعاد الشحن المباشر والقيم الفارغة أو النصوص الوهمية (null / undefined)
                 const cleanCode = tx.serial_code ? String(tx.serial_code).trim() : '';
-                const isDirectTopup = (tx.type && tx.type.includes('شحن مباشر')) || (tx.details && tx.details.includes('(ID:'));
-                const hasValidCode = cleanCode !== '' && 
-                                     cleanCode.toLowerCase() !== 'null' && 
-                                     cleanCode.toLowerCase() !== 'undefined' && 
-                                     !isDirectTopup;
+                const hasCleanCode = cleanCode !== '' && !['null', 'undefined', 'none', 'n/a', '0', '-'].includes(cleanCode.toLowerCase());
 
-                const codeBlockHtml = hasValidCode ? `
-                    <div class="mt-2.5 p-2 px-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] flex items-center justify-between border border-slate-800" dir="ltr">
-                        <span class="tracking-wider font-bold select-all">${cleanCode}</span>
-                        <button onclick="copyToClipboard('${cleanCode}')" class="text-slate-400 hover:text-white p-1 transition" title="نسخ الكود">
-                            <i class="ph-fill ph-copy text-sm"></i>
-                        </button>
-                    </div>
-                ` : '';
+                let extraContentHtml = '';
+
+                // المعيار الأساسي: نوع التسليم المحدد صراحة في قاعدة البيانات
+                if (tx.delivery_type === 'CODE' && hasCleanCode) {
+                    // المربع الأسود المخصص للأكواد الرقمية فقط
+                    extraContentHtml = `
+                        <div class="mt-2.5 p-2 px-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] flex items-center justify-between border border-slate-800" dir="ltr">
+                            <span class="tracking-wider font-bold select-all">${cleanCode}</span>
+                            <button onclick="copyToClipboard('${cleanCode}')" class="text-slate-400 hover:text-white p-1 transition" title="نسخ الكود">
+                                <i class="ph-fill ph-copy text-sm"></i>
+                            </button>
+                        </div>
+                    `;
+                } else if (tx.delivery_type === 'DIRECT_ID') {
+                    // شحن فوري بالمعرف: بطاقة أنيقة باللون الرمادي الفاتح لعرض الـ ID دون المربع الأسود نهائياً
+                    const displayId = tx.player_id || (tx.details && tx.details.match(/ID:\s*([^\s)]+)/i) ? tx.details.match(/ID:\s*([^\s)]+)/i)[1] : '');
+                    if (displayId) {
+                        extraContentHtml = `
+                            <div class="mt-2.5 flex items-center gap-2 text-[10px] text-slate-500 bg-slate-50 border border-slate-100 rounded-xl px-3 py-1.5 w-fit">
+                                <i class="ph-fill ph-user-circle text-blue-500 text-sm"></i>
+                                <span class="font-bold">معرف الشحن:</span>
+                                <span class="font-mono text-slate-800 font-bold" dir="ltr">${displayId}</span>
+                            </div>
+                        `;
+                    }
+                } else if (!tx.delivery_type) {
+                    // طبقة حماية إضافية للبيانات القديمة التي ليس لها delivery_type:
+                    const isLegacyDirect = (tx.type && (tx.type.includes('مباشر') || tx.type.includes('فوري'))) ||
+                                           (tx.details && /id|معرف|لاعب/i.test(tx.details));
+
+                    if (!isLegacyDirect && hasCleanCode) {
+                        extraContentHtml = `
+                            <div class="mt-2.5 p-2 px-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] flex items-center justify-between border border-slate-800" dir="ltr">
+                                <span class="tracking-wider font-bold select-all">${cleanCode}</span>
+                                <button onclick="copyToClipboard('${cleanCode}')" class="text-slate-400 hover:text-white p-1 transition" title="نسخ الكود">
+                                    <i class="ph-fill ph-copy text-sm"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
 
                 container.innerHTML += `
                     <div class="p-4 bg-white border border-slate-100 rounded-2xl text-right mb-2.5 shadow-sm">
@@ -968,7 +1008,7 @@
                                 <span class="px-2 py-0.5 rounded-lg text-[9px] font-bold border ${badge}">${tx.status}</span>
                             </div>
                         </div>
-                        ${codeBlockHtml}
+                        ${extraContentHtml}
                     </div>
                 `;
             });
@@ -1087,7 +1127,7 @@
         }
 
         // ========================================================================
-        // 7. وظائف نافذة تسليم الكود الرقمي
+        // 8. وظائف نافذة تسليم الكود الرقمي
         // ========================================================================
         let currentDeliveredCode = "";
 

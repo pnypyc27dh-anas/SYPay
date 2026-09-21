@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>SYPay - المحفظة الرقمية ومتجر الاشتراكات</title>
+    <title>SHIIFTX - المحفظة الرقمية ومتجر الاشتراكات</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Tajawal:wght=400;500;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -107,7 +107,7 @@
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-lg mb-4">
                 <i class="ph ph-wallet text-3xl"></i>
             </div>
-            <h1 class="text-5xl font-black text-slate-900 tracking-tight">SY<span class="text-[#005ba3]">Pay</span></h1>
+            <h1 class="text-5xl font-black text-slate-900 tracking-tight">SHIIFT<span class="text-[#005ba3]">X</span></h1>
             <p class="text-[10px] text-slate-500 font-bold tracking-[0.25em] uppercase">Premium Digital Wallet</p>
         </div>
 
@@ -154,7 +154,7 @@
                     <div class="bg-gradient-to-tr from-blue-600 to-blue-400 text-white p-2 rounded-xl shadow-md">
                         <i class="ph ph-wallet text-xl"></i>
                     </div>
-                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">SY<span class="text-[#005ba3]">Pay</span></h1>
+                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">SHIIFT<span class="text-[#005ba3]">X</span></h1>
                 </div>
                 
                 <div class="flex items-center gap-3">
@@ -349,7 +349,7 @@
                         <i class="ph ph-wallet text-xl"></i>
                     </div>
                     <div>
-                        <h3 class="font-black text-slate-800 text-base leading-tight">SY<span class="text-[#005ba3]">Pay</span></h3>
+                        <h3 class="font-black text-slate-800 text-base leading-tight">SHIIFT<span class="text-[#005ba3]">X</span></h3>
                         <p class="text-[10px] text-slate-400 font-bold">بوابتك للرصيد الرقمي</p>
                     </div>
                 </div>
@@ -467,7 +467,7 @@
                 </div>
                 <button onclick="toggleView('support-modal', false)" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full"><i class="ph ph-x font-bold"></i></button>
             </div>
-            <p class="text-xs text-slate-500 font-medium leading-relaxed">فريق خدمة عملاء SYPay متاح على مدار الساعة للإجابة على استفساراتكم وحل أي مشكلة في عمليات الشحن.</p>
+            <p class="text-xs text-slate-500 font-medium leading-relaxed">فريق خدمة عملاء SHIIFTX متاح على مدار الساعة للإجابة على استفساراتكم وحل أي مشكلة في عمليات الشحن.</p>
             <div class="space-y-2.5 pt-1">
                 <a href="https://wa.me/963900000000" target="_blank" class="flex items-center justify-between p-3.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-2xl transition border border-emerald-100">
                     <div class="flex items-center gap-3">
@@ -479,7 +479,7 @@
                     </div>
                     <i class="ph ph-caret-left text-sm"></i>
                 </a>
-                <a href="https://t.me/sypay_support" target="_blank" class="flex items-center justify-between p-3.5 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-2xl transition border border-blue-100">
+                <a href="https://t.me/shiiftx_support" target="_blank" class="flex items-center justify-between p-3.5 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-2xl transition border border-blue-100">
                     <div class="flex items-center gap-3">
                         <i class="ph-fill ph-telegram-logo text-2xl text-blue-600"></i>
                         <div>
@@ -982,7 +982,7 @@
                             phone: tempRegisterData.phone 
                         } 
                     }
-                });
+                }); 
                 
                 btn.disabled = false; 
                 btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد وحفظ`;
@@ -997,7 +997,7 @@
             } else {
                 const { error } = await supabase.auth.updateUser({ 
                     password: password 
-                });
+                }); 
                 
                 btn.disabled = false; 
                 btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد وحفظ`;
@@ -1113,7 +1113,7 @@
                     p_product_id: selectedProductId, 
                     p_player_id: inputPlayerId, 
                     p_player_id_confirm: inputPlayerIdConfirm
-                });
+                }); 
                 
                 if (error) throw error;
 
@@ -1462,8 +1462,8 @@
         async function sharePlatform() {
             toggleSideMenu(false);
             const shareData = {
-                title: 'SYPay - المحفظة الرقمية ومتجر الاشتراكات',
-                text: 'اشحن رصيدك واشترِ بطاقات الألعاب والاشتراكات الرقمية فوراً عبر SYPay.',
+                title: 'SHIIFTX - المحفظة الرقمية ومتجر الاشتراكات',
+                text: 'اشحن رصيدك واشترِ بطاقات الألعاب والاشتراكات الرقمية فوراً عبر SHIIFTX.',
                 url: window.location.href
             };
             if (navigator.share) {
@@ -1476,11 +1476,11 @@
 
         const INFO_CONTENT = {
             about: {
-                title: "عن منصة SYPay",
+                title: "عن منصة SHIIFTX",
                 icon: "ph-wallet",
                 html: `
                     <div class="space-y-3">
-                        <p class="font-medium"><strong>SYPay</strong> هي منصتك الموثوقة للحصول على الاشتراكات الرقمية، بطاقات الألعاب، وتعبئة التطبيقات الترفيهية بأمان وسرعة فائقة.</p>
+                        <p class="font-medium"><strong>SHIIFTX</strong> هي منصتك الموثوقة للحصول على الاشتراكات الرقمية، بطاقات الألعاب، وتعبئة التطبيقات الترفيهية بأمان وسرعة فائقة.</p>
                         <div class="bg-blue-50/60 p-4 rounded-2xl border border-blue-100 space-y-2">
                             <h5 class="font-black text-[#005ba3] flex items-center gap-1.5"><i class="ph-fill ph-check-circle"></i> ميزات المنصة:</h5>
                             <ul class="list-disc list-inside space-y-1 text-slate-700">
@@ -1498,7 +1498,7 @@
                 icon: "ph-shield-check",
                 html: `
                     <div class="space-y-3">
-                        <p class="font-medium">نحن في <strong>SYPay</strong> نضع حماية بياناتك الشخصية والمالية على رأس أولوياتنا وفق البنود التالية:</p>
+                        <p class="font-medium">نحن في <strong>SHIIFTX</strong> نضع حماية بياناتك الشخصية والمالية على رأس أولوياتنا وفق البنود التالية:</p>
                         <div class="border-r-2 border-blue-500 pr-3 space-y-1">
                             <h5 class="font-bold text-slate-800">1. البيانات التي نطلبها:</h5>
                             <p class="text-slate-500">نجمع فقط المعلومات الأساسية اللازمة لإنشاء الحساب (الاسم، البريد الإلكتروني، ورقم الهاتف)، ومعرف اللاعب (ID) الذي تدخله لشحن ألعابك مباشرة.</p>
@@ -1686,8 +1686,8 @@
         async function shareDeliveredCode() {
             if (!currentDeliveredCode) return;
             const shareData = {
-                title: 'كود البطاقة الرقمية - SYPay',
-                text: `كود البطاقة الخاص بك: ${currentDeliveredCode}\nتم الشراء عبر تطبيق SYPay.`
+                title: 'كود البطاقة الرقمية - SHIIFTX',
+                text: `كود البطاقة الخاص بك: ${currentDeliveredCode}\nتم الشراء عبر تطبيق SHIIFTX.`
             };
             if (navigator.share) {
                 try { await navigator.share(shareData); } catch (err) {}

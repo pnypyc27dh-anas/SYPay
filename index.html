@@ -42,7 +42,7 @@
         .glass-panel { 
             background: var(--bg-glass); 
             backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); 
             border: 1px solid rgba(255, 255, 255, 1); 
             box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
             border-radius: 28px;
@@ -150,7 +150,6 @@
     <div id="dashboard-screen" class="hidden flex-col min-h-screen">
         <header class="bg-white/80 backdrop-blur-xl px-6 py-4 border-b border-slate-200/60 sticky top-0 z-30 flex justify-center shadow-sm">
             <div class="w-full max-w-5xl flex justify-between items-center">
-                <!-- النقر على اللوغو يفتح الرئيسية فوراً -->
                 <div onclick="switchTab('home')" class="flex items-center gap-3 cursor-pointer hover:opacity-90 active:scale-95 transition select-none" title="الرئيسية">
                     <div class="bg-gradient-to-tr from-blue-600 to-blue-400 text-white p-2 rounded-xl shadow-md">
                         <i class="ph ph-wallet text-xl"></i>
@@ -164,7 +163,6 @@
                         <span id="nav-user-name" class="text-xs font-black text-slate-700">...</span>
                     </div>
 
-                    <!-- زر القائمة الجانبية (منبثقة من اليسار) -->
                     <button onclick="toggleSideMenu(true)" class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 transition" title="القائمة">
                         <i class="ph ph-list text-xl"></i>
                     </button>
@@ -342,10 +340,9 @@
     <!-- خلفية التعتيم للقائمة الجانبية -->
     <div id="side-menu-overlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[80] transition-opacity" onclick="toggleSideMenu(false)"></div>
 
-    <!-- لوحة القائمة الجانبية المنزلقة من جهة اليسار -->
+    <!-- لوحة القائمة الجانبية المنزلقة -->
     <div id="side-menu-panel" class="fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-white z-[85] shadow-2xl p-5 flex flex-col justify-between transform -translate-x-full transition-transform duration-300 ease-in-out text-right overflow-y-auto">
         <div class="space-y-6">
-            <!-- ترويسة القائمة الجانبية -->
             <div class="flex justify-between items-center border-b border-slate-100 pb-4">
                 <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchTab('home')">
                     <div class="bg-gradient-to-tr from-blue-600 to-blue-400 text-white p-2 rounded-xl shadow-sm">
@@ -361,7 +358,6 @@
                 </button>
             </div>
 
-            <!-- روابط التنقل الأساسية -->
             <nav class="space-y-4">
                 <div>
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2 px-2">الخدمات الأساسية</p>
@@ -409,7 +405,6 @@
             </nav>
         </div>
 
-        <!-- الجزء السفلي: روابط الشفافية وزر تسجيل الخروج -->
         <div class="border-t border-slate-100 pt-4 mt-6 space-y-3">
             <div class="flex justify-center items-center gap-3 text-[11px] font-bold text-slate-400">
                 <button onclick="openInfoModal('about')" class="hover:text-blue-600 transition">من نحن</button>
@@ -624,37 +619,63 @@
         </div>
     </div>
 
-    <!-- نافذة التسجيل -->
+    <!-- نافذة التسجيل واستعادة كلمة المرور -->
     <div id="register-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[90]">
         <div class="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[28px] p-6 shadow-2xl relative text-right slide-up-modal">
             <div class="flex justify-between pb-4 border-b border-slate-100 mb-5 items-center">
                 <h3 id="register-modal-title" class="font-black text-slate-800 text-lg">فتح حساب جديد</h3>
                 <button onclick="toggleView('register-modal', false)" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full"><i class="ph ph-x font-bold"></i></button>
             </div>
+
+            <!-- المرحلة 1: إدخال البيانات أو البريد -->
             <div id="register-step-form" class="space-y-4">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 mb-1.5">الاسم الأول</label>
-                        <input id="reg-first-name" type="text" class="input-field w-full px-4 py-3 text-xs">
+                <div id="reg-extra-fields" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1.5">الاسم الأول</label>
+                            <input id="reg-first-name" type="text" class="input-field w-full px-4 py-3 text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1.5">اسم العائلة</label>
+                            <input id="reg-last-name" type="text" class="input-field w-full px-4 py-3 text-xs">
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-500 mb-1.5">اسم العائلة</label>
-                        <input id="reg-last-name" type="text" class="input-field w-full px-4 py-3 text-xs">
+                        <label class="block text-[10px] font-bold text-slate-500 mb-1.5">رقم الجوال</label>
+                        <input id="reg-phone" type="tel" class="input-field w-full px-4 py-3.5 text-sm tracking-widest text-left" dir="ltr">
                     </div>
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold text-slate-500 mb-1.5">البريد الإلكتروني</label>
                     <input id="reg-email" type="email" class="input-field w-full px-4 py-3.5 text-sm" dir="ltr">
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 mb-1.5">رقم الجوال</label>
-                    <input id="reg-phone" type="tel" class="input-field w-full px-4 py-3.5 text-sm tracking-widest text-left" dir="ltr">
-                </div>
-                <button onclick="submitRegistration()" class="w-full btn-primary text-white font-bold py-4 rounded-xl text-sm mt-2 flex justify-center items-center gap-2">
-                    المتابعة <i class="ph ph-arrow-left"></i>
+                <button id="reg-submit-btn" onclick="submitRegistration()" class="w-full btn-primary text-white font-bold py-4 rounded-xl text-sm mt-2 flex justify-center items-center gap-2">
+                    <span id="reg-submit-btn-text">المتابعة</span> <i class="ph ph-arrow-left"></i>
                 </button>
             </div>
-            
+
+            <!-- المرحلة 2: إدخال رمز التحقق OTP وزر إعادة الإرسال -->
+            <div id="register-step-otp" class="hidden space-y-5 text-center py-4">
+                <div class="inline-flex justify-center items-center w-16 h-16 bg-blue-50 text-blue-500 rounded-full mb-1">
+                    <i class="ph-fill ph-envelope-open text-3xl"></i>
+                </div>
+                <p class="text-xs text-slate-600 font-medium">أرسلنا رمز تحقق (6 أرقام) إلى بريدك الإلكتروني، يرجى إدخاله هنا:</p>
+                <input id="reg-otp-code" type="tel" maxlength="6" placeholder="000000" class="input-field w-40 text-center tracking-[0.4em] py-3 text-xl mx-auto block font-mono font-bold" dir="ltr">
+                
+                <button id="otp-verify-btn" onclick="verifyRegistrationOtp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl text-sm transition shadow-md">
+                    تأكيد الرمز
+                </button>
+
+                <!-- زر إعادة الإرسال المشترك لكلا العمليتين -->
+                <div class="pt-2 text-center border-t border-slate-100">
+                    <span class="text-xs text-slate-500 font-medium">لم يصلك الرمز بعد؟</span>
+                    <button id="resend-otp-btn" onclick="resendOtpCode()" class="text-xs text-[#005ba3] font-bold hover:underline mr-1 disabled:opacity-50 disabled:no-underline cursor-pointer">
+                        إعادة إرسال الرمز
+                    </button>
+                </div>
+            </div>
+
+            <!-- المرحلة 3: تعيين كلمة المرور -->
             <div id="register-step-password" class="hidden space-y-4">
                 <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100 text-[11px] text-amber-800 leading-relaxed font-bold flex gap-3 items-start">
                     <i class="ph-fill ph-warning-circle text-amber-500 text-lg shrink-0 mt-0.5"></i>
@@ -677,15 +698,6 @@
                 <button id="final-register-btn" onclick="executeFinalAccountCreationOrReset()" class="w-full btn-primary text-white font-bold py-4 rounded-xl text-sm mt-2 flex justify-center items-center gap-2">
                     <i class="ph-fill ph-check-circle text-lg"></i> تأكيد وحفظ
                 </button>
-            </div>
-
-            <div id="register-step-otp" class="hidden space-y-6 text-center py-4">
-                <div class="inline-flex justify-center items-center w-16 h-16 bg-blue-50 text-blue-500 rounded-full mb-2">
-                    <i class="ph-fill ph-envelope-open text-3xl"></i>
-                </div>
-                <p class="text-xs text-slate-600 font-medium">أرسلنا رمز تحقق (6 أرقام) إلى بريدك الإلكتروني، يرجى إدخاله هنا:</p>
-                <input id="reg-otp-code" type="tel" maxlength="6" placeholder="000000" class="input-field w-40 text-center tracking-[0.4em] py-3 text-xl mx-auto block font-mono font-bold" dir="ltr">
-                <button id="otp-verify-btn" onclick="verifyRegistrationOtp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl text-sm transition">تأكيد الرمز</button>
             </div>
         </div>
     </div>
@@ -720,10 +732,42 @@
         let rawCardNumber = "", lastFourDigits = "", isCardVisible = false;
         let selectedProductId = "", selectedItemName = "", selectedItemPrice = 0.00, inputPlayerId = "", inputPlayerIdConfirm = "";
         let tempRegisterData = {}, globalProductsRaw = [], currentFlowType = "register", globalTransactionsRaw = [];
+        let resendTimer = null;
 
-        // التحقق التلقائي من الجلسة
+        // التحقق التلقائي من الجلسة والاستماع لتغييرات المصادقة
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                currentFlowType = "reset";
+                currentUser = session ? session.user : null;
+                if (currentUser) {
+                    tempRegisterData = { email: currentUser.email };
+                }
+                closeAllModals();
+                toggleView('dashboard-screen', false);
+                toggleView('login-screen', true);
+                
+                toggleView('reg-extra-fields', false);
+                toggleView('register-step-form', false);
+                toggleView('register-step-otp', false);
+                toggleView('register-step-password', true);
+                document.getElementById('register-modal-title').innerText = "تعيين كلمة المرور الجديدة";
+                toggleView('register-modal', true);
+            } else if (event === 'SIGNED_IN') {
+                if (currentFlowType !== 'reset') {
+                    currentUser = session.user;
+                    postLoginSetup();
+                }
+            } else if (event === 'SIGNED_OUT') {
+                currentUser = null;
+            }
+        });
+
         supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) { currentUser = session.user; postLoginSetup(); }
+            const isRecoveryHash = window.location.hash.includes('type=recovery');
+            if (session && !isRecoveryHash) { 
+                currentUser = session.user; 
+                postLoginSetup(); 
+            }
         });
 
         // ========================================================================
@@ -737,8 +781,14 @@
             btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري التحقق...`; 
             
             const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
-            if (error) { showCustomAlert("بيانات الدخول غير صحيحة."); btn.disabled = false; btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`; } 
-            else { currentUser = data.user; postLoginSetup(); }
+            if (error) { 
+                showCustomAlert("بيانات الدخول غير صحيحة."); 
+                btn.disabled = false; 
+                btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`; 
+            } else { 
+                currentUser = data.user; 
+                postLoginSetup(); 
+            }
         }
 
         function postLoginSetup() {
@@ -769,69 +819,235 @@
         }
 
         // ========================================================================
-        // 3. التسجيل واستعادة كلمة المرور
+        // 3. إدارة التسجيل واستعادة كلمة المرور وإعادة الإرسال
         // ========================================================================
+        function resetResendButtonState() {
+            if (resendTimer) clearInterval(resendTimer);
+            const resendBtn = document.getElementById('resend-otp-btn');
+            if (resendBtn) {
+                resendBtn.disabled = false;
+                resendBtn.innerText = "إعادة إرسال الرمز";
+            }
+        }
+
+        function startResendCooldown() {
+            const btn = document.getElementById('resend-otp-btn');
+            if (!btn) return;
+            let timeLeft = 60;
+            btn.disabled = true;
+            btn.innerText = `إعادة الإرسال خلال (${timeLeft}) ثانية`;
+
+            if (resendTimer) clearInterval(resendTimer);
+            resendTimer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(resendTimer);
+                    btn.disabled = false;
+                    btn.innerText = "إعادة إرسال الرمز";
+                } else {
+                    btn.innerText = `إعادة الإرسال خلال (${timeLeft}) ثانية`;
+                }
+            }, 1000);
+        }
+
         function openRegisterModal() { 
-            currentFlowType = "register"; toggleView('register-step-form', true); toggleView('register-step-password', false); toggleView('register-step-otp', false); 
-            document.getElementById('register-modal-title').innerText = "إنشاء حساب جديد (خطوة 1)"; 
-            ['reg-first-name', 'reg-last-name', 'reg-email', 'reg-phone', 'reg-new-pin', 'reg-confirm-pin', 'reg-otp-code'].forEach(id => document.getElementById(id).value = ""); 
+            currentFlowType = "register"; 
+            resetResendButtonState();
+            toggleView('reg-extra-fields', true);
+            toggleView('register-step-form', true); 
+            toggleView('register-step-password', false); 
+            toggleView('register-step-otp', false); 
+            
+            document.getElementById('register-modal-title').innerText = "فتح حساب جديد"; 
+            document.getElementById('reg-submit-btn-text').innerText = "المتابعة";
+            
+            ['reg-first-name', 'reg-last-name', 'reg-email', 'reg-phone', 'reg-new-pin', 'reg-confirm-pin', 'reg-otp-code'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.value = "";
+            }); 
             toggleView('register-modal', true); 
         }
 
-        function submitRegistration() { 
-            const email = document.getElementById('reg-email').value.trim();
-            if (!email) return showCustomAlert("البريد الإلكتروني إلزامي."); 
-            if (currentFlowType === "register") { 
-                const fName = document.getElementById('reg-first-name').value.trim(), lName = document.getElementById('reg-last-name').value.trim(), phone = document.getElementById('reg-phone').value.trim(); 
-                if (!fName || !lName || !phone) return showCustomAlert("يرجى ملء كافة الخانات."); 
-                tempRegisterData = { firstName: fName, lastName: lName, email: email, phone: phone }; 
-            } else { tempRegisterData = { email: email }; } 
-            toggleView('register-step-form', false); toggleView('register-step-password', true); 
-            document.getElementById('register-modal-title').innerText = currentFlowType === "register" ? "تعيين كلمة المرور (خطوة 2)" : "كلمة المرور الجديدة";
+        function triggerPasswordResetFlow() { 
+            closeAllModals(); 
+            currentFlowType = "reset"; 
+            resetResendButtonState();
+            toggleView('reg-extra-fields', false);
+            toggleView('register-step-form', true); 
+            toggleView('register-step-otp', false); 
+            toggleView('register-step-password', false); 
+            
+            document.getElementById('register-modal-title').innerText = "استعادة كلمة المرور"; 
+            document.getElementById('reg-submit-btn-text').innerText = "إرسال رمز التحقق";
+            
+            const emailInput = document.getElementById('reg-email');
+            emailInput.value = (currentUser && currentUser.email) ? currentUser.email : "";
+            
+            toggleView('register-modal', true); 
         }
 
-        async function executeFinalAccountCreationOrReset() { 
-            const password = document.getElementById('reg-new-pin').value, cPassword = document.getElementById('reg-confirm-pin').value, btn = document.getElementById('final-register-btn'); 
-            if (password !== cPassword) return showCustomAlert("كلمات المرور غير متطابقة."); 
-            if (password.length < 8) return showCustomAlert("الحد الأدنى 8 خانات."); 
-            btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> إرسال رمز التحقق...`; 
+        function openForgotPasswordModal() { 
+            triggerPasswordResetFlow(); 
+        }
+
+        async function submitRegistration() { 
+            const email = document.getElementById('reg-email').value.trim();
+            if (!email) return showCustomAlert("البريد الإلكتروني إلزامي."); 
             
-            if (currentFlowType === "register") {
-                const { error } = await supabase.auth.signUp({
-                    email: tempRegisterData.email, password: password,
-                    options: { data: { first_name: tempRegisterData.firstName, last_name: tempRegisterData.lastName, phone: tempRegisterData.phone } }
-                });
-                if (error) { showCustomAlert(error.message); btn.disabled = false; btn.innerHTML = `المتابعة`; return; }
-            } else {
-                const { error } = await supabase.auth.resetPasswordForEmail(tempRegisterData.email);
-                if (error) { showCustomAlert(error.message); btn.disabled = false; btn.innerHTML = `المتابعة`; return; }
-            }
-            btn.disabled = false; btn.innerHTML = `المتابعة`;
-            toggleView('register-step-password', false); toggleView('register-step-otp', true); 
+            const btn = document.getElementById('reg-submit-btn');
+
+            if (currentFlowType === "register") { 
+                const fName = document.getElementById('reg-first-name').value.trim();
+                const lName = document.getElementById('reg-last-name').value.trim();
+                const phone = document.getElementById('reg-phone').value.trim(); 
+                
+                if (!fName || !lName || !phone) return showCustomAlert("يرجى ملء كافة الخانات."); 
+                
+                tempRegisterData = { firstName: fName, lastName: lName, email: email, phone: phone }; 
+                toggleView('register-step-form', false); 
+                toggleView('register-step-password', true); 
+                document.getElementById('register-modal-title').innerText = "تعيين كلمة المرور";
+            } else { 
+                tempRegisterData = { email: email }; 
+                btn.disabled = true;
+                btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> إرسال رمز التحقق...`;
+                
+                const { error } = await supabase.auth.resetPasswordForEmail(email);
+                btn.disabled = false;
+                btn.innerHTML = `<span id="reg-submit-btn-text">إرسال رمز التحقق</span> <i class="ph ph-arrow-left"></i>`;
+                
+                if (error) return showCustomAlert(error.message);
+                
+                showCustomAlert("تم إرسال رمز التحقق إلى بريدك الإلكتروني.", false);
+                toggleView('register-step-form', false); 
+                toggleView('register-step-otp', true); 
+                document.getElementById('register-modal-title').innerText = "تأكيد الرمز";
+                startResendCooldown();
+            } 
         }
 
         async function verifyRegistrationOtp() { 
-            const code = document.getElementById('reg-otp-code').value.trim(), btn = document.getElementById('otp-verify-btn'); 
-            if (!code || code.length < 6) return showCustomAlert("أدخل الرمز كاملاً."); 
-            btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> التفعيل...`; 
+            const code = document.getElementById('reg-otp-code').value.trim();
+            const btn = document.getElementById('otp-verify-btn'); 
             
-            const { error } = await supabase.auth.verifyOtp({
-                email: tempRegisterData.email, token: code, type: currentFlowType === "register" ? 'signup' : 'recovery'
-            });
+            if (!code || code.length < 6) return showCustomAlert("أدخل الرمز كاملاً (6 أرقام)."); 
             
-            if (error) { showCustomAlert("الرمز غير صحيح."); btn.disabled = false; btn.innerText = "تأكيد الرمز"; } 
-            else {
-                showCustomAlert("تمت العملية بنجاح!", false); toggleView('register-modal', false);
-                if (currentFlowType === "register") document.getElementById('login-email').value = tempRegisterData.email;
+            btn.disabled = true; 
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري التحقق...`; 
+            
+            const { data, error } = await supabase.auth.verifyOtp({
+                email: tempRegisterData.email, 
+                token: code, 
+                type: currentFlowType === "register" ? 'signup' : 'recovery'
+            }); 
+            
+            btn.disabled = false; 
+            btn.innerText = "تأكيد الرمز";
+
+            if (error) { 
+                return showCustomAlert("الرمز غير صحيح أو منتهي الصلاحية."); 
+            } 
+            
+            if (currentFlowType === "register") {
+                showCustomAlert("تم تفعيل حسابك بنجاح! يمكنك الآن تسجيل الدخول.", false); 
+                toggleView('register-modal', false);
+                document.getElementById('login-email').value = tempRegisterData.email;
+            } else {
+                showCustomAlert("تم تأكيد هويتك، أدخل كلمة المرور الجديدة.", false);
+                toggleView('register-step-otp', false);
+                toggleView('register-step-password', true);
+                document.getElementById('register-modal-title').innerText = "تعيين كلمة المرور الجديدة";
             }
         }
 
-        function triggerPasswordResetFlow() { 
-            closeAllModals(); currentFlowType = "reset"; toggleView('register-step-form', true); toggleView('register-step-otp', false); toggleView('register-step-password', false); 
-            document.getElementById('register-modal-title').innerText = "استعادة كلمة المرور"; 
-            document.getElementById('reg-email').value = ""; toggleView('register-modal', true); 
+        async function executeFinalAccountCreationOrReset() { 
+            const password = document.getElementById('reg-new-pin').value;
+            const cPassword = document.getElementById('reg-confirm-pin').value;
+            const btn = document.getElementById('final-register-btn'); 
+            
+            if (password !== cPassword) return showCustomAlert("كلمات المرور غير متطابقة."); 
+            if (password.length < 8) return showCustomAlert("الحد الأدنى لكلمة المرور 8 خانات."); 
+            
+            btn.disabled = true; 
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري الحفظ...`; 
+            
+            if (currentFlowType === "register") {
+                const { error } = await supabase.auth.signUp({
+                    email: tempRegisterData.email, 
+                    password: password,
+                    options: { 
+                        data: { 
+                            first_name: tempRegisterData.firstName, 
+                            last_name: tempRegisterData.lastName, 
+                            phone: tempRegisterData.phone 
+                        } 
+                    }
+                });
+                
+                btn.disabled = false; 
+                btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد وحفظ`;
+
+                if (error) return showCustomAlert(error.message);
+                
+                showCustomAlert("تم إرسال رمز التحقق إلى بريدك للتفعيل.", false);
+                toggleView('register-step-password', false); 
+                toggleView('register-step-otp', true); 
+                document.getElementById('register-modal-title').innerText = "تفعيل الحساب";
+                startResendCooldown();
+            } else {
+                const { error } = await supabase.auth.updateUser({ 
+                    password: password 
+                });
+                
+                btn.disabled = false; 
+                btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد وحفظ`;
+
+                if (error) return showCustomAlert("فشل تحديث كلمة المرور: " + error.message);
+                
+                showCustomAlert("تم تحديث كلمة المرور بنجاح! يرجى تسجيل الدخول بكلمتك الجديدة.", false);
+                await supabase.auth.signOut();
+                currentUser = null;
+                toggleView('register-modal', false);
+                document.getElementById('login-email').value = tempRegisterData.email;
+                document.getElementById('login-password').value = "";
+                switchTab('home');
+                toggleView('dashboard-screen', false);
+                toggleView('login-screen', true);
+            }
         }
-        function openForgotPasswordModal() { triggerPasswordResetFlow(); }
+
+        async function resendOtpCode() {
+            const btn = document.getElementById('resend-otp-btn');
+            if (!tempRegisterData || !tempRegisterData.email) {
+                return showCustomAlert("حدث خطأ، يرجى إعادة المحاولة من البداية.");
+            }
+
+            btn.disabled = true;
+            btn.innerText = "جاري الإرسال...";
+
+            let error = null;
+
+            if (currentFlowType === "register") {
+                const res = await supabase.auth.resend({
+                    type: 'signup',
+                    email: tempRegisterData.email
+                });
+                error = res.error;
+            } else {
+                const res = await supabase.auth.resetPasswordForEmail(tempRegisterData.email);
+                error = res.error;
+            }
+
+            if (error) {
+                btn.disabled = false;
+                btn.innerText = "إعادة إرسال الرمز";
+                return showCustomAlert("فشل الإرسال: " + error.message);
+            }
+
+            showCustomAlert("تم إرسال رمز جديد إلى بريدك بنجاح!", false);
+            document.getElementById('reg-otp-code').value = "";
+            startResendCooldown();
+        }
 
         // ========================================================================
         // 4. جلب ومزامنة البيانات
@@ -996,6 +1212,7 @@
         function toggleView(id, show) { const el = document.getElementById(id); if(el) el.classList.toggle('hidden', !show); }
         
         function closeAllModals() { 
+            resetResendButtonState();
             ['register-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'code-delivery-modal', 'all-orders-modal', 'agents-modal', 'support-modal', 'info-modal'].forEach(id => toggleView(id, false)); 
         }
         
@@ -1072,7 +1289,7 @@
         }
 
         // ========================================================================
-        // 7. عرض المعاملات واستبعاد المربع الأسود عن الشحن المباشر
+        // 7. عرض المعاملات
         // ========================================================================
         function renderRecentDashboardTransactions(txArray) {
             const container = document.getElementById('dashboard-recent-tx');
@@ -1170,8 +1387,10 @@
             document.querySelectorAll('.order-filter-btn').forEach(btn => {
                 btn.className = "order-filter-btn bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl";
             });
-            event?.target?.classList?.remove('bg-slate-100', 'text-slate-600');
-            event?.target?.classList?.add('bg-slate-900', 'text-white');
+            if (event && event.target && event.target.classList) {
+                event.target.classList.remove('bg-slate-100', 'text-slate-600');
+                event.target.classList.add('bg-slate-900', 'text-white');
+            }
 
             const container = document.getElementById('all-orders-container');
             container.innerHTML = "";

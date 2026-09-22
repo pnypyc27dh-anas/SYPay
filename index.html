@@ -88,7 +88,7 @@
 <body class="min-h-screen flex flex-col justify-between antialiased selection:bg-blue-200 selection:text-blue-900">
 
     <!-- التنبيهات المخصصة -->
-    <div id="custom-alert" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-sm px-4 py-3 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border bg-white flex items-center justify-between gap-3 slide-down backdrop-blur-xl">
+    <div id="custom-alert" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-[120] w-[90%] max-w-sm px-4 py-3 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border bg-white flex items-center justify-between gap-3 slide-down backdrop-blur-xl">
         <div class="flex items-center gap-3 w-full">
             <div id="alert-icon-container" class="p-2 rounded-full bg-red-100 text-red-600 shrink-0"></div>
             <p id="custom-alert-text" class="text-xs font-bold text-slate-800 leading-snug flex-grow"></p>
@@ -423,6 +423,30 @@
 
     <!-- ==================== النوافذ المنبثقة ==================== -->
 
+    <!-- نافذة إعادة تفعيل الحساب المؤتمتة (Self Reactivation) -->
+    <div id="reactivate-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[115]">
+        <div class="bg-white w-full max-w-sm rounded-[28px] p-6 shadow-2xl text-center space-y-4">
+            <div class="w-16 h-16 bg-blue-50 text-[#005ba3] rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-inner">
+                <i class="ph-fill ph-arrow-counter-clockwise"></i>
+            </div>
+            <div class="space-y-1">
+                <h4 class="text-base font-black text-slate-800">حسابك معطل حالياً</h4>
+                <p class="text-xs text-slate-500 font-medium leading-relaxed">
+                    لقد قمت بتعطيل حسابك سابقاً. هل ترغب في إعادة تنشيطه الآن والدخول إلى محفظتك؟
+                </p>
+            </div>
+            <div class="space-y-2 pt-2">
+                <button id="confirm-reactivate-btn" onclick="handleConfirmReactivate()" class="w-full btn-primary text-white text-xs font-bold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2">
+                    <i class="ph-fill ph-check-circle text-lg"></i>
+                    <span>إعادة تفعيل الحساب ومتابعة الدخول</span>
+                </button>
+                <button onclick="handleCancelReactivate()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold py-3.5 rounded-xl transition">
+                    إلغاء وتسجيل الخروج
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- نافذة سجل المعاملات الشامل -->
     <div id="all-orders-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-[95]">
         <div class="bg-white w-full max-w-2xl rounded-t-[32px] sm:rounded-[28px] max-h-[85vh] flex flex-col p-6 shadow-2xl relative slide-up-modal text-right">
@@ -735,7 +759,7 @@
         let resendTimer = null;
 
         // التحقق التلقائي من الجلسة والاستماع لتغييرات المصادقة
-        supabase.auth.onAuthStateChange((event, session) => {
+        supabase.auth.onAuthStateChange(async (event, session) => {
             if (event === 'PASSWORD_RECOVERY') {
                 currentFlowType = "reset";
                 currentUser = session ? session.user : null;
@@ -754,24 +778,61 @@
                 toggleView('register-modal', true);
             } else if (event === 'SIGNED_IN') {
                 if (currentFlowType !== 'reset') {
-                    currentUser = session.user;
-                    postLoginSetup();
+                    // التحقق من حالة الحساب عند الدخول
+                    const { data: prof } = await supabase
+                        .from('profiles')
+                        .select('status')
+                        .eq('id', session.user.id)
+                        .single();
+
+                    if (prof && (prof.status === 'inactive' || prof.status === 'محذوف' || prof.status === 'معطل')) {
+                        currentUser = session.user;
+                        toggleView('dashboard-screen', false);
+                        toggleView('login-screen', true);
+                        toggleView('reactivate-modal', true);
+                    } else if (prof && prof.status === 'banned') {
+                        await supabase.auth.signOut();
+                        currentUser = null;
+                        showCustomAlert("هذا الحساب محظور إدارياً. يرجى التواصل مع الإدارة.");
+                    } else {
+                        currentUser = session.user;
+                        postLoginSetup();
+                    }
                 }
             } else if (event === 'SIGNED_OUT') {
                 currentUser = null;
             }
         });
 
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        // فحص الجلسة عند تحميل الصفحة لأول مرة
+        supabase.auth.getSession().then(async ({ data: { session } }) => {
             const isRecoveryHash = window.location.hash.includes('type=recovery');
             if (session && !isRecoveryHash) { 
-                currentUser = session.user; 
-                postLoginSetup(); 
+                const { data: prof } = await supabase
+                    .from('profiles')
+                    .select('status')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (prof && (prof.status === 'inactive' || prof.status === 'محذوف' || prof.status === 'معطل')) {
+                    currentUser = session.user;
+                    toggleView('dashboard-screen', false);
+                    toggleView('login-screen', true);
+                    toggleView('reactivate-modal', true);
+                } else if (prof && prof.status === 'banned') {
+                    await supabase.auth.signOut();
+                    currentUser = null;
+                    toggleView('dashboard-screen', false);
+                    toggleView('login-screen', true);
+                } else {
+                    currentUser = session.user; 
+                    postLoginSetup(); 
+                }
             }
         });
 
         // ========================================================================
-        // 2. دوال المصادقة (Auth)
+        // 2. دوال المصادقة (Auth) وإدارة الحساب
         // ========================================================================
         async function handleLogin() { 
             const email = document.getElementById('login-email').value.trim();
@@ -781,14 +842,72 @@
             btn.disabled = true; btn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> جاري التحقق...`; 
             
             const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+            
             if (error) { 
                 showCustomAlert("بيانات الدخول غير صحيحة."); 
                 btn.disabled = false; 
                 btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`; 
-            } else { 
-                currentUser = data.user; 
-                postLoginSetup(); 
+                return;
             }
+
+            // فحص حالة الحساب في جدول profiles
+            const { data: prof } = await supabase
+                .from('profiles')
+                .select('status')
+                .eq('id', data.user.id)
+                .single();
+
+            btn.disabled = false; 
+            btn.innerHTML = `<span>تسجيل الدخول</span><i class="ph ph-sign-in text-lg"></i>`;
+
+            // 1. الحساب محظور إدارياً
+            if (prof && prof.status === 'banned') {
+                await supabase.auth.signOut();
+                currentUser = null;
+                return showCustomAlert("هذا الحساب محظور إدارياً. يرجى التواصل مع الإدارة.");
+            }
+
+            // 2. الحساب معطل ذاتياً من قبل العميل
+            if (prof && (prof.status === 'inactive' || prof.status === 'محذوف' || prof.status === 'معطل')) {
+                currentUser = data.user;
+                toggleView('reactivate-modal', true);
+                return;
+            }
+
+            // 3. الحساب نشط بصورة طبيعية
+            currentUser = data.user; 
+            postLoginSetup(); 
+        }
+
+        // دالة تأكيد إعادة التنشيط الذاتي المؤتمتة
+        async function handleConfirmReactivate() {
+            const btn = document.getElementById('confirm-reactivate-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري إعادة التنشيط...`;
+
+            const { data, error } = await supabase.rpc('reactivate_my_account');
+            btn.disabled = false;
+            btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> <span>إعادة تفعيل الحساب ومتابعة الدخول</span>`;
+
+            if (error || (data && data.status === 'error')) {
+                return showCustomAlert("فشل تفعيل الحساب: " + (error?.message || data?.message));
+            }
+
+            toggleView('reactivate-modal', false);
+            showCustomAlert("تمت إعادة تفعيل حسابك بنجاح! أهلاً بك مجدداً.", false);
+            postLoginSetup();
+        }
+
+        // دالة إلغاء إعادة التنشيط والبقاء كحساب معطل
+        async function handleCancelReactivate() {
+            toggleView('reactivate-modal', false);
+            await supabase.auth.signOut();
+            currentUser = null;
+            ['login-email', 'login-password'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = "";
+            });
+            showCustomAlert("تم إلغاء الدخول، حسابك ما زال معطلاً.", false);
         }
 
         function postLoginSetup() {
@@ -1090,7 +1209,6 @@
         } 
 
         async function fetchStoreProductsDirectly() { 
-            // قراءة المنتجات المتاحة بتوافق مع active و نشط
             const { data: prods, error } = await supabase
                 .from('products')
                 .select('*')
@@ -1198,7 +1316,7 @@
                 const { data: rpcRef, error: rpcErr } = await supabase.rpc('generate_ref', { prefix: 'TX-D' });
                 if (!rpcErr && rpcRef) txRef = rpcRef;
 
-                // 1. إدراج طلب الإيداع مع شرط الأمان status = 'pending'
+                // 1. إدراج طلب الإيداع
                 const { error: depError } = await supabase.from('deposit_orders').insert({ 
                     transaction_ref: txRef, 
                     user_id: currentUser.id, 
@@ -1211,7 +1329,7 @@
 
                 if (depError) throw depError;
 
-                // 2. توثيق الحركة بالقيد المعتمد 'Deposit' وحالة 'pending'
+                // 2. توثيق الحركة بالقيد المعتمد
                 const { error: txError } = await supabase.from('transactions').insert({ 
                     user_id: currentUser.id, 
                     transaction_type: 'Deposit', 
@@ -1246,7 +1364,7 @@
         
         function closeAllModals() { 
             resetResendButtonState();
-            ['register-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'code-delivery-modal', 'all-orders-modal', 'agents-modal', 'support-modal', 'info-modal'].forEach(id => toggleView(id, false)); 
+            ['register-modal', 'plans-modal', 'account-inputs-modal', 'purchase-modal', 'code-delivery-modal', 'all-orders-modal', 'agents-modal', 'support-modal', 'info-modal', 'reactivate-modal'].forEach(id => toggleView(id, false)); 
         }
         
         function toggleSideMenu(open) {
@@ -1305,13 +1423,23 @@
         }
         function closeCustomPrompt() { toggleView('custom-prompt', false); }
 
+        // ترقية دالة تعطيل الحساب لتنفيذ التحديث الآمن عبر الخادم RPC
         async function triggerDeleteAccountFlow() { 
-            showCustomPrompt("أدخل كلمة المرور لتأكيد تعطيل الحساب:", async function(pass) { 
-                const { error } = await supabase.auth.signInWithPassword({ email: currentUser.email, password: pass });
-                if (error) return showCustomAlert("كلمة المرور غير صحيحة."); 
-                // اعتماد القيمة القياسية inactive المتوافقة مع القيود
-                await supabase.from('profiles').update({ status: 'inactive' }).eq('id', currentUser.id);
-                showCustomAlert("تم تعطيل الحساب بنجاح.", false); 
+            showCustomPrompt("أدخل كلمة المرور لتأكيد تعطيل حسابك:", async function(pass) { 
+                const { error: authError } = await supabase.auth.signInWithPassword({ 
+                    email: currentUser.email, 
+                    password: pass 
+                });
+                if (authError) return showCustomAlert("كلمة المرور غير صحيحة."); 
+                
+                // استدعاء دالة الخادم الآمنة لتحديث الحالة إلى inactive
+                const { data, error } = await supabase.rpc('deactivate_my_account');
+                
+                if (error || (data && data.status === 'error')) {
+                    return showCustomAlert("فشل تعطيل الحساب: " + (error?.message || data?.message));
+                }
+
+                showCustomAlert("تم تعطيل حسابك بنجاح. نراك قريباً!", false); 
                 handleLogout(); 
             }); 
         }

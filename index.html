@@ -1010,40 +1010,38 @@
         }
 
         async function submitRegistration() { 
-            const email = document.getElementById('reg-email').value.trim();
-            if (!email) return showCustomAlert("البريد الإلكتروني إلزامي."); 
-            
-            const btn = document.getElementById('reg-submit-btn');
+    const email = document.getElementById('reg-email').value.trim();
+    if (!email) return showCustomAlert("البريد الإلكتروني إلزامي."); 
+    
+    const btn = document.getElementById('reg-submit-btn');
 
-            if (currentFlowType === "register") { 
-                const fName = document.getElementById('reg-first-name').value.trim();
-                const lName = document.getElementById('reg-last-name').value.trim();
-                const phone = document.getElementById('reg-phone').value.trim(); 
-                
-                if (!fName || !lName || !phone) return showCustomAlert("يرجى ملء كافة الخانات."); 
-                
-                tempRegisterData = { firstName: fName, lastName: lName, email: email, phone: phone }; 
-                toggleView('register-step-form', false); 
-                toggleView('register-step-password', true); 
-                document.getElementById('register-modal-title').innerText = "تعيين كلمة المرور";
-            } else { 
-                tempRegisterData = { email: email }; 
-                btn.disabled = true;
-                btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> إرسال رمز التحقق...`;
-                
-                const { error } = await supabase.auth.resetPasswordForEmail(email);
-                btn.disabled = false;
-                btn.innerHTML = `<span id="reg-submit-btn-text">إرسال رمز التحقق</span> <i class="ph ph-arrow-left"></i>`;
-                
-                if (error) return showCustomAlert(error.message);
-                
-                showCustomAlert("تم إرسال رمز التحقق إلى بريدك الإلكتروني.", false);
-                toggleView('register-step-form', false); 
-                toggleView('register-step-otp', true); 
-                document.getElementById('register-modal-title').innerText = "تأكيد الرمز";
-                startResendCooldown();
-            } 
-        }
+    if (currentFlowType === "register") { 
+        const fName = document.getElementById('reg-first-name').value.trim();
+        const lName = document.getElementById('reg-last-name').value.trim();
+        const phone = document.getElementById('reg-phone').value.trim(); 
+        
+        if (!fName || !lName || !phone) return showCustomAlert("يرجى ملء كافة الخانات."); 
+        
+        tempRegisterData = { firstName: fName, lastName: lName, email: email, phone: phone }; 
+        toggleView('register-step-form', false); 
+        toggleView('register-step-password', true); 
+        document.getElementById('register-modal-title').innerText = "تعيين كلمة المرور";
+    } else { 
+        tempRegisterData = { email: email }; 
+        btn.disabled = true;
+        btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> إرسال رمز التحقق...`;
+        
+        const { error } = await supabase.auth.resetPasswordForEmail(email);
+        btn.disabled = false;
+        btn.innerHTML = `<span id="reg-submit-btn-text">إرسال رمز التحقق</span> <i class="ph ph-arrow-left"></i>`;
+        
+        showCustomAlert("إذا كان هذا البريد مسجلاً لدينا، فستصلك تعليمات الاستعادة.", false);
+        toggleView('register-step-form', false); 
+        toggleView('register-step-otp', true); 
+        document.getElementById('register-modal-title').innerText = "تأكيد الرمز";
+        startResendCooldown();
+    } 
+}
 
         async function verifyRegistrationOtp() { 
             const code = document.getElementById('reg-otp-code').value.trim();
@@ -1080,60 +1078,65 @@
         }
 
         async function executeFinalAccountCreationOrReset() { 
-            const password = document.getElementById('reg-new-pin').value;
-            const cPassword = document.getElementById('reg-confirm-pin').value;
-            const btn = document.getElementById('final-register-btn'); 
-            
-            if (password !== cPassword) return showCustomAlert("كلمات المرور غير متطابقة."); 
-            if (password.length < 8) return showCustomAlert("الحد الأدنى لكلمة المرور 8 خانات."); 
-            
-            btn.disabled = true; 
-            btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري الحفظ...`; 
-            
-            if (currentFlowType === "register") {
-                const { error } = await supabase.auth.signUp({
-                    email: tempRegisterData.email, 
-                    password: password,
-                    options: { 
-                        data: { 
-                            first_name: tempRegisterData.firstName, 
-                            last_name: tempRegisterData.lastName, 
-                            phone: tempRegisterData.phone 
-                        } 
-                    }
-                }); 
-                
-                btn.disabled = false; 
-                btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد وحفظ`;
-
-                if (error) return showCustomAlert(error.message);
-                
-                showCustomAlert("تم إرسال رمز التحقق إلى بريدك للتفعيل.", false);
-                toggleView('register-step-password', false); 
-                toggleView('register-step-otp', true); 
-                document.getElementById('register-modal-title').innerText = "تفعيل الحساب";
-                startResendCooldown();
-            } else {
-                const { error } = await supabase.auth.updateUser({ 
-                    password: password 
-                }); 
-                
-                btn.disabled = false; 
-                btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد وحفظ`;
-
-                if (error) return showCustomAlert("فشل تحديث كلمة المرور: " + error.message);
-                
-                showCustomAlert("تم تحديث كلمة المرور بنجاح! يرجى تسجيل الدخول بكلمتك الجديدة.", false);
-                await supabase.auth.signOut();
-                currentUser = null;
-                toggleView('register-modal', false);
-                document.getElementById('login-email').value = tempRegisterData.email;
-                document.getElementById('login-password').value = "";
-                switchTab('home');
-                toggleView('dashboard-screen', false);
-                toggleView('login-screen', true);
+    const password = document.getElementById('reg-new-pin').value;
+    const cPassword = document.getElementById('reg-confirm-pin').value;
+    const btn = document.getElementById('final-register-btn'); 
+    
+    if (password !== cPassword) return showCustomAlert("كلمات المرور غير متطابقة."); 
+    if (password.length < 8) return showCustomAlert("الحد الأدنى لكلمة المرور 8 خانات."); 
+    
+    btn.disabled = true; 
+    btn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> جاري الحفظ...`; 
+    
+    if (currentFlowType === "register") {
+        const { data: signUpData, error } = await supabase.auth.signUp({
+            email: tempRegisterData.email, 
+            password: password,
+            options: { 
+                data: { 
+                    first_name: tempRegisterData.firstName, 
+                    last_name: tempRegisterData.lastName, 
+                    phone: tempRegisterData.phone 
+                } 
             }
+        }); 
+        
+        btn.disabled = false; 
+        btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد وحفظ`;
+
+        if (error) return showCustomAlert(error.message);
+
+        // إذا كان البريد مسجلاً مسبقاً، يعيد Supabase مصفوفة identities فارغة لحماية الخصوصية
+        if (signUpData?.user && (!signUpData.user.identities || signUpData.user.identities.length === 0)) {
+            toggleView('register-modal', false);
+            document.getElementById('login-email').value = tempRegisterData.email;
+            return showCustomAlert("هذا البريد مسجل مسبقاً. سجل دخولك بكلمة مرورك لتفعيل محفظتك.", false);
         }
+        
+        showCustomAlert("تم إرسال رمز التحقق إلى بريدك للتفعيل.", false);
+        toggleView('register-step-password', false); 
+        toggleView('register-step-otp', true); 
+        document.getElementById('register-modal-title').innerText = "تفعيل الحساب";
+        startResendCooldown();
+    } else {
+        const { error } = await supabase.auth.updateUser({ password: password }); 
+        
+        btn.disabled = false; 
+        btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> تأكيد وحفظ`;
+
+        if (error) return showCustomAlert("فشل تحديث كلمة المرور: " + error.message);
+        
+        showCustomAlert("تم تحديث كلمة المرور بنجاح! يرجى تسجيل الدخول بكلمتك الجديدة.", false);
+        await supabase.auth.signOut();
+        currentUser = null;
+        toggleView('register-modal', false);
+        document.getElementById('login-email').value = tempRegisterData.email;
+        document.getElementById('login-password').value = "";
+        switchTab('home');
+        toggleView('dashboard-screen', false);
+        toggleView('login-screen', true);
+    }
+}
 
         async function resendOtpCode() {
             const btn = document.getElementById('resend-otp-btn');

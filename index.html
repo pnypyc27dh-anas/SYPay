@@ -1056,11 +1056,12 @@
             if (!currentUser) return;
             const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
             if (profile) {
-                currentWalletBalance = parseFloat(profile.balance); 
+                currentWalletBalance = parseFloat(profile.balance || 0); 
                 document.getElementById('live-balance').innerText = "$" + currentWalletBalance.toFixed(2); 
-                const fullName = profile.first_name + " " + profile.last_name;
-                document.getElementById('live-client-name').innerText = document.getElementById('nav-user-name').innerText = fullName; 
-                rawCardNumber = profile.card_number || "0000 0000 0000 0000"; lastFourDigits = rawCardNumber.substring(rawCardNumber.length - 4); 
+                const fullName = (profile.first_name || '') + " " + (profile.last_name || '');
+                document.getElementById('live-client-name').innerText = document.getElementById('nav-user-name').innerText = fullName.trim() || 'عميل معتمد'; 
+                rawCardNumber = profile.card_number || "0000 0000 0000 0000"; 
+                lastFourDigits = rawCardNumber.substring(rawCardNumber.length - 4); 
                 resetCardVisibility(); 
                 document.getElementById('prof-first-name').value = profile.first_name || "";
                 document.getElementById('prof-last-name').value = profile.last_name || "";
@@ -1089,11 +1090,32 @@
         } 
 
         async function fetchStoreProductsDirectly() { 
-            const { data: prods } = await supabase.from('products').select('*').eq('status', 'نشط');
+            // قراءة المنتجات المتاحة بتوافق مع active و نشط
+            const { data: prods, error } = await supabase
+                .from('products')
+                .select('*')
+                .in('status', ['active', 'نشط']);
+
+            if (error) {
+                console.error("Error fetching products:", error);
+                return;
+            }
+
             if(prods) {
                 globalProductsRaw = prods.map(p => ({
-                    id: p.id, category: p.category, platform: p.platform, package_name: p.package_name, price: parseFloat(p.price), type: p.product_type, image_url: p.image_url
+                    id: p.id, 
+                    category: p.category, 
+                    platform: p.platform, 
+                    package_name: p.package_name, 
+                    price: parseFloat(p.price), 
+                    type: p.product_type, 
+                    image_url: p.image_url
                 }));
+
+                const storeView = document.getElementById('view-store');
+                if (storeView && !storeView.classList.contains('hidden')) {
+                    renderMainCategoriesView();
+                }
             }
         }
 
@@ -1111,20 +1133,20 @@
                 const { data: r, error } = await supabase.rpc('buy_product', {
                     p_user_id: currentUser.id, 
                     p_product_id: selectedProductId, 
-                    p_player_id: inputPlayerId, 
-                    p_player_id_confirm: inputPlayerIdConfirm
+                    p_player_id: inputPlayerId || null, 
+                    p_player_id_confirm: inputPlayerIdConfirm || null
                 }); 
                 
                 if (error) throw error;
 
                 if (r && r.status === "success") { 
                     closeAllModals(); 
-                    silentSyncData(); 
+                    await silentSyncData(); 
                     
                     if (r.mode === "CODE") {
                         showCodeDeliveryModal(r.code, selectedItemName);
                     } else {
-                        alert(`✅ تم استلام طلب الشحن بنجاح!\n\nالمنتج: ${selectedItemName}\nمعرف اللاعب (ID): ${inputPlayerId}\n\nطلبك قيد التنفيذ وسيصل لحسابك في اللعبة فوراً.`);
+                        showCustomAlert("✅ تم استلام طلب الشحن بنجاح وهو قيد التنفيذ!", false);
                     }
                 } else { 
                     showCustomAlert("فشلت العملية: " + (r ? r.message : "حدث خطأ غير متوقع")); 
@@ -1139,14 +1161,22 @@
         }
 
         async function processSubWalletFetch() { 
-            const agent = document.getElementById('sub-agent-code').value.trim(), method = document.getElementById('sub-payment-method').value, btn = document.getElementById('sub-deposit-step1-btn'); 
+            const agent = document.getElementById('sub-agent-code').value.trim();
+            const method = document.getElementById('sub-payment-method').value;
+            const btn = document.getElementById('sub-deposit-step1-btn'); 
+            
             if(!agent) return showCustomAlert("يرجى إدخال رمز الوكيل."); 
             btn.disabled = true; 
+            
             const { data: agentData } = await supabase.from('agents').select('*').eq('agent_code', agent).eq('payment_method', method).single();
             if(agentData) { 
-                document.getElementById('sub-display-agent-name').innerText = agentData.agent_name; document.getElementById('sub-display-wallet-number').innerText = agentData.wallet_address; 
-                toggleView('deposit-sub-step1', false); toggleView('deposit-sub-step2', true); 
-            } else { showCustomAlert("رمز الوكيل غير مسجل."); } 
+                document.getElementById('sub-display-agent-name').innerText = agentData.agent_name; 
+                document.getElementById('sub-display-wallet-number').innerText = agentData.wallet_address; 
+                toggleView('deposit-sub-step1', false); 
+                toggleView('deposit-sub-step2', true); 
+            } else { 
+                showCustomAlert("رمز الوكيل غير مسجل."); 
+            } 
             btn.disabled = false; 
         }
 
@@ -1168,23 +1198,26 @@
                 const { data: rpcRef, error: rpcErr } = await supabase.rpc('generate_ref', { prefix: 'TX-D' });
                 if (!rpcErr && rpcRef) txRef = rpcRef;
 
+                // 1. إدراج طلب الإيداع مع شرط الأمان status = 'pending'
                 const { error: depError } = await supabase.from('deposit_orders').insert({ 
                     transaction_ref: txRef, 
                     user_id: currentUser.id, 
                     amount: parseFloat(finalAmt), 
                     payment_method: method, 
                     agent_code: agent, 
-                    transfer_receipt_num: txNum 
+                    transfer_receipt_num: txNum,
+                    status: 'pending'
                 });
 
                 if (depError) throw depError;
 
+                // 2. توثيق الحركة بالقيد المعتمد 'Deposit' وحالة 'pending'
                 const { error: txError } = await supabase.from('transactions').insert({ 
                     user_id: currentUser.id, 
-                    transaction_type: 'شحن رصيد', 
-                    details: 'طلب تمويل عبر الوكيل', 
+                    transaction_type: 'Deposit', 
+                    details: 'طلب تمويل عبر الوكيل (' + method + ')', 
                     amount: parseFloat(finalAmt), 
-                    status: 'معلق', 
+                    status: 'pending', 
                     transaction_ref: txRef,
                     delivery_type: 'WALLET_DEPOSIT',
                     player_id: null,
@@ -1276,21 +1309,47 @@
             showCustomPrompt("أدخل كلمة المرور لتأكيد تعطيل الحساب:", async function(pass) { 
                 const { error } = await supabase.auth.signInWithPassword({ email: currentUser.email, password: pass });
                 if (error) return showCustomAlert("كلمة المرور غير صحيحة."); 
-                await supabase.from('profiles').update({ status: 'محذوف' }).eq('id', currentUser.id);
-                showCustomAlert("تم تعطيل الحساب بنجاح.", false); handleLogout(); 
+                // اعتماد القيمة القياسية inactive المتوافقة مع القيود
+                await supabase.from('profiles').update({ status: 'inactive' }).eq('id', currentUser.id);
+                showCustomAlert("تم تعطيل الحساب بنجاح.", false); 
+                handleLogout(); 
             }); 
         }
 
         async function handleUpdateProfileView() { 
-            const fName = document.getElementById('prof-first-name').value.trim(), lName = document.getElementById('prof-last-name').value.trim(), phone = document.getElementById('prof-phone').value.trim(); 
+            const fName = document.getElementById('prof-first-name').value.trim();
+            const lName = document.getElementById('prof-last-name').value.trim();
+            const phone = document.getElementById('prof-phone').value.trim(); 
             if (!fName || !lName || !phone) return showCustomAlert("يجب تعبئة كافة الحقول."); 
             const { error } = await supabase.from('profiles').update({ first_name: fName, last_name: lName, phone: phone }).eq('id', currentUser.id);
             if(!error) { showCustomAlert("تم تعديل البيانات بنجاح.", false); silentSyncData(); switchTab('home'); } 
         }
 
         // ========================================================================
-        // 7. عرض المعاملات
+        // 7. عرض المعاملات وتنسيق الحالات
         // ========================================================================
+        const TX_TYPE_LABELS = {
+            'Deposit': 'شحن رصيد',
+            'Purchase Digital Code': 'شراء كود رقمي',
+            'Direct ID Top-up': 'شحن مباشر (ID)',
+            'Refund': 'استرجاع رصيد',
+            'شراء كود رقمي': 'شراء كود رقمي',
+            'شحن مباشر (ID)': 'شحن مباشر (ID)',
+            'شحن رصيد': 'شحن رصيد'
+        };
+
+        const TX_STATUS_CONFIG = {
+            'completed': { text: 'مكتمل', badge: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+            'approved': { text: 'مقبول', badge: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+            'مقبول': { text: 'مقبول', badge: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+            'مكتمل': { text: 'مكتمل', badge: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+            'pending': { text: 'قيد المراجعة', badge: 'bg-amber-50 text-amber-600 border-amber-100' },
+            'معلق': { text: 'قيد المراجعة', badge: 'bg-amber-50 text-amber-600 border-amber-100' },
+            'rejected': { text: 'مرفوض', badge: 'bg-red-50 text-red-600 border-red-100' },
+            'cancelled': { text: 'ملغي', badge: 'bg-red-50 text-red-600 border-red-100' },
+            'مرفوض': { text: 'مرفوض', badge: 'bg-red-50 text-red-600 border-red-100' }
+        };
+
         function renderRecentDashboardTransactions(txArray) {
             const container = document.getElementById('dashboard-recent-tx');
             if (!container) return;
@@ -1310,9 +1369,8 @@
             const card = document.createElement('div');
             card.className = "p-4 bg-white border border-slate-100 rounded-2xl text-right mb-2.5 shadow-sm";
             
-            const badge = tx.status === "مقبول" || tx.status === "مكتمل" ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
-                        : tx.status === "مرفوض" ? "bg-red-50 text-red-600 border-red-100" 
-                        : "bg-amber-50 text-amber-600 border-amber-100";
+            const statusCfg = TX_STATUS_CONFIG[tx.status] || { text: tx.status, badge: 'bg-slate-50 text-slate-600 border-slate-100' };
+            const displayType = TX_TYPE_LABELS[tx.type] || tx.type;
 
             const cleanCode = tx.serial_code ? String(tx.serial_code).trim() : '';
             const hasCleanCode = cleanCode !== '' && !['null', 'undefined', 'none', 'n/a', '0', '-'].includes(cleanCode.toLowerCase());
@@ -1340,7 +1398,7 @@
                     `;
                 }
             } else if (!tx.delivery_type) {
-                const isLegacyDirect = (tx.type && (tx.type.includes('مباشر') || tx.type.includes('فوري'))) ||
+                const isLegacyDirect = (tx.type && (tx.type.includes('مباشر') || tx.type.includes('Direct'))) ||
                                        (tx.details && /id|معرف|لاعب/i.test(tx.details));
 
                 if (!isLegacyDirect && hasCleanCode) {
@@ -1358,13 +1416,13 @@
             card.innerHTML = `
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs font-black text-slate-800">${tx.type}</p>
+                        <p class="text-xs font-black text-slate-800">${displayType}</p>
                         <p class="text-[10px] text-slate-500 mt-0.5">${tx.details}</p>
                         <p class="text-[9px] text-slate-400 font-sans mt-1">${tx.date}</p>
                     </div>
                     <div class="flex flex-col items-end gap-1">
                         <span class="text-sm font-black text-slate-800 font-sans tabular-numeric">${tx.amount}</span>
-                        <span class="px-2 py-0.5 rounded-lg text-[9px] font-bold border ${badge}">${tx.status}</span>
+                        <span class="px-2 py-0.5 rounded-lg text-[9px] font-bold border ${statusCfg.badge}">${statusCfg.text}</span>
                     </div>
                 </div>
                 ${extraContentHtml}
@@ -1387,9 +1445,9 @@
             document.querySelectorAll('.order-filter-btn').forEach(btn => {
                 btn.className = "order-filter-btn bg-slate-100 text-slate-600 px-3 py-1.5 rounded-xl";
             });
-            if (event && event.target && event.target.classList) {
-                event.target.classList.remove('bg-slate-100', 'text-slate-600');
-                event.target.classList.add('bg-slate-900', 'text-white');
+            if (window.event && window.event.target && window.event.target.classList) {
+                window.event.target.classList.remove('bg-slate-100', 'text-slate-600');
+                window.event.target.classList.add('bg-slate-900', 'text-white');
             }
 
             const container = document.getElementById('all-orders-container');
@@ -1397,11 +1455,11 @@
 
             let list = globalTransactionsRaw;
             if (filterType === 'CODE') {
-                list = list.filter(t => t.delivery_type === 'CODE' || (t.serial_code && !t.type.includes('مباشر')));
+                list = list.filter(t => t.delivery_type === 'CODE' || (t.serial_code && !String(t.type).includes('ID') && !String(t.type).includes('مباشر')));
             } else if (filterType === 'DIRECT_ID') {
-                list = list.filter(t => t.delivery_type === 'DIRECT_ID' || t.type.includes('مباشر') || t.type.includes('فوري'));
+                list = list.filter(t => t.delivery_type === 'DIRECT_ID' || String(t.type).includes('Direct') || String(t.type).includes('مباشر'));
             } else if (filterType === 'DEPOSIT') {
-                list = list.filter(t => t.transaction_type === 'شحن رصيد' || t.delivery_type === 'WALLET_DEPOSIT');
+                list = list.filter(t => t.type === 'Deposit' || t.type === 'شحن رصيد' || t.delivery_type === 'WALLET_DEPOSIT');
             }
 
             if (list.length === 0) {
